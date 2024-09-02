@@ -1,13 +1,13 @@
-import logo from './logo.svg';
+import roadguardlogo from './roadguardlogo.png';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={roadguardlogo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+            ROAD GUARD TESTING TESTING PULL PUSH COMMIT 
         </p>
         <a
           className="App-link"
