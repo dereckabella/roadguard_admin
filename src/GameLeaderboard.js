@@ -8,6 +8,44 @@ import usersIcon from './images/users-icon.png'; // Update with the correct path
 import leaderboardIcon from './images/leaderboard-icon.png'; // Update with the correct path
 import reportsIcon from './images/reports-icon.png'; // Update with the correct path
 
+const LeaderboardItem = ({ name, score, rank, avatar }) => (
+  <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center">
+      <img src={avatar} alt={name} className="w-10 h-10 rounded-full mr-2" />
+      <span className="font-semibold">{name}</span>
+    </div>
+    <div className={`h-24 w-16 flex items-end justify-center ${
+      rank === 1 ? 'bg-yellow-400' : rank === 2 ? 'bg-gray-300' : 'bg-amber-700'
+    }`}>
+      <span className="text-white font-bold mb-2">{score}</span>
+    </div>
+  </div>
+);
+
+const GameLeaderboard = () => {
+  const leaderboardData = [
+    { name: 'Diovic Solon', score: 9999, avatar: '/api/placeholder/40/40', rank: 1 },
+    { name: 'Mie Atcham', score: 7659, avatar: '/api/placeholder/40/40', rank: 2 },
+    { name: 'Kusogmoh Sikad', score: 600, avatar: '/api/placeholder/40/40', rank: 3 },
+  ];
+
+  return (
+    <div className="bg-gray-100 p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+      <h2 className="text-3xl font-bold text-yellow-400 mb-6 text-center">Game Leaderboard</h2>
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        {leaderboardData.map((item, index) => (
+          <LeaderboardItem key={index} {...item} />
+        ))}
+      </div>
+      <div className="text-center">
+        <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded-full hover:bg-yellow-500 transition duration-300">
+          View Rewards
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const AdminHomePage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif' }}>
@@ -29,7 +67,7 @@ const AdminHomePage = () => {
         <img src={logo} alt="Logo" style={{ width: '50px', height: '50px', margin: '0 20px' }} />
         <div style={{
           display: 'flex',
-          justifyContent: 'center', //soy
+          justifyContent: 'center',
           flexGrow: 1,
         }}>
           <button style={{
@@ -164,10 +202,11 @@ const AdminHomePage = () => {
         {/* Main Content */}
         <div style={{ flexGrow: 1, padding: '20px', marginLeft: '200px' }}>
           {/* Main content area */}
+          <GameLeaderboard />
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminHomePage;
+export default GameLeaderboard;
