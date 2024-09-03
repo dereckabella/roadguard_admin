@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import roadguardLogo from './images/roadguardlogo.png';
 
 const App = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = (e) => {
     e.preventDefault();
     // Static login validation
     if (id === 'Admin' && password === 'Admin123') {
       setMessage('Login successful!');
+      navigate('/admin-home'); // Redirect to AdminHomePage
     } else {
       setMessage('Invalid credentials, please try again.');
     }
@@ -26,7 +29,7 @@ const App = () => {
     }}>
       {/* Image */}
       <img
-        src={roadguardLogo}  // Use the imported variable here
+        src={roadguardLogo} 
         alt="Roadguard Logo"
         style={{
           position: 'absolute',
@@ -34,7 +37,7 @@ const App = () => {
           height: '360px',
           left: '300px',
           top: '60px',
-          objectFit: 'cover', // Ensures the image covers the specified dimensions
+          objectFit: 'cover',
         }}
       />
 
