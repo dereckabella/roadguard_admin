@@ -26,7 +26,7 @@ const GameLeaderboard = () => {
   const leaderboardData = [
     { name: 'Diovic Solon', score: 9999, avatar: '/api/placeholder/40/40', rank: 1 },
     { name: 'Mie Atcham', score: 7659, avatar: '/api/placeholder/40/40', rank: 2 },
-    { name: 'Kusogmoh Sikad', score: 600, avatar: '/api/placeholder/40/40', rank: 3 },
+    { name: 'Oh yeah', score: 600, avatar: '/api/placeholder/40/40', rank: 3 },
   ];
 
   return (
