@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import roadguardLogo from './images/roadguardlogo.png';
 
 const App = () => {
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Static login validation
+    if (id === 'Admin' && password === 'Admin123') {
+      setMessage('Login successful!');
+    } else {
+      setMessage('Invalid credentials, please try again.');
+    }
+  };
+
   return (
     <div style={{
       position: 'relative',
@@ -102,17 +116,23 @@ const App = () => {
           lineHeight: '20px',
           color: '#000000',
         }}>ID</label>
-        <input id="id" type="text" style={{
-          position: 'absolute',
-          width: '100%',
-          height: '45px',
-          top: '30px',
-          borderRadius: '25px',
-          border: '1px solid #18191A',
-          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-          padding: '5px 10px',
-          outline: 'none',
-        }} />
+        <input 
+          id="id" 
+          type="text" 
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '45px',
+            top: '30px',
+            borderRadius: '25px',
+            border: '1px solid #18191A',
+            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+            padding: '5px 10px',
+            outline: 'none',
+          }} 
+        />
       </div>
 
       {/* Password Input Field */}
@@ -135,38 +155,64 @@ const App = () => {
           lineHeight: '20px',
           color: '#000000',
         }}>Password</label>
-        <input id="password" type="password" style={{
-          position: 'absolute',
-          width: '100%',
-          height: '45px',
-          top: '30px',
-          borderRadius: '25px',
-          border: '1px solid #18191A',
-          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-          padding: '5px 10px',
-          outline: 'none',
-        }} />
+        <input 
+          id="password" 
+          type="password" 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '45px',
+            top: '30px',
+            borderRadius: '25px',
+            border: '1px solid #18191A',
+            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+            padding: '5px 10px',
+            outline: 'none',
+          }} 
+        />
       </div>
 
       {/* Login Button */}
-      <button style={{
-        position: 'absolute',
-        width: '168px',
-        height: '52px',
-        left: '1055px',
-        top: '550px',
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #E4E4E4 100%)',
-        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-        borderRadius: '25px',
-        fontWeight: '700',
-        fontSize: '15px',
-        lineHeight: '45px',
-        color: '#000000',
-        border: 'none',
-        cursor: 'pointer',
-      }}>
+      <button 
+        onClick={handleLogin}
+        style={{
+          position: 'absolute',
+          width: '168px',
+          height: '52px',
+          left: '1055px',
+          top: '550px',
+          background: 'linear-gradient(180deg, #FFFFFF 0%, #E4E4E4 100%)',
+          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+          borderRadius: '25px',
+          fontWeight: '700',
+          fontSize: '15px',
+          lineHeight: '45px',
+          color: '#000000',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
         Login
       </button>
+
+      {/* Login Message */}
+      {message && (
+        <p style={{
+          position: 'absolute',
+          width: '350px',
+          height: '45px',
+          left: '963px',
+          top: '620px',
+          fontWeight: '700',
+          fontSize: '20px',
+          color: '#FF0000',
+          textAlign: 'center',
+        }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 };
