@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './images/logo.png'; // Update with the correct path
 import documentIcon from './images/document-icon.png'; // Update with the correct path
 import pieIcon from './images/pie.png'; // Update with the correct path
@@ -7,8 +7,21 @@ import adminIcon from './images/admin-icon.png'; // Update with the correct path
 import usersIcon from './images/users-icon.png'; // Update with the correct path
 import leaderboardIcon from './images/leaderboard-icon.png'; // Update with the correct path
 import reportsIcon from './images/reports-icon.png'; // Update with the correct path
+import Users from './users'; // Import the Users component
 
 const AdminHomePage = () => {
+  const [activeComponent, setActiveComponent] = useState(''); // State to manage active component
+
+  const renderContent = () => {
+    switch (activeComponent) {
+      case 'users':
+        return <Users />;
+      // Add more cases for other components if needed
+      default:
+        return <div>Welcome to the Admin Dashboard</div>;
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif' }}>
       {/* Top Navbar */}
@@ -29,7 +42,7 @@ const AdminHomePage = () => {
         <img src={logo} alt="Logo" style={{ width: '50px', height: '50px', margin: '0 20px' }} />
         <div style={{
           display: 'flex',
-          justifyContent: 'center', //soy
+          justifyContent: 'center',
           flexGrow: 1,
         }}>
           <button style={{
@@ -97,6 +110,7 @@ const AdminHomePage = () => {
             }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E0C55B'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onClick={() => setActiveComponent('admin')}
             >
               <img src={adminIcon} alt="Admin icon" style={{ width: '24px', height: '24px', marginRight: '10px' }} />
               <span style={{ fontSize: '16px' }}>Admin</span>
@@ -116,6 +130,7 @@ const AdminHomePage = () => {
             }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E0C55B'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onClick={() => setActiveComponent('users')}
             >
               <img src={usersIcon} alt="Users icon" style={{ width: '24px', height: '24px', marginRight: '10px' }} />
               <span style={{ fontSize: '16px' }}>Users</span>
@@ -135,6 +150,7 @@ const AdminHomePage = () => {
             }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E0C55B'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onClick={() => setActiveComponent('leaderboard')}
             >
               <img src={leaderboardIcon} alt="Leaderboard icon" style={{ width: '24px', height: '24px', marginRight: '10px' }} />
               <span style={{ fontSize: '16px' }}>Leaderboard</span>
@@ -154,6 +170,7 @@ const AdminHomePage = () => {
             }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E0C55B'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onClick={() => setActiveComponent('reports')}
             >
               <img src={reportsIcon} alt="Reports icon" style={{ width: '24px', height: '24px', marginRight: '10px' }} />
               <span style={{ fontSize: '16px' }}>Reviews & Reports</span>
@@ -163,7 +180,7 @@ const AdminHomePage = () => {
 
         {/* Main Content */}
         <div style={{ flexGrow: 1, padding: '20px', marginLeft: '200px' }}>
-          {/* Main content area */}
+          {renderContent()}
         </div>
       </div>
     </div>
