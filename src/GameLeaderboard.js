@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from './firebaseConfig'; // Import Firestore from firebaseConfig.js
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { firestore, storage, database } from './firebaseConfig'; // Import Firestore and Storage from firebaseConfig.js
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getDatabase, ref as dbRef, set } from 'firebase/database';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto'; // Import Chart.js
 import './GameLeaderboard.css'; // Import the CSS file
@@ -8,31 +11,28 @@ import './GameLeaderboard.css'; // Import the CSS file
 const GameLeaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [highestScorer, setHighestScorer] = useState(null);
+  const [rewardName, setRewardName] = useState('');
+  const [rewardImage, setRewardImage] = useState(null);
+  const [userIdForReward, setUserIdForReward] = useState('');
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        // Reference to 'users' collection in Firestore
         const usersCollection = collection(firestore, 'users');
         const usersSnapshot = await getDocs(usersCollection);
 
-        console.log('Users snapshot:', usersSnapshot);
-
-        // Aggregate scores by user
         const scoresMap = {};
         
         for (const doc of usersSnapshot.docs) {
           const userId = doc.id;
           const userDoc = doc.data();
-          const scoresArray = userDoc.scores || []; // Get scores array, default to empty array
+          const scoresArray = userDoc.scores || []; 
 
           let totalScore = 0;
-          // Aggregate scores from the scores array
           scoresArray.forEach(scoreEntry => {
             totalScore += scoreEntry.score || 0;
           });
 
-          // Initialize user if not already in the map
           if (!scoresMap[userId]) {
             scoresMap[userId] = {
               displayName: userDoc.displayName || 'Anonymous',
@@ -40,35 +40,17 @@ const GameLeaderboard = () => {
             };
           }
 
-          // Set total score for the user
           scoresMap[userId].score = totalScore;
         }
 
-        // Log the aggregated scores
-        console.log('Aggregated scores per user:', scoresMap);
-
-        // Convert map to array
         const leaderboard = Object.values(scoresMap);
-
-        // Log the leaderboard data
-        console.log('Leaderboard data before sorting:', leaderboard);
-
-        // Sort leaderboard data by score in descending order
         const sortedLeaderboard = leaderboard.sort((a, b) => b.score - a.score);
-
-        // Limit to top 3
         const top3Leaderboard = sortedLeaderboard.slice(0, 3);
 
-        // Log the top 3 leaderboard data
-        console.log('Top 3 leaderboard data:', top3Leaderboard);
-
-        // Set top 3 data
         setLeaderboardData(top3Leaderboard);
 
-        // Find the user with the highest score
         if (top3Leaderboard.length > 0) {
-          const highest = top3Leaderboard[0]; // Highest scorer is now the first in the sorted array
-          console.log('Highest scorer:', highest); // Log highest scorer
+          const highest = top3Leaderboard[0];
           setHighestScorer(highest);
         }
       } catch (error) {
@@ -79,12 +61,40 @@ const GameLeaderboard = () => {
     fetchLeaderboardData();
   }, []);
 
-  // Define colors
+  const handleRewardImageChange = (event) => {
+    setRewardImage(event.target.files[0]);
+  };
+
+  const handleRewardSubmit = async () => {
+    if (!rewardImage || !rewardName || !userIdForReward) {
+      alert('Please fill out all fields and upload an image.');
+      return;
+    }
+
+    try {
+      // Upload image to Firebase Storage
+      const imageRef = ref(storage, `rewards/${rewardImage.name}`);
+      await uploadBytes(imageRef, rewardImage);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      // Save reward details to Realtime Database
+      const rewardRef = dbRef(database, `rewards/${userIdForReward}`);
+      await set(rewardRef, {
+        name: rewardName,
+        imageUrl: imageUrl
+      });
+
+      alert('Reward added successfully!');
+    } catch (error) {
+      console.error('Error adding reward:', error);
+      alert('Failed to add reward.');
+    }
+  };
+
   const colors = ['#B6B6B6', '#E0C55B', '#A56020'];
 
   const podiumData = [leaderboardData[1], leaderboardData[0], leaderboardData[2]];
 
-  // Prepare data for the bar chart
   const chartData = {
     labels: podiumData.map((user, index) => user ? user.displayName : ''),
     datasets: [
@@ -96,41 +106,40 @@ const GameLeaderboard = () => {
     ],
   };
 
-  // Update chart options to adjust the bar thickness and positioning
   const chartOptions = {
-    indexAxis: 'x', // Vertical bars
+    indexAxis: 'x',
     responsive: true,
-    maintainAspectRatio: false, // Ensure the chart respects the set dimensions
+    maintainAspectRatio: false,
     scales: {
       x: {
         grid: {
-          display: false, // Remove the gridlines for the x-axis
+          display: false,
         },
         ticks: {
-          display: true, // Display x-axis labels
-          maxRotation: 0, // Prevent label rotation
+          display: true,
+          maxRotation: 0,
           minRotation: 0,
           font: {
-            size: 12, // Smaller font size for labels
+            size: 12,
           },
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          stepSize: 10, // Customize based on score range
+          stepSize: 10,
           font: {
-            size: 12, // Smaller font size for labels
+            size: 12,
           },
         },
       },
     },
     plugins: {
       legend: {
-        display: false, // Disable the legend
+        display: false,
       },
       tooltip: {
-        enabled: true, // Show tooltips for each bar
+        enabled: true,
       },
     },
     layout: {
@@ -143,11 +152,11 @@ const GameLeaderboard = () => {
     },
     elements: {
       bar: {
-        borderRadius: 10, // Rounded edges for bars
+        borderRadius: 10,
         borderWidth: 1,
         barThickness: (context) => {
           const index = context.dataIndex;
-          return index === 1 ? 40 : 30; // Adjusted thickness for smaller bars
+          return index === 1 ? 40 : 30;
         },
       },
     },
@@ -165,8 +174,26 @@ const GameLeaderboard = () => {
       <div className="chart-container">
         <Bar data={chartData} options={chartOptions} />
       </div>
-      <div className="button-container">
-        <button className="view-rewards-button">View Rewards</button>
+      <div className="reward-form">
+        <h2>Add Reward</h2>
+        <input
+          type="text"
+          placeholder="Reward Name"
+          value={rewardName}
+          onChange={(e) => setRewardName(e.target.value)}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleRewardImageChange}
+        />
+        <input
+          type="text"
+          placeholder="User ID (for reward)"
+          value={userIdForReward}
+          onChange={(e) => setUserIdForReward(e.target.value)}
+        />
+        <button onClick={handleRewardSubmit}>Add Reward</button>
       </div>
     </div>
   );
