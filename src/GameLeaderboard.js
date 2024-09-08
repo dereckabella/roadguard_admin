@@ -8,6 +8,7 @@ import './GameLeaderboard.css'; // Import the CSS file
 const GameLeaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [highestScorer, setHighestScorer] = useState(null);
+  const [otherUsers, setOtherUsers] = useState([]); // State for other users
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -36,7 +37,8 @@ const GameLeaderboard = () => {
           if (!scoresMap[userId]) {
             scoresMap[userId] = {
               displayName: userDoc.displayName || 'Anonymous',
-              score: 0
+              score: 0,
+              photoURL: userDoc.photoURL || 'default-image-url.jpg' // Default image if none provided
             };
           }
 
@@ -71,6 +73,11 @@ const GameLeaderboard = () => {
           console.log('Highest scorer:', highest); // Log highest scorer
           setHighestScorer(highest);
         }
+
+        // Set other users data
+        const otherUsersData = sortedLeaderboard.slice(3);
+        setOtherUsers(otherUsersData);
+
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
       }
@@ -94,6 +101,25 @@ const GameLeaderboard = () => {
         backgroundColor: podiumData.map((user, index) => colors[index] || 'rgba(75, 192, 192, 0.8)'),
       },
     ],
+  };
+
+  // Custom plugin to draw images on top of bars
+  const drawImagesOnTop = {
+    id: 'drawImagesOnTop',
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea: { top }, scales: { x, y } } = chart;
+      podiumData.forEach((user, index) => {
+        if (user && user.photoURL) {
+          const img = new Image();
+          img.src = user.photoURL;
+          img.onload = () => {
+            const xPos = x.getPixelForValue(index);
+            const yPos = y.getPixelForValue(user.score);
+            ctx.drawImage(img, xPos - 15, yPos - 40, 30, 30); // Adjust the image size and position
+          };
+        }
+      });
+    }
   };
 
   // Update chart options to adjust the bar thickness and positioning
@@ -132,6 +158,7 @@ const GameLeaderboard = () => {
       tooltip: {
         enabled: true, // Show tooltips for each bar
       },
+      drawImagesOnTop, // Add the custom plugin
     },
     layout: {
       padding: {
@@ -154,19 +181,38 @@ const GameLeaderboard = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="title">Game Leaderboard</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">Game Leaderboard</h1>
       {highestScorer && (
-        <div className="highest-scorer">
-          <h2>Highest Scorer: {highestScorer.displayName}</h2>
-          <p>Score: {highestScorer.score}</p>
+        <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+          <h2 className="text-2xl font-semibold">Highest Scorer: {highestScorer.displayName}</h2>
+          <p className="text-lg">Score: {highestScorer.score}</p>
         </div>
       )}
-      <div className="chart-container">
-        <Bar data={chartData} options={chartOptions} />
+      <div className="flex flex-wrap lg:flex-nowrap">
+        <div className="chart-container">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
+        <div className="other-users">
+          <h2 className="text-2xl font-semibold mb-4">Other Users</h2>
+          <ul className="space-y-4">
+            {otherUsers.map((user, index) => (
+              <li
+                key={index}
+                className="bg-white shadow-md rounded-lg p-4 flex items-center justify-between"
+              >
+                <img src={user.photoURL} alt={user.displayName} className="user-image" />
+                <span className="text-lg font-medium">{user.displayName}</span>
+                <span className="text-lg font-semibold text-gray-700">{user.score}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <div className="button-container">
-        <button className="view-rewards-button">View Rewards</button>
+      <div className="button-container mt-8">
+        <button className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
+          View Rewards
+        </button>
       </div>
     </div>
   );
