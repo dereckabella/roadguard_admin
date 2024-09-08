@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getAuth, getUser, deleteUser } from 'firebase/auth'; // Import Firebase Auth
 import { firestore } from './firebaseConfig'; // Import Firestore from firebaseConfig.js
 import './Users.css'; // Import the CSS file
 
@@ -9,25 +10,47 @@ const Users = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
+            const auth = getAuth(); // Initialize Firebase Auth
             const usersCollection = collection(firestore, 'users');
             const usersSnapshot = await getDocs(usersCollection);
-            const usersData = usersSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            console.log('Fetched users:', usersData); // Debugging log
+
+            const usersData = await Promise.all(
+                usersSnapshot.docs.map(async (userDoc) => {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id; // Document ID as email
+
+                    try {
+                        // Fetch user metadata from Firebase Authentication
+                        const userAuth = await auth.getUserByEmail(userId);
+                        return {
+                            id: userId,
+                            ...userData,
+                            created: userAuth.metadata.creationTime, // Use creationTime from metadata and rename to 'created'
+                        };
+                    } catch (error) {
+                        console.error('Error fetching user from Auth:', error);
+                        return { id: userId, ...userData, created: 'N/A' }; // Handle if user not found
+                    }
+                })
+            );
+
+            console.log('Fetched users with metadata:', usersData);
             setUsers(usersData);
         };
 
         fetchUsers().catch(error => {
-            console.error('Error fetching users:', error); // Debugging log
+            console.error('Error fetching users:', error);
         });
     }, []);
 
     const deleteUser = async (userId) => {
         const userDoc = doc(firestore, 'users', userId);
+        const auth = getAuth();
+
         try {
-            await deleteDoc(userDoc);
+            await deleteDoc(userDoc); // Delete from Firestore
+            const userAuth = await auth.getUserByEmail(userId);
+            await deleteUser(userAuth); // Delete from Authentication
             console.log('User deleted successfully');
             setUsers(users.filter(user => user.id !== userId));
         } catch (error) {
@@ -61,7 +84,7 @@ const Users = () => {
 
     const filteredUsers = users.filter(user =>
         (user.displayName && user.displayName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))
+        (user.id && user.id.toLowerCase().includes(searchQuery.toLowerCase())) // Search by document ID
     );
 
     return (
@@ -80,14 +103,14 @@ const Users = () => {
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Date Created</th>
+                            <th>Created</th> {/* Update the header label */}
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map((user) => (
                             <tr key={user.id}>
-                                    <td>
+                                <td>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <img
                                             src={user.photoURL}
@@ -102,11 +125,10 @@ const Users = () => {
                                         {user.displayName}
                                     </div>
                                 </td>
-                                <td>{user.email}</td>
+                                <td>{user.id}</td> {/* Use document ID as email */}
                                 <td>
-                                    {user.dateCreated && user.dateCreated.seconds
-                                        ? new Date(user.dateCreated.seconds * 1000).toLocaleDateString()
-                                        : 'N/A'}
+                                    {user.created}
+                                       
                                 </td>
                                 <td>
                                     <button onClick={() => editUser(user.id)}>Edit</button>
