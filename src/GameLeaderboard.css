@@ -115,3 +115,36 @@
 .view-rewards-button:hover {
   background-color: #2563eb;
 }
+
+.reward-form {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.reward-form input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.reward-form input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.reward-form button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reward-form button:hover {
+  background-color: #45a049;
+}

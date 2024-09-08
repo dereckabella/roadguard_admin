@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { getAuth, getUser, deleteUser } from 'firebase/auth'; // Import Firebase Auth
+import { getAuth, deleteUser as deleteAuthUser } from 'firebase/auth'; // Import Firebase Auth
 import { firestore } from './firebaseConfig'; // Import Firestore from firebaseConfig.js
 import './Users.css'; // Import the CSS file
 
@@ -20,16 +20,26 @@ const Users = () => {
                     const userId = userDoc.id; // Document ID as email
 
                     try {
-                        // Fetch user metadata from Firebase Authentication
-                        const userAuth = await auth.getUserByEmail(userId);
+                        let created = '';
+
+                        if (userData.createdAt) {
+                            if (userData.createdAt instanceof Date) {
+                                created = userData.createdAt.toLocaleString();
+                            } else if (userData.createdAt.seconds) {
+                                created = new Date(userData.createdAt.seconds * 1000).toLocaleString();
+                            } else {
+                                created = userData.createdAt; // Assuming it's already a string
+                            }
+                        }
+
                         return {
                             id: userId,
                             ...userData,
-                            created: userAuth.metadata.creationTime, // Use creationTime from metadata and rename to 'created'
+                            created: created, // Use the formatted date string
                         };
                     } catch (error) {
-                        console.error('Error fetching user from Auth:', error);
-                        return { id: userId, ...userData, created: 'N/A' }; // Handle if user not found
+                        console.error('Error processing user data:', error);
+                        return { id: userId, ...userData, created: '' }; // Default empty string if error
                     }
                 })
             );
@@ -50,7 +60,7 @@ const Users = () => {
         try {
             await deleteDoc(userDoc); // Delete from Firestore
             const userAuth = await auth.getUserByEmail(userId);
-            await deleteUser(userAuth); // Delete from Authentication
+            await deleteAuthUser(userAuth); // Delete from Authentication
             console.log('User deleted successfully');
             setUsers(users.filter(user => user.id !== userId));
         } catch (error) {
@@ -103,7 +113,7 @@ const Users = () => {
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Created</th> {/* Update the header label */}
+                            <th>Created At</th> {/* Update the header label */}
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -126,10 +136,7 @@ const Users = () => {
                                     </div>
                                 </td>
                                 <td>{user.id}</td> {/* Use document ID as email */}
-                                <td>
-                                    {user.created}
-                                       
-                                </td>
+                                <td>{user.created}</td> {/* Display createdAt */}
                                 <td>
                                     <button onClick={() => editUser(user.id)}>Edit</button>
                                     <button onClick={() => confirmDeleteUser(user.id)}>Delete</button>
