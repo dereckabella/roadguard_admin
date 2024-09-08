@@ -1,47 +1,72 @@
+.chart-container {
+  background-color: #ffffff;
+  padding: 20px;
+  /* Reduced padding for a smaller chart */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 900px;
+  /* Set the width of the chart */
+  height: 550px;
+  /* Set the height of the chart */
+}
+
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .highest-scorer {
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .chart-container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .button-container {
-    text-align: center;
-  }
-  
-  .view-rewards-button {
-    background-color: #facc15;
-    color: #ffffff;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .view-rewards-button:hover {
-    background-color: #eab308;
-  }
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 0 10px;
+  text-align: center;
+}
+
+.podium-item:first-child {
+  order: 2;
+  /* Center item */
+}
+
+.podium-item:nth-child(2) {
+  order: 1;
+  /* Left item */
+}
+
+.podium-item:nth-child(3) {
+  order: 3;
+  /* Right item */
+}
+
+.podium-rank-1 {
+  height: 150px;
+  /* Center user (1st place) higher */
+}
+
+.podium-rank-2 {
+  height: 100px;
+  /* Left user (2nd place) */
+}
+
+.podium-rank-3 {
+  height: 120px;
+  /* Right user (3rd place) */
+}
+
+.podium-item .score {
+  font-weight: bold;
+  font-size: 18px;
+}
