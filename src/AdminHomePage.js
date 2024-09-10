@@ -9,6 +9,7 @@ import leaderboardIcon from './images/leaderboard-icon.png'; // Update with the 
 import reportsIcon from './images/reports-icon.png'; // Update with the correct path
 import Users from './users'; // Import the Users component
 import GameLeaderboard from './GameLeaderboard'; // Import the GameLeaderboard component
+import Posts from './Posts'; // Import the Posts component
 
 const AdminHomePage = () => {
   const [activeComponent, setActiveComponent] = useState(''); // State to manage active component
@@ -19,6 +20,8 @@ const AdminHomePage = () => {
         return <Users />;
       case 'leaderboard':
         return <GameLeaderboard />;
+      case 'reports':
+        return <Posts />;
       // Add more cases for other components if needed
       default:
         return <div>Welcome to the Admin Dashboard</div>;
