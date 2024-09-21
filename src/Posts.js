@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { ref, get, child, remove } from 'firebase/database';
-import { database } from './firebaseConfig'; // Import the database reference from firebaseConfig.js
+import { ref, get, child, remove, update } from 'firebase/database';
+import { database } from './firebaseConfig'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import './Posts.css'; // Import the CSS file
+import './Posts.css'; 
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyACvMNE1lw18V00MT1wzRDW1vDlofnOZbw';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
-  const [selectedPost, setSelectedPost] = useState(null); // State to manage selected post
-  const [deleteReason, setDeleteReason] = useState(''); // State to manage delete reason
-  const [currentPage, setCurrentPage] = useState(1); // State to manage current page
-  const postsPerPage = 3; // Number of posts per page
+  const [loading, setLoading] = useState(true); 
+  const [showModal, setShowModal] = useState(false); 
+  const [selectedPost, setSelectedPost] = useState(null); 
+  const [deleteReason, setDeleteReason] = useState(''); 
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [dropdownOpen, setDropdownOpen] = useState(null); 
+  const [sortOption, setSortOption] = useState('Most Recent'); 
+  const postsPerPage = 3; 
 
-  // Calculate the posts to be displayed on the current page
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
@@ -31,67 +32,98 @@ const Posts = () => {
           const postsData = [];
           snapshot.forEach(childSnapshot => {
             const data = childSnapshot.val();
-            console.log('Document data:', data); // Debugging: Log each document's data
             postsData.push({
               id: childSnapshot.key,
               ...data
             });
           });
-
-          console.log('Fetched posts:', postsData); // Debugging: Log fetched posts
-
           setPosts(postsData);
         } else {
           console.log('No data available');
         }
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false); 
       } catch (error) {
         console.error('Error fetching posts:', error);
-        setLoading(false); // Set loading to false even if there is an error
+        setLoading(false); 
       }
     };
 
     fetchPosts();
   }, []);
 
-  useEffect(() => {
-    if (!loading) {
+  const initMaps = () => {
+    if (!window.google || !window.google.maps) {
+      console.error('Google Maps API is not loaded.');
+      return;
+    }
+
+    currentPosts.forEach(post => {
+      if (post.location) {
+        const mapElement = document.getElementById(`map-${post.id}`);
+        if (!mapElement) return;
+
+        const map = new window.google.maps.Map(mapElement, {
+          center: { lat: post.location.latitude, lng: post.location.longitude },
+          zoom: 13,
+        });
+
+        new window.google.maps.Marker({
+          position: { lat: post.location.latitude, lng: post.location.longitude },
+          map,
+          title: post.title,
+        });
+
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode(
+          { location: { lat: post.location.latitude, lng: post.location.longitude } },
+          (results, status) => {
+            if (status === 'OK' && results[0]) {
+              const locationElement = document.getElementById(`location-${post.id}`);
+              if (locationElement) {
+                locationElement.innerText = results[0].formatted_address;
+              }
+            } else {
+              console.error('Geocode was not successful for the following reason: ' + status);
+            }
+          }
+        );
+      }
+    });
+  };
+
+  const loadGoogleMapsScript = () => {
+    if (!window.google || !window.google.maps) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`;
       script.async = true;
       script.defer = true;
-      window.initMap = () => {
-        currentPosts.forEach(post => {
-          if (post.location) {
-            const map = new window.google.maps.Map(document.getElementById(`map-${post.id}`), {
-              center: { lat: post.location.latitude, lng: post.location.longitude },
-              zoom: 13
-            });
-            new window.google.maps.Marker({
-              position: { lat: post.location.latitude, lng: post.location.longitude },
-              map,
-              title: post.title
-            });
-
-            // Geocode the location to get the address
-            const geocoder = new window.google.maps.Geocoder();
-            geocoder.geocode({ location: { lat: post.location.latitude, lng: post.location.longitude } }, (results, status) => {
-              if (status === 'OK' && results[0]) {
-                document.getElementById(`location-${post.id}`).innerText = results[0].formatted_address;
-              } else {
-                console.error('Geocode was not successful for the following reason: ' + status);
-              }
-            });
-          }
-        });
-      };
+      script.onload = initMaps;
       document.head.appendChild(script);
+    } else {
+      initMaps(); 
     }
-  }, [loading, currentPosts]);
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        loadGoogleMapsScript();
+      }, 500); 
+    }
+  }, [loading, currentPosts, currentPage]);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        initMaps();
+      }, 500); 
+    }
+  }, [sortOption]);
 
   const handleDeleteClick = (post) => {
     setSelectedPost(post);
     setShowModal(true);
+    setDropdownOpen(null); 
   };
 
   const handleDeleteConfirm = async () => {
@@ -107,7 +139,32 @@ const Posts = () => {
     }
   };
 
-  // Change page
+  const handleMarkResolved = async (post) => {
+    try {
+      await update(ref(database, `posts/${post.id}`), { resolved: true });
+      setPosts(posts.map(p => p.id === post.id ? { ...p, resolved: true } : p));
+      setDropdownOpen(null); 
+    } catch (error) {
+      console.error('Error marking post as resolved:', error);
+    }
+  };
+
+  const handleSortChange = (option) => {
+    setSortOption(option);
+    setDropdownOpen(null); 
+  };
+
+  const sortedPosts = [...posts].sort((a, b) => {
+    if (sortOption === 'Most Recent') {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else if (sortOption === 'Most Voted') {
+      return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes);
+    } else if (sortOption === 'Least Voted') {
+      return (a.upvotes - a.downvotes) - (b.upvotes - b.downvotes);
+    }
+    return 0;
+  });
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
@@ -117,11 +174,31 @@ const Posts = () => {
   return (
     <div className="reported-posts-container p-4">
       <h1 className="text-2xl font-bold mb-4">Reported Posts</h1>
+      <div className="flex justify-end mb-4">
+        <div className="relative">
+          <button className="bg-gray-200 px-4 py-2 rounded" onClick={() => setDropdownOpen('sort')}>
+            Sort by: {sortOption}
+          </button>
+          {dropdownOpen === 'sort' && (
+            <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
+              <button className="dropdown-item w-full text-left px-4 py-2" onClick={() => handleSortChange('Most Recent')}>Most Recent</button>
+              <button className="dropdown-item w-full text-left px-4 py-2" onClick={() => handleSortChange('Most Voted')}>Most Voted</button>
+              <button className="dropdown-item w-full text-left px-4 py-2" onClick={() => handleSortChange('Least Voted')}>Least Voted</button>
+            </div>
+          )}
+        </div>
+      </div>
       <div className="posts-list grid grid-cols-1 gap-4">
-        {currentPosts.map(post => (
+        {sortedPosts.slice(indexOfFirstPost, indexOfLastPost).map(post => (
           <div key={post.id} className="post-item bg-white p-4 rounded-lg shadow-md relative">
             <div className="absolute top-6 right-6">
-              <FontAwesomeIcon icon={faEllipsisV} size="lg" className="cursor-pointer" onClick={() => handleDeleteClick(post)} />
+              <FontAwesomeIcon icon={faEllipsisV} size="lg" className="cursor-pointer" onClick={() => setDropdownOpen(post.id)} />
+              {dropdownOpen === post.id && (
+                <div className="dropdown-menu absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
+                  <button className="dropdown-item w-full text-left px-4 py-2" onClick={() => handleDeleteClick(post)}>Delete</button>
+                  <button className="dropdown-item w-full text-left px-4 py-2" onClick={() => handleMarkResolved(post)}>Mark as Resolved</button>
+                </div>
+              )}
             </div>
             <div className="flex items-center mb-2">
               <img src={post.photoURL} alt="User Photo" className="user-photo mr-2 fixed-size" />
@@ -143,7 +220,6 @@ const Posts = () => {
         ))}
       </div>
 
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-4">
         {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, index) => (
           <button
