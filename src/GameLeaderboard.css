@@ -1,106 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-/* Modal Overlay */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  /* Dark semi-transparent background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  /* Ensures it overlays other content */
-}
-
-/* Modal Content */
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 400px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-/* Close Button */
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.modal input,
-.modal select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.modal button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal .submit-btn {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.modal .cancel-btn {
-  background-color: #f44336;
-  color: white;
-  margin-left: 10px;
-}
+/* Container for the whole leaderboard */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.chart-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  flex: 2;
-  min-width: 300px;
-  height: 550px;
+/* Leaderboard Title */
+.leaderboard-title {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
 }
 
-.other-users {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  flex: 1;
-  min-width: 300px;
-  max-height: 550px; /* Set a maximum height */
-  overflow-y: auto; /* Enable vertical scrolling */
-}
-
-.user-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
+/* Podium Container for top 3 */
 .podium-container {
   display: flex;
   justify-content: center;
@@ -108,107 +22,416 @@
   margin-bottom: 30px;
 }
 
+/* Each Podium Item */
 .podium-item {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 0 10px;
+  justify-content: flex-end;
+  margin: 0 20px;
   text-align: center;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: all 0.3s ease-in-out;
 }
 
-.podium-item:first-child {
-  order: 2;
-  /* Center item */
-}
-
-.podium-item:nth-child(2) {
-  order: 1;
-  /* Left item */
-}
-
-.podium-item:nth-child(3) {
-  order: 3;
-  /* Right item */
-}
-
+/* Podium colors based on rank */
+/* Podium Item for 1st Place */
 .podium-rank-1 {
-  height: 150px;
-  /* Center user (1st place) higher */
+  background-color: #FFD700; /* Bright Gold */
+  width: 130px;
+  height: 300px;
 }
 
+/* Podium Item for 2nd Place */
 .podium-rank-2 {
-  height: 100px;
-  /* Left user (2nd place) */
+  background-color: #B0C4DE; /* Light Steel Blue */
+  width: 120px;
+  height: 260px;
 }
 
+/* Podium Item for 3rd Place */
 .podium-rank-3 {
-  height: 120px;
-  /* Right user (3rd place) */
+  background-color: #FF8C00; /* Dark Orange */
+  width: 110px;
+  height: 220px;
 }
 
+/* Podium Item for 4th Place */
+.podium-rank-4 {
+  background-color: #8A2BE2; /* Blue Violet */
+  width: 100px;
+  height: 180px;
+}
+
+/* Podium Item for 5th Place */
+.podium-rank-5 {
+  background-color: #00FA9A; /* Medium Spring Green */
+  width: 90px;
+  height: 160px;
+}
+
+/* Style for Tied Users (sharing the same color) */
+.podium-tied {
+  background-color: #FF8C00; /* Same color for tied users */
+}
+
+/* Image for the user's avatar on the podium */
 .podium-image {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   margin-bottom: 10px;
+  object-fit: cover;
+  border: 2px solid white;
 }
 
-.podium-item .score {
-  font-weight: bold;
+/* Crown Image for 1st Place */
+.crown {
+  position: absolute;
+  top: -40px;
+  width: 50px;
+  height: auto;
+}
+
+/* Username text */
+.username {
   font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
 }
 
+/* Score text */
+.score {
+  font-size: 22px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+
+
+/* Other Users Container */
+.other-users-container {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Styling for other users' list */
+.other-users-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each other user in the list */
+.other-users-container li {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Other users' avatar */
+.other-users-container img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Buttons Container */
 .button-container {
-  margin-top: 24px;
   text-align: center;
+  margin-top: 40px;
 }
 
-.view-rewards-button {
-  background-color: #1d4ed8;
-  color: white;
+/* Add Reward & View Reward Buttons */
+.button-container button {
   padding: 12px 24px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-}
-
-.view-rewards-button:hover {
-  background-color: #2563eb;
-}
-
-.reward-form {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.reward-form input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.reward-form input[type="file"] {
-  margin-bottom: 10px;
-}
-
-.reward-form button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: transform 0.3s ease, background-color 0.3s ease;
   cursor: pointer;
 }
 
-.reward-form button:hover {
-  background-color: #45a049;
+.button-container button:hover {
+  transform: scale(1.05);
+}
+
+/* Button Colors */
+.bg-green-500 {
+  background-color: #27ae60;
+}
+
+.bg-green-500:hover {
+  background-color: #2ecc71;
+}
+
+.bg-blue-500 {
+  background-color: #3498db;
+}
+
+.bg-blue-500:hover {
+  background-color: #5dade2;
+}
+
+/* Modals */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-black {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.p-6 {
+  padding: 24px;
+}
+
+.rounded-lg {
+  border-radius: 8px;
+}
+
+.relative {
+  position: relative;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-lg {
+  max-width: 600px;
+}
+
+.max-w-4xl {
+  max-width: 1024px;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.h-[80%] {
+  height: 80%;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.space-y-4 > :not(:last-child) {
+  margin-bottom: 16px;
+}
+
+.space-y-2 > :not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.mt-8 {
+  margin-top: 32px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+/* Reward List Container */
+.reward-list-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Each Reward Item */
+.reward-item {
+  display: flex;
+  align-items: center;
+  background-color: #f6f6f6;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+/* Reward Item Hover */
+.reward-item:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: #fafafa;
+}
+
+/* Reward Image */
+.reward-item img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+  border: 2px solid #ddd;
+}
+
+/* Reward Details */
+.reward-details {
+  flex-grow: 1;
+}
+
+.reward-details p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reward-details .points-required {
+  font-size: 14px;
+  color: #777;
+}
+
+/* Delete Button */
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+/* Spacing for rewards modal */
+.modal-content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.reward-list-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+/* Modal Container */
+.modal-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Modal Title */
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* Input Fields */
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 14px;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: #3498db;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+}
+
+/* File Input Styling */
+.file-input-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.file-input-label:hover {
+  background-color: #2980b9;
+}
+
+/* Buttons */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.submit-button {
+  background-color: #27ae60;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #2ecc71;
+}
+
+.cancel-button {
+  background-color: #bdc3c7;
+  color: #7f8c8d;
+}
+
+.cancel-button:hover {
+  background-color: #95a5a6;
 }
