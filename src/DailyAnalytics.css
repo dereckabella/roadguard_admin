@@ -1,0 +1,28 @@
+.analytics-container {
+    background-color: #f9f9f9; /* Light background for the chart */
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.analytics-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
