@@ -115,9 +115,6 @@ const GameLeaderboard = () => {
   const top5Data = leaderboardData.slice(0, 5);
   const otherUsers = leaderboardData.slice(5);
 
-  // Generate dynamic podium colors and handling ties
-  const podiumColors = ['#FFDD44', '#99CCFF', '#FF9900', '#CC66FF', '#FF6699']; // Custom colors for top 5
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="leaderboard-title mb-6">
@@ -131,19 +128,19 @@ const GameLeaderboard = () => {
           {/* Podium for top 5 */}
           <div className="flex justify-center chart-container">
             <div className="podium-container">
-            {top5Data.map((user, index) => (
-  <div
-    key={index}
-    className={`podium-item podium-rank-${user.rank} ${user.tied ? 'podium-tied' : ''}`}
-    style={{ height: (user.score / maxScore) * 300 }}
-  >
-    {user.tied && <span className="tied-badge"></span>}
-    <img src={user.photoURL} alt={user.displayName} className="podium-image" />
-    {user.rank === 1 && <img src={Crown} alt="Crown" className="crown" />}
-    <p className="username">{user.displayName}</p>
-    <p className="score">{user.score}</p>
-  </div>
-))}
+              {top5Data.map((user, index) => (
+                <div
+                  key={index}
+                  className={`podium-item podium-rank-${user.rank} ${user.tied ? 'podium-tied' : ''}`}
+                  style={{ height: (user.score / maxScore) * 300 }}
+                >
+                  {user.tied && <span className="tied-badge">Tied</span>}
+                  <img src={user.photoURL} alt={user.displayName} className="podium-image" />
+                  {user.rank === 1 && <img src={Crown} alt="Crown" className="crown" />}
+                  <p className="username">{user.displayName}</p>
+                  <p className="score">{user.score}</p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -187,109 +184,106 @@ const GameLeaderboard = () => {
       </div>
 
       {/* Add Reward Modal */}
-{showAddRewardModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="modal-container"> 
-      <button
-        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-        onClick={() => setShowAddRewardModal(false)}
-      >
-        &times;
-      </button>
-      <h2 className="modal-title">Add Reward</h2> 
+      {showAddRewardModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="modal-container"> 
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowAddRewardModal(false)}
+            >
+              &times;
+            </button>
+            <h2 className="modal-title">Add Reward</h2> 
 
-      <input
-        type="text"
-        placeholder="Reward Name"
-        value={rewardName}
-        onChange={(e) => setRewardName(e.target.value)}
-        className="modal-input" 
-      />
+            <input
+              type="text"
+              placeholder="Reward Name"
+              value={rewardName}
+              onChange={(e) => setRewardName(e.target.value)}
+              className="modal-input" 
+            />
 
-      <div className="file-input-container"> 
-        <label className="file-input-label" htmlFor="file-upload"> 
-          Choose File
-        </label>
-        <input
-          type="file"
-          id="file-upload"
-          accept="image/*"
-          onChange={handleRewardImageChange}
-          className="file-input" 
-        />
-        <span>{rewardImage ? rewardImage.name : "No file chosen"}</span>
-      </div>
+            <div className="file-input-container"> 
+              <label className="file-input-label" htmlFor="file-upload"> 
+                Choose File
+              </label>
+              <input
+                type="file"
+                id="file-upload"
+                accept="image/*"
+                onChange={handleRewardImageChange}
+                className="file-input" 
+              />
+              <span>{rewardImage ? rewardImage.name : "No file chosen"}</span>
+            </div>
 
-      <input
-        type="number"
-        placeholder="Points Required"
-        value={pointsRequired}
-        onChange={(e) => setPointsRequired(e.target.value)}
-        className="modal-input" 
-      />
+            <input
+              type="number"
+              placeholder="Points Required"
+              value={pointsRequired}
+              onChange={(e) => setPointsRequired(e.target.value)}
+              className="modal-input" 
+            />
 
-      <div className="modal-buttons"> 
-        <button
-          onClick={handleRewardSubmit}
-          className="modal-button submit-button" 
-        >
-          Submit
-        </button>
-        <button
-          onClick={() => setShowAddRewardModal(false)}
-          className="modal-button cancel-button" 
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="modal-buttons"> 
+              <button
+                onClick={handleRewardSubmit}
+                className="modal-button submit-button" 
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setShowAddRewardModal(false)}
+                className="modal-button cancel-button" 
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-
-{/* View Rewards Modal */}
-{showViewRewardsModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full h-[80%] overflow-y-auto p-6 relative">
-      <button
-        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-        onClick={() => setShowViewRewardsModal(false)}
-      >
-        &times;
-      </button>
-      <h2 className="reward-list-title">Rewards</h2>
-      <div className="reward-list-container">
-        {rewards.length > 0 ? (
-          <ul>
-            {rewards.map((reward) => (
-              <li key={reward.id} className="reward-item">
-                <img
-                  src={reward.imageUrl}
-                  alt={reward.rewardName}
-                  className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <div className="reward-details">
-                  <p>{reward.rewardName}</p>
-                  <p className="points-required">Points Required: {reward.pointsRequired}</p>
-                </div>
-                <button
-                  onClick={() => handleDeleteReward(reward.id)}
-                  className="delete-button"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No rewards available yet.</p>
-        )}
-      </div>
-    </div>
-  </div>
-)}
-
-
+      {/* View Rewards Modal */}
+      {showViewRewardsModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full h-[80%] overflow-y-auto p-6 relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowViewRewardsModal(false)}
+            >
+              &times;
+            </button>
+            <h2 className="reward-list-title">Rewards</h2>
+            <div className="reward-list-container">
+              {rewards.length > 0 ? (
+                <ul>
+                  {rewards.map((reward) => (
+                    <li key={reward.id} className="reward-item">
+                      <img
+                        src={reward.imageUrl}
+                        alt={reward.rewardName}
+                        className="w-16 h-16 rounded-full object-cover mr-4"
+                      />
+                      <div className="reward-details">
+                        <p>{reward.rewardName}</p>
+                        <p className="points-required">Points Required: {reward.pointsRequired}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteReward(reward.id)}
+                        className="delete-button"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No rewards available yet.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

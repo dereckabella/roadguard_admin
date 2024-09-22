@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { getAuth, deleteUser as deleteAuthUser } from 'firebase/auth'; // Import Firebase Auth
-import { firestore } from './firebaseConfig'; // Import Firestore from firebaseConfig.js
-import './Users.css'; // Import the CSS file
+import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { getAuth, deleteUser } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { firestore, storage } from './firebaseConfig';
+import './Users.css';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -10,41 +11,30 @@ const Users = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const auth = getAuth(); // Initialize Firebase Auth
             const usersCollection = collection(firestore, 'users');
             const usersSnapshot = await getDocs(usersCollection);
 
-            const usersData = await Promise.all(
-                usersSnapshot.docs.map(async (userDoc) => {
-                    const userData = userDoc.data();
-                    const userId = userDoc.id; // Document ID as email
+            const usersData = usersSnapshot.docs.map((userDoc) => {
+                const userData = userDoc.data();
+                const userId = userDoc.id;
 
-                    try {
-                        let created = '';
+                let created = '';
 
-                        if (userData.createdAt) {
-                            if (userData.createdAt instanceof Date) {
-                                created = userData.createdAt.toLocaleString();
-                            } else if (userData.createdAt.seconds) {
-                                created = new Date(userData.createdAt.seconds * 1000).toLocaleString();
-                            } else {
-                                created = userData.createdAt; // Assuming it's already a string
-                            }
-                        }
-
-                        return {
-                            id: userId,
-                            ...userData,
-                            created: created, // Use the formatted date string
-                        };
-                    } catch (error) {
-                        console.error('Error processing user data:', error);
-                        return { id: userId, ...userData, created: '' }; // Default empty string if error
+                if (userData.createdAt) {
+                    if (userData.createdAt.seconds) {
+                        created = new Date(userData.createdAt.seconds * 1000).toLocaleString();
+                    } else {
+                        created = userData.createdAt.toString();
                     }
-                })
-            );
+                }
 
-            console.log('Fetched users with metadata:', usersData);
+                return {
+                    id: userId,
+                    ...userData,
+                    created: created,
+                };
+            });
+
             setUsers(usersData);
         };
 
@@ -53,15 +43,95 @@ const Users = () => {
         });
     }, []);
 
-    const deleteUser = async (userId) => {
+    const handleImageClick = async (userId) => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+
+        fileInput.onchange = async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const user = users.find(user => user.id === userId);
+            const imageRef = ref(storage, `users/${userId}/${file.name}`);
+
+            try {
+                await uploadBytes(imageRef, file);
+                const newPhotoURL = await getDownloadURL(imageRef);
+                const userDoc = doc(firestore, 'users', userId);
+                await updateDoc(userDoc, { photoURL: newPhotoURL });
+
+                setUsers(users.map(user => user.id === userId ? { ...user, photoURL: newPhotoURL } : user));
+            } catch (error) {
+                console.error('Error uploading image or updating Firestore:', error);
+            }
+        };
+
+        fileInput.click();
+    };
+
+    // Function to edit document ID and displayName
+    const editUser = async (userId) => {
+        const user = users.find(user => user.id === userId);
+
+        const newId = prompt('Enter new document ID (should match email):', userId);
+        const newDisplayName = prompt('Enter new display name:', user.displayName);
+
+        if (!newId || !newDisplayName) {
+            alert("Document ID and display name are required!");
+            return;
+        }
+
+        try {
+            // Check if the new document ID already exists
+            const existingUserDoc = await getDocs(collection(firestore, 'users'));
+            const existingUserIds = existingUserDoc.docs.map(doc => doc.id);
+            
+            if (existingUserIds.includes(newId) && newId !== userId) {
+                alert("Document ID already exists. Please use a different ID.");
+                return;
+            }
+
+            if (newId === userId) {
+                // If the ID has not changed, update the display name only
+                const userDoc = doc(firestore, 'users', userId);
+                await updateDoc(userDoc, { displayName: newDisplayName });
+                setUsers(users.map(user => user.id === userId ? { ...user, displayName: newDisplayName } : user));
+                console.log('User displayName updated successfully');
+            } else {
+                // If the ID has changed, create a new document and delete the old one
+                const newUserDoc = doc(firestore, 'users', newId);
+                await setDoc(newUserDoc, {
+                    ...user,
+                    id: newId,
+                    displayName: newDisplayName,
+                    email: user.email // Keep the email unchanged
+                });
+
+                // Delete the old document
+                const oldUserDoc = doc(firestore, 'users', userId);
+                await deleteDoc(oldUserDoc);
+
+                // Update the UI
+                setUsers(users.map(user => user.id === userId ? { ...user, id: newId, displayName: newDisplayName } : user));
+                console.log('User updated and Document ID changed successfully');
+            }
+        } catch (error) {
+            console.error('Error updating user:', error);
+        }
+    };
+
+    const deleteUserFromFirestoreAndAuth = async (userId) => {
         const userDoc = doc(firestore, 'users', userId);
         const auth = getAuth();
 
         try {
-            await deleteDoc(userDoc); // Delete from Firestore
-            const userAuth = await auth.getUserByEmail(userId);
-            await deleteAuthUser(userAuth); // Delete from Authentication
-            console.log('User deleted successfully');
+            await deleteDoc(userDoc);
+            const userAuth = auth.currentUser;
+            if (userAuth && userAuth.email === userId) {
+                await deleteUser(userAuth);
+            }
+
             setUsers(users.filter(user => user.id !== userId));
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -71,20 +141,7 @@ const Users = () => {
     const confirmDeleteUser = (userId) => {
         const confirmed = window.confirm('Are you sure you want to delete this user?');
         if (confirmed) {
-            deleteUser(userId);
-        }
-    };
-
-    const editUser = async (userId) => {
-        const newEmail = prompt('Enter new email:');
-        const userDoc = doc(firestore, 'users', userId);
-
-        try {
-            await updateDoc(userDoc, { email: newEmail });
-            console.log('User updated successfully');
-            setUsers(users.map(user => user.id === userId ? { ...user, email: newEmail } : user));
-        } catch (error) {
-            console.error('Error updating user:', error);
+            deleteUserFromFirestoreAndAuth(userId);
         }
     };
 
@@ -94,7 +151,7 @@ const Users = () => {
 
     const filteredUsers = users.filter(user =>
         (user.displayName && user.displayName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (user.id && user.id.toLowerCase().includes(searchQuery.toLowerCase())) // Search by document ID
+        (user.id && user.id.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     return (
@@ -102,7 +159,7 @@ const Users = () => {
             <h1>Users</h1>
             <input
                 type="text"
-                placeholder="Search by name or email"
+                placeholder="Search by name or document ID"
                 value={searchQuery}
                 onChange={handleSearch}
                 className="search-input"
@@ -112,8 +169,8 @@ const Users = () => {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Created At</th> {/* Update the header label */}
+                            <th>Document ID</th> {/* Display Document ID */}
+                            <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -129,14 +186,16 @@ const Users = () => {
                                                 width: '30px',
                                                 height: '30px',
                                                 borderRadius: '50%',
-                                                marginRight: '10px'
+                                                marginRight: '10px',
+                                                cursor: 'pointer'
                                             }}
+                                            onClick={() => handleImageClick(user.id)}
                                         />
                                         {user.displayName}
                                     </div>
                                 </td>
-                                <td>{user.id}</td> {/* Use document ID as email */}
-                                <td>{user.created}</td> {/* Display createdAt */}
+                                <td>{user.id}</td> {/* Display Document ID */}
+                                <td>{user.created}</td>
                                 <td>
                                     <button onClick={() => editUser(user.id)}>Edit</button>
                                     <button onClick={() => confirmDeleteUser(user.id)}>Delete</button>

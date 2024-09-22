@@ -14,7 +14,7 @@
   color: #2c3e50;
 }
 
-/* Podium Container for top 3 */
+/* Podium Container */
 .podium-container {
   display: flex;
   justify-content: center;
@@ -38,45 +38,48 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Podium colors based on rank */
-/* Podium Item for 1st Place */
+/* Podium Colors */
 .podium-rank-1 {
-  background-color: #FFD700; /* Bright Gold */
+  background-color: #FFD700; /* Gold */
   width: 130px;
   height: 300px;
 }
 
-/* Podium Item for 2nd Place */
 .podium-rank-2 {
-  background-color: #B0C4DE; /* Light Steel Blue */
+  background-color: #C0C0C0; /* Silver */
   width: 120px;
   height: 260px;
 }
 
-/* Podium Item for 3rd Place */
 .podium-rank-3 {
-  background-color: #FF8C00; /* Dark Orange */
+  background-color: #CD7F32; /* Bronze */
   width: 110px;
   height: 220px;
 }
 
-/* Podium Item for 4th Place */
-.podium-rank-4 {
-  background-color: #8A2BE2; /* Blue Violet */
-  width: 100px;
-  height: 180px;
-}
-
-/* Podium Item for 5th Place */
+/* Additional Podium Ranks */
+.podium-rank-4,
 .podium-rank-5 {
-  background-color: #00FA9A; /* Medium Spring Green */
-  width: 90px;
+  background-color: #FFA500; /* Orange */
+  width: 100px;
   height: 160px;
 }
 
-/* Style for Tied Users (sharing the same color) */
+/* Tied Users */
 .podium-tied {
-  background-color: #FF8C00; /* Same color for tied users */
+  background-color: #FF8C00; /* Orange for tied users */
+}
+
+/* Tied Badge */
+.tied-badge {
+  background-color: #ff4d4f;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  position: relative;
+  top: -10px;
+  left: -10px;
 }
 
 /* Image for the user's avatar on the podium */
@@ -92,7 +95,7 @@
 /* Crown Image for 1st Place */
 .crown {
   position: absolute;
-  top: -40px;
+  top: -50px; /* Adjusted for better positioning */
   width: 50px;
   height: auto;
 }
@@ -111,8 +114,6 @@
   font-weight: bold;
   color: #34495e;
 }
-
-
 
 /* Other Users Container */
 .other-users-container {
@@ -255,183 +256,4 @@
 
 .mb-4 {
   margin-bottom: 16px;
-}
-/* Reward List Container */
-.reward-list-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-/* Each Reward Item */
-.reward-item {
-  display: flex;
-  align-items: center;
-  background-color: #f6f6f6;
-  padding: 15px 20px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  transition: box-shadow 0.3s ease, background-color 0.3s ease;
-  border: 1px solid #e0e0e0;
-}
-
-/* Reward Item Hover */
-.reward-item:hover {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  background-color: #fafafa;
-}
-
-/* Reward Image */
-.reward-item img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 20px;
-  border: 2px solid #ddd;
-}
-
-/* Reward Details */
-.reward-details {
-  flex-grow: 1;
-}
-
-.reward-details p {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-}
-
-.reward-details .points-required {
-  font-size: 14px;
-  color: #777;
-}
-
-/* Delete Button */
-.delete-button {
-  background-color: #e74c3c;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.delete-button:hover {
-  background-color: #c0392b;
-}
-
-/* Spacing for rewards modal */
-.modal-content {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.reward-list-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-}
-/* Modal Container */
-.modal-container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-/* Modal Title */
-.modal-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #2c3e50;
-}
-
-/* Input Fields */
-.modal-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  font-size: 14px;
-}
-
-.modal-input:focus {
-  outline: none;
-  border-color: #3498db;
-  background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
-}
-
-/* File Input Styling */
-.file-input-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.file-input {
-  display: none;
-}
-
-.file-input-label {
-  background-color: #3498db;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.file-input-label:hover {
-  background-color: #2980b9;
-}
-
-/* Buttons */
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.modal-button {
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.submit-button {
-  background-color: #27ae60;
-  color: white;
-}
-
-.submit-button:hover {
-  background-color: #2ecc71;
-}
-
-.cancel-button {
-  background-color: #bdc3c7;
-  color: #7f8c8d;
-}
-
-.cancel-button:hover {
-  background-color: #95a5a6;
 }
