@@ -1,0 +1,127 @@
+/* Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+}
+  
+/* Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid #E0C55B;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    height: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+  
+.nav-icons {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+  
+.nav-icon-button {
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 10px;
+    transition: background-color 0.3s;
+}
+  
+.nav-icon {
+    width: 30px;
+    height: 30px;
+}
+  
+.nav-icon-button:hover {
+    background-color: #f1f1f1;
+}
+  
+/* Sidebar */
+.content-wrapper {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 60px;
+}
+
+.sidebar {
+    width: 220px; /* Slightly wider for better readability */
+    background-color: #F1C40F; /* Mellow Yellow */
+    padding: 20px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Sidebar Items */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px; /* Rounded corners for a modern look */
+    transition: background-color 0.3s, color 0.3s; /* Smooth hover and active transitions */
+    cursor: pointer;
+}
+
+.sidebar-item.active {
+    background-color: #e0e0e0; /* Subtle background for active state */
+    font-weight: bold;
+}
+
+.sidebar-item:hover {
+    background-color: #d3d3d3; /* Hover color */
+}
+
+.sidebar-icon {
+    width: 22px; /* Reduced icon size */
+    height: 22px;
+    margin-right: 12px; /* More space between icon and label */
+}
+
+.sidebar-label {
+    font-size: 16px; /* Text size for better readability */
+    color: #333;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    margin-left: 220px; /* Adjusted margin to match the new sidebar width */
+    background-color: #F5F5F5;
+    min-height: 100vh;
+}
+
+/* Centered Logo and Welcome Text */
+.centered-logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.centered-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+}
+
+.dashboard-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2C3E50;
+}
