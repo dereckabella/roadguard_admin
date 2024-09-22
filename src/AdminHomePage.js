@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import './AdminHomePage.css'; // Importing CSS file
-import logo from './images/logo.png'; // Logo path
+import logo from './images/logo.png'; // Logo path (replace with actual logo path)
 import documentIcon from './images/document-icon.png';
 import pieIcon from './images/pie.png';
 import bellIcon from './images/bell.png';
-import adminIcon from './images/admin-icon.png';
 import usersIcon from './images/users-icon.png';
 import leaderboardIcon from './images/leaderboard-icon.png';
 import reportsIcon from './images/reports-icon.png';
@@ -39,7 +38,7 @@ const AdminHomePage = () => {
       {/* Top Navbar */}
       <div className="navbar">
         <div className="nav-icons">
-          <NavbarIcon icon={documentIcon} tooltip="Documents" />
+          <NavbarIcon icon={documentIcon} tooltip="Feed" />
           <NavbarIcon icon={pieIcon} tooltip="Analytics" />
           <NavbarIcon icon={bellIcon} tooltip="Notifications" />
         </div>
@@ -49,8 +48,15 @@ const AdminHomePage = () => {
       <div className="content-wrapper">
         {/* Sidebar */}
         <div className="sidebar">
+          {/* Sidebar Logo and App Name */}
+          <div className="sidebar-logo">
+            <img src={logo} alt="Logo" />
+            <span className="logo-text">RoadGuard</span>
+          </div>
+
+          {/* Sidebar Items */}
           <SidebarItem
-            icon={adminIcon}
+            icon={logo}
             label="Admin"
             active={activeComponent === 'admin'}
             onClick={() => setActiveComponent('admin')}

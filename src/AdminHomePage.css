@@ -5,47 +5,72 @@
     height: 100vh;
     font-family: 'Arial', sans-serif;
 }
-  
+
 /* Navbar */
 .navbar {
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: #ffffff; /* Keep white background or use #f8f9fa for a light grey */
     border-bottom: 1px solid #E0C55B;
     padding: 10px 20px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for a more defined look */
     height: 60px;
     position: fixed;
     top: 0;
-    left: 0;
+    left: 220px; /* Adjust the left value to match the sidebar width */
     right: 0;
     z-index: 1000;
 }
-  
+
+/* Navbar Icons Container */
 .nav-icons {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Align icons to the left */
+    align-items: center;
     flex-grow: 1;
+    padding-left: 350px; /* Adjust this to shift the icons right */
+    gap: 30px; /* Maintain spacing between each icon */
 }
-  
+
+/* Navbar Icon Button */
 .nav-icon-button {
-    background-color: #ffffff;
+    background-color: transparent;
     border: none;
     cursor: pointer;
     padding: 10px;
-    margin: 0 10px;
-    transition: background-color 0.3s;
+    margin: 0 20px;
+    position: relative;
+    transition: background-color 0.3s, transform 0.3s ease-in-out; /* Adding animation */
 }
-  
+
+/* Navbar Icon */
 .nav-icon {
-    width: 30px;
-    height: 30px;
+    width: 32px; /* Increase icon size */
+    height: 32px;
 }
-  
+
+/* Hover Effect on Navbar Icon Button */
 .nav-icon-button:hover {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1; /* Subtle background on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
 }
-  
+
+/* Tooltip for Navbar Icons */
+.nav-icon-button:hover::after {
+    content: attr(title); /* Tooltip for icon */
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Sidebar */
 .content-wrapper {
     display: flex;
@@ -53,17 +78,40 @@
     margin-top: 60px;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 220px; /* Slightly wider for better readability */
-    background-color: #F1C40F; /* Mellow Yellow */
-    padding: 20px;
+    width: 220px;
+    background-color: #FFD700; /* Traffic Yellow for full sidebar */
+    padding: 0; /* Remove padding to align the logo properly */
     position: fixed;
-    top: 60px;
+    top: 0; /* Align the sidebar from the very top */
+    left: 0;
     bottom: 0;
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Sidebar Logo */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    background-color: #FFD700; /* Same yellow as the sidebar */
+    padding: 20px 10px; /* Adjust padding */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Optional: Add bottom border to separate sections */
+}
+
+.sidebar-logo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circular logo */
+    margin-right: 10px;
+}
+
+.sidebar-logo .logo-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+}
 
 /* Sidebar Items */
 .sidebar-item {
@@ -71,30 +119,31 @@
     align-items: center;
     padding: 12px 15px;
     margin-bottom: 15px;
-    border-radius: 8px; /* Rounded corners for a modern look */
-    transition: background-color 0.3s, color 0.3s; /* Smooth hover and active transitions */
+    border-radius: 12px; /* Rounded corners for modern look */
+    transition: background-color 0.3s ease-in-out;
     cursor: pointer;
 }
 
 .sidebar-item.active {
-    background-color: #e0e0e0; /* Subtle background for active state */
+    background-color: rgba(255, 255, 255, 0.3); /* Transparent active state */
     font-weight: bold;
 }
 
 .sidebar-item:hover {
-    background-color: #d3d3d3; /* Hover color */
+    background-color: rgba(255, 255, 255, 0.2); /* Lighter hover effect */
 }
 
 .sidebar-icon {
-    width: 22px; /* Reduced icon size */
-    height: 22px;
-    margin-right: 12px; /* More space between icon and label */
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
 }
 
 .sidebar-label {
-    font-size: 16px; /* Text size for better readability */
+    font-size: 16px;
     color: #333;
 }
+
 
 /* Main Content */
 .main-content {
@@ -115,13 +164,13 @@
 }
 
 .centered-logo {
-    width: 120px;
-    height: 120px;
+    width: 150px; /* Increase logo size */
+    height: 150px;
     margin-bottom: 20px;
 }
 
 .dashboard-text {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 26px; /* Increase text size */
     color: #2C3E50;
+    margin-top: 10px;
 }
