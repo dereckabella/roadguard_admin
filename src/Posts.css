@@ -2,63 +2,204 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Main container for reported posts */
 .reported-posts-container {
-  max-width: 800px; /* Adjust the max-width to make the container smaller */
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
 }
 
+/* Post list container with responsive grid */
 .posts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Consistent spacing between posts */
 }
 
+/* Post card styling */
 .post-item {
   background-color: #ffffff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: box-shadow 0.3s ease, transform 0.2s ease; /* Smooth transitions */
 }
 
+.post-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px); /* Slight lift effect */
+}
+
+/* Post title styling */
 .post-item h2 {
-  margin-top: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
 }
 
+/* Paragraph (body content) styling */
+.post-item p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Smaller text styling (e.g., date and upvotes) */
+.text-sm {
+  font-size: 14px;
+  color: #888;
+}
+
+/* User photo and name styling */
+.user-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-right: 12px;
+}
+
+/* Post image styling */
 .post-image {
   max-width: 100%;
-  max-height: 900px; /* Adjust the max-height to make the image smaller */
+  height: auto;
+  max-height: 500px;
   object-fit: cover;
+  border-radius: 8px;
 }
 
-.user-photo {
-  max-width: 50px;
-  max-height: 50px;
-  border-radius: 50%;
-}
-
-.fixed-size {
-  width: 100%;
-  height: 500px;
-  object-fit: cover;
-}
-
+/* Map container styling */
 .map-container {
   width: 100%;
-  height: 200px;
+  height: 250px;
+  margin-top: 15px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
 }
 
+/* Dropdown menu for post actions */
 .dropdown-menu {
   z-index: 10;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .dropdown-item {
   cursor: pointer;
   padding: 8px 16px;
   text-align: left;
-  width: 100%;
+  transition: background-color 0.3s ease;
 }
 
 .dropdown-item:hover {
   background-color: #f1f1f1;
+}
+
+/* Button styles */
+button {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ececec;
+  color: #333;
+}
+
+.bg-gray-500 {
+  background-color: #6b7280;
+  color: white;
+}
+
+.bg-green-500 {
+  background-color: #22c55e;
+  color: white;
+}
+
+.bg-red-500 {
+  background-color: #ef4444;
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pagination button styling */
+.pagination button {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 10px 15px;
+  margin: 0 5px;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.pagination button.active {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+/* Modal Styling */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal-container.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Form Elements Inside the Modal */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+textarea {
+  resize: none;
+}
+.success-message {
+  text-align: center;
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.success-message.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
 }
