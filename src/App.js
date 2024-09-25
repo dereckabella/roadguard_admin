@@ -1,221 +1,161 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import roadguardLogo from './images/roadguardlogo.png';
+import { FaUser, FaLock } from 'react-icons/fa';
+import './App.css';
 
 const App = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Load stored ID from localStorage if 'Remember Me' was selected
+  useEffect(() => {
+    const storedId = localStorage.getItem('rememberedId');
+    if (storedId) setId(storedId);
+  }, []);
+
+  // Session timeout logic (15 minutes)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMessage("Session expired, please log in again.");
+      navigate('/login');
+    }, 15 * 60 * 1000); // 15 minutes session timeout
+
+    return () => clearTimeout(timer); // Clear timeout on component unmount
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Static login validation
-    if (id === 'Admin' && password === 'Admin123') {
-      setMessage('Login successful!');
-      navigate('/admin-home'); // Redirect to AdminHomePage
-    } else {
-      setMessage('Invalid credentials, please try again.');
+
+    // Validate inputs
+    if (!id || !password) {
+      setMessage('Please enter both ID and password.');
+      return;
     }
+
+    if (password.length < 8) {
+      setMessage('Password must be at least 8 characters long.');
+      return;
+    }
+
+    // Rate limiting logic
+    if (attempts >= 3) {
+      setMessage('Too many failed attempts. Please try again later.');
+      return;
+    }
+
+    setLoading(true);
+
+    // Simulate login request (you can replace this with an API call)
+    setTimeout(() => {
+      setLoading(false);
+
+      if (id === 'Admin' && password === 'Admin123') {
+        setMessage('Login successful!');
+        
+        // Remember Me logic
+        if (rememberMe) {
+          localStorage.setItem('rememberedId', id);
+        } else {
+          localStorage.removeItem('rememberedId');
+        }
+
+        // Navigate based on user role (you can adjust this logic based on your app)
+        navigate('/admin-home');
+      } else {
+        setAttempts(attempts + 1);
+        setMessage(`Invalid credentials. You have ${3 - attempts} attempts left.`);
+      }
+    }, 2000); // Simulating delay
+  };
+
+  const handleRememberMe = () => {
+    setRememberMe(!rememberMe);
   };
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '1440px',
-      height: '1024px',
-      background: '#FFFFFF',
-      fontFamily: 'Poppins, sans-serif',
-    }}>
-      {/* Image */}
-      <img
-        src={roadguardLogo} 
-        alt="Roadguard Logo"
-        style={{
-          position: 'absolute',
-          width: '450px',
-          height: '360px',
-          left: '300px',
-          top: '60px',
-          objectFit: 'cover',
-        }}
-      />
-
-      {/* Roadguard Text */}
-      <h1 style={{
-        position: 'absolute',
-        width: '695px',
-        height: '180px',
-        left: '250px',
-        top: '330px',
-        fontWeight: '700',
-        fontSize: '100px',
-        lineHeight: '180px',
-        color: '#000000',
-      }}>
-        Roadguard
-      </h1>
-
-      {/* Your Safety, Our Priority */}
-      <p style={{
-        position: 'absolute',
-        width: '694px',
-        height: '90px',
-        left: '275px',
-        top: '470px',
-        fontWeight: '400',
-        fontSize: '45px',
-        lineHeight: '90px',
-        color: '#FAFF00',
-        textShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-      }}>
-        Your Safety, Our Priority
-      </p>
-
-      {/* Login Form Background */}
-      <div style={{
-        position: 'absolute',
-        width: '443px',
-        height: '543px',
-        left: '917px',
-        top: '100px',
-        background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
-        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-        borderRadius: '30px',
-      }}></div>
-
-      {/* Login Title */}
-      <h2 style={{
-        position: 'absolute',
-        width: '166px',
-        height: '90px',
-        left: '1055px',
-        top: '100px',
-        fontWeight: '700',
-        fontSize: '60px',
-        lineHeight: '90px',
-        color: '#000000',
-      }}>
-        Login
-      </h2>
-
-      {/* ID Input Field */}
-      <div style={{
-        position: 'absolute',
-        width: '350px',
-        height: '90px',
-        left: '963px',
-        top: '300px',
-        boxSizing: 'border-box',
-      }}>
-        <label htmlFor="id" style={{
-          position: 'absolute',
-          width: '100%',
-          height: '20px',
-          left: '0',
-          top: '0',
-          fontWeight: '700',
-          fontSize: '20px',
-          lineHeight: '20px',
-          color: '#000000',
-        }}>ID</label>
-        <input 
-          id="id" 
-          type="text" 
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '45px',
-            top: '30px',
-            borderRadius: '25px',
-            border: '1px solid #18191A',
-            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-            padding: '5px 10px',
-            outline: 'none',
-          }} 
+    <div className="login-container">
+      {/* Left Section with Logo */}
+      <div className="logo-section">
+        <img
+          src={roadguardLogo}
+          alt="Roadguard Logo"
+          className="roadguard-logo"
         />
+        <h1 className="roadguard-title">Roadguard</h1>
+        <p className="roadguard-tagline">Your Safety, Our Priority</p>
       </div>
 
-      {/* Password Input Field */}
-      <div style={{
-        position: 'absolute',
-        width: '350px',
-        height: '90px',
-        left: '963px',
-        top: '450px',
-        boxSizing: 'border-box',
-      }}>
-        <label htmlFor="password" style={{
-          position: 'absolute',
-          width: '100%',
-          height: '20px',
-          left: '0',
-          top: '0',
-          fontWeight: '700',
-          fontSize: '20px',
-          lineHeight: '20px',
-          color: '#000000',
-        }}>Password</label>
-        <input 
-          id="password" 
-          type="password" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '45px',
-            top: '30px',
-            borderRadius: '25px',
-            border: '1px solid #18191A',
-            boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-            padding: '5px 10px',
-            outline: 'none',
-          }} 
-        />
+      {/* Right Section with Login Form */}
+      <div className="login-form">
+        <h2 className="login-title">Login</h2>
+
+        {/* ID Input */}
+        <div className="input-container">
+          <FaUser className="input-icon" />
+          <label htmlFor="id" className="input-label">ID</label>
+          <input
+            id="id"
+            type="text"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+            className="input-field"
+            onFocus={(e) => (e.target.style.border = '1px solid #FFD700')}
+            onBlur={(e) => (e.target.style.border = '1px solid #ccc')}
+          />
+        </div>
+
+        {/* Password Input with Toggle */}
+        <div className="input-container">
+          <FaLock className="input-icon" />
+          <label htmlFor="password" className="input-label">Password</label>
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input-field"
+            onFocus={(e) => (e.target.style.border = '1px solid #FFD700')}
+            onBlur={(e) => (e.target.style.border = '1px solid #ccc')}
+          />
+          <button
+            type="button"
+            className="toggle-password-btn"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
+
+        {/* Remember Me Checkbox */}
+        <label className="remember-me">
+          <input type="checkbox" checked={rememberMe} onChange={handleRememberMe} />
+          Remember Me
+        </label>
+
+        {/* Login Button */}
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className="login-button"
+        >
+          {loading ? "Logging in..." : "LOGIN"}
+        </button>
+
+        {/* Login Message */}
+        {message && (
+          <p className="login-message">
+            {message}
+          </p>
+        )}
       </div>
-
-      {/* Login Button */}
-      <button 
-        onClick={handleLogin}
-        style={{
-          position: 'absolute',
-          width: '168px',
-          height: '52px',
-          left: '1055px',
-          top: '550px',
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #E4E4E4 100%)',
-          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-          borderRadius: '25px',
-          fontWeight: '700',
-          fontSize: '15px',
-          lineHeight: '45px',
-          color: '#000000',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Login
-      </button>
-
-      {/* Login Message */}
-      {message && (
-        <p style={{
-          position: 'absolute',
-          width: '350px',
-          height: '45px',
-          left: '963px',
-          top: '620px',
-          fontWeight: '700',
-          fontSize: '20px',
-          color: '#FF0000',
-          textAlign: 'center',
-        }}>
-          {message}
-        </p>
-      )}
     </div>
   );
 };
