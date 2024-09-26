@@ -1,28 +1,81 @@
 .analytics-container {
-    background-color: #f9f9f9; /* Light background for the chart */
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
-    color: #333;
+    background-color: #f5f7fa;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
 }
 
-.analytics-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #444;
+.date-picker-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px; /* Adding gap between elements */
+}
+
+.date-picker, .chart-type-selector, .data-type-selector {
+    flex: 1;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px; /* Reduced space between chart controls */
     margin-bottom: 20px;
 }
 
-.no-data {
-    text-align: center;
-    font-size: 18px;
-    color: #888;
+label {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+input[type="date"], select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease;
+}
+
+input[type="date"]:hover {
+    border-color: #888;
+}
+
+select {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease;
+}
+
+select:hover {
+    border-color: #888;
+}
+
+.chart-box {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .loading {
     text-align: center;
-    font-size: 18px;
-    color: #888;
+    font-size: 1.25rem;
+    color: #333;
 }

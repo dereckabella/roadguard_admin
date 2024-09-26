@@ -81,7 +81,7 @@
 /* Sidebar */
 .sidebar {
     width: 220px;
-    background-color: #FFD700; /* Traffic Yellow for full sidebar */
+    background-image: linear-gradient(135deg, #FFD700, #FF8C00); /* Gradient from yellow to orange */
     padding: 0; /* Remove padding to align the logo properly */
     position: fixed;
     top: 0; /* Align the sidebar from the very top */
@@ -142,6 +142,16 @@
 .sidebar-label {
     font-size: 16px;
     color: #333;
+}
+
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    margin-left: 220px; /* Adjusted margin to match the new sidebar width */
+    background-color: #F5F5F5;
+    min-height: 100vh;
 }
 
 
