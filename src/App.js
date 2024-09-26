@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import roadguardLogo from './images/roadguardlogo.png';
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';  // Importing Eye icons
 import './App.css';
 
 const App = () => {
@@ -9,7 +9,6 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -59,13 +58,6 @@ const App = () => {
 
       if (id === 'Admin' && password === 'Admin123') {
         setMessage('Login successful!');
-        
-        // Remember Me logic
-        if (rememberMe) {
-          localStorage.setItem('rememberedId', id);
-        } else {
-          localStorage.removeItem('rememberedId');
-        }
 
         // Navigate based on user role (you can adjust this logic based on your app)
         navigate('/admin-home');
@@ -74,10 +66,6 @@ const App = () => {
         setMessage(`Invalid credentials. You have ${3 - attempts} attempts left.`);
       }
     }, 2000); // Simulating delay
-  };
-
-  const handleRememberMe = () => {
-    setRememberMe(!rememberMe);
   };
 
   return (
@@ -130,15 +118,9 @@ const App = () => {
             className="toggle-password-btn"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? 'Hide' : 'Show'}
+            {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Using icons instead of text */}
           </button>
         </div>
-
-        {/* Remember Me Checkbox */}
-        <label className="remember-me">
-          <input type="checkbox" checked={rememberMe} onChange={handleRememberMe} />
-          Remember Me
-        </label>
 
         {/* Login Button */}
         <button

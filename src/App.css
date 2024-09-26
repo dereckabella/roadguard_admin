@@ -5,8 +5,10 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #f9f9f9;
+  background-color: #f0f4f8; /* Slightly softer background color */
   font-family: 'Poppins', sans-serif;
+  padding: 20px;
+  transition: all 0.3s ease;
 }
 
 /* Left Section: Logo, Title, and Tagline */
@@ -16,39 +18,41 @@
 }
 
 .roadguard-logo {
-  width: 250px;
+  width: 270px; /* Slightly larger logo for more impact */
   object-fit: cover;
 }
 
 .roadguard-title {
   font-weight: 900;
-  font-size: 48px;
-  line-height: 58px;
+  font-size: 50px; /* Slightly larger for impact */
+  line-height: 60px;
   color: #2c3e50;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  margin-left: -10px;
 }
 
 .roadguard-tagline {
   font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 20px; /* Increase size for better readability */
+  line-height: 24px;
   color: #FFD700;
   text-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Right Section: Login Form */
 .login-form {
-  width: 350px;
+  width: 380px; /* Make the form slightly wider */
   background: linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%);
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  padding: 30px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow for more depth */
+  border-radius: 20px; /* Smoother rounded corners */
+  padding: 40px; /* Increase padding for more breathing space */
   text-align: center;
 }
 
 /* Login Title */
 .login-title {
   font-weight: 700;
-  font-size: 30px;
+  font-size: 32px; /* Slightly larger font */
   color: #2c3e50;
   margin-bottom: 30px;
 }
@@ -56,7 +60,7 @@
 /* Input Container */
 .input-container {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Increase space between inputs */
   position: relative;
 }
 
@@ -64,61 +68,73 @@
 .input-icon {
   position: absolute;
   left: 10px;
-  top: 13px;
-  font-size: 16px;
+  top: 12px;
+  font-size: 18px;
   color: #777;
 }
 
 /* Input Field */
 .input-field {
   width: 100%;
-  height: 40px;
-  border-radius: 10px;
+  height: 45px; /* Slightly larger input field */
+  border-radius: 12px;
   border: 1px solid #ccc;
   box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 5px 35px;
+  padding: 5px 40px; /* Adjust padding to make room for icons */
   font-size: 16px;
   outline: none;
-  transition: border 0.3s ease;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #FFD700;
+  box-shadow: 0px 0px 8px rgba(255, 215, 0, 0.5); /* More prominent focus effect */
 }
 
 /* Toggle Password Button */
 .toggle-password-btn {
   background: none;
   border: none;
-  font-size: 14px;
-  color: #000;
+  font-size: 18px;
+  color: #777;
   cursor: pointer;
   position: absolute;
-  right: 10px;
-  top: 13px;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: color 0.3s ease;
 }
 
-/* Remember Me */
-.remember-me {
-  display: flex;
-  justify-content: start;
-  font-size: 14px;
-  margin-bottom: 20px;
+.toggle-password-btn:hover {
+  color: #000;
+}
+
+.toggle-password-btn:focus {
+  outline: none;
 }
 
 /* Login Button */
 .login-button {
   width: 100%;
-  height: 40px;
-  background: linear-gradient(180deg, #FFFFFF, #F1F1F1);
-  border-radius: 10px;
+  height: 45px; /* Slightly larger button */
+  background: linear-gradient(180deg, #FFFFFF, #E0E0E0); /* Subtle gradient for depth */
+  border-radius: 12px;
   font-weight: 700;
   font-size: 16px;
-  color: #000000;
-  border: none;
+  color: #2c3e50;
   cursor: pointer;
   box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
+.login-button:hover {
+  background: linear-gradient(180deg, #F5F5F5, #DDDDDD); /* Slight hover effect */
+  transform: scale(1.04); /* Slight scaling */
+}
+
 .login-button:disabled {
   background-color: #ccc;
+  cursor: not-allowed;
 }
 
 /* Login Message */
@@ -127,4 +143,34 @@
   color: #FF0000;
   font-weight: 700;
   font-size: 16px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .logo-section {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .login-form {
+    width: 100%;
+    padding: 30px; /* Adjust padding for mobile */
+  }
+
+  /* Adjusting input-field padding and font-size for small screens */
+  .input-field {
+    font-size: 14px;
+    padding: 5px 35px;
+  }
+
+  /* Scaling down the button size on mobile */
+  .login-button {
+    font-size: 14px;
+    height: 40px;
+  }
 }
