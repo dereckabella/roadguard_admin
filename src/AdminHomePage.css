@@ -1,186 +1,126 @@
-/* Container */
-.container {
+/* AdminHomePage.css */
+
+/* Container for the entire page */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .sidebar {
+    width: 70px; /* Default width for collapsed sidebar */
+    transition: width 0.3s ease-in-out;
+    background-color: #2c3e50; /* Sidebar background color */
+    height: 100vh; /* Full height */
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    font-family: 'Arial', sans-serif;
-}
-
-/* Navbar */
-.navbar {
-    display: flex;
     align-items: center;
-    background-color: #ffffff; /* Keep white background or use #f8f9fa for a light grey */
-    border-bottom: 1px solid #E0C55B;
-    padding: 10px 20px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for a more defined look */
-    height: 60px;
-    position: fixed;
-    top: 0;
-    left: 220px; /* Adjust the left value to match the sidebar width */
-    right: 0;
-    z-index: 1000;
-}
-
-/* Navbar Icons Container */
-.nav-icons {
-    display: flex;
-    justify-content: flex-start; /* Align icons to the left */
-    align-items: center;
-    flex-grow: 1;
-    padding-left: 350px; /* Adjust this to shift the icons right */
-    gap: 30px; /* Maintain spacing between each icon */
-}
-
-/* Navbar Icon Button */
-.nav-icon-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    margin: 0 20px;
+    padding: 10px 0; /* Vertical padding */
     position: relative;
-    transition: background-color 0.3s, transform 0.3s ease-in-out; /* Adding animation */
-}
-
-/* Navbar Icon */
-.nav-icon {
-    width: 32px; /* Increase icon size */
-    height: 32px;
-}
-
-/* Hover Effect on Navbar Icon Button */
-.nav-icon-button:hover {
-    background-color: #f1f1f1; /* Subtle background on hover */
-    transform: translateY(-2px); /* Slight lift effect on hover */
-}
-
-/* Tooltip for Navbar Icons */
-.nav-icon-button:hover::after {
-    content: attr(title); /* Tooltip for icon */
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Sidebar */
-.content-wrapper {
+  }
+  
+  /* Expanded Sidebar */
+  .sidebar.expanded {
+    width: 200px; /* Expanded width */
+  }
+  
+  /* Sidebar Logo */
+  .sidebar-logo {
     display: flex;
-    flex-grow: 1;
-    margin-top: 60px;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    background-image: linear-gradient(135deg, #FFD700, #FF8C00); /* Gradient from yellow to orange */
-    padding: 0; /* Remove padding to align the logo properly */
-    position: fixed;
-    top: 0; /* Align the sidebar from the very top */
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Sidebar Logo */
-.sidebar-logo {
-    display: flex;
-    align-items: center;
-    background-color: #FFD700; /* Same yellow as the sidebar */
-    padding: 20px 10px; /* Adjust padding */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Optional: Add bottom border to separate sections */
-}
-
-.sidebar-logo img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; /* Circular logo */
-    margin-right: 10px;
-}
-
-.sidebar-logo .logo-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #000;
-}
-
-/* Sidebar Items */
-.sidebar-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    border-radius: 12px; /* Rounded corners for modern look */
-    transition: background-color 0.3s ease-in-out;
-    cursor: pointer;
-}
-
-.sidebar-item.active {
-    background-color: rgba(255, 255, 255, 0.3); /* Transparent active state */
-    font-weight: bold;
-}
-
-.sidebar-item:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Lighter hover effect */
-}
-
-.sidebar-icon {
-    width: 32px;
-    height: 32px;
-    margin-right: 12px;
-}
-
-.sidebar-label {
-    font-size: 16px;
-    color: #333;
-}
-
-
-/* Main Content */
-.main-content {
-    flex-grow: 1;
-    padding: 40px;
-    margin-left: 220px; /* Adjusted margin to match the new sidebar width */
-    background-color: #F5F5F5;
-    min-height: 100vh;
-}
-
-
-/* Main Content */
-.main-content {
-    flex-grow: 1;
-    padding: 40px;
-    margin-left: 220px; /* Adjusted margin to match the new sidebar width */
-    background-color: #F5F5F5;
-    min-height: 100vh;
-}
-
-/* Centered Logo and Welcome Text */
-.centered-logo-container {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-}
-
-.centered-logo {
-    width: 150px; /* Increase logo size */
-    height: 150px;
-    margin-bottom: 20px;
-}
-
-.dashboard-text {
-    font-size: 26px; /* Increase text size */
-    color: #2C3E50;
-    margin-top: 10px;
-}
+    margin-bottom: 30px;
+  }
+  
+  .sidebar-logo img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .logo-text {
+    display: none;
+    color: white;
+    font-size: 18px;
+    margin-left: 10px;
+  }
+  
+  .sidebar.expanded .logo-text {
+    display: inline-block; /* Show logo text when sidebar is expanded */
+  }
+  
+  /* Sidebar Items */
+  .sidebar-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background 0.2s, padding-left 0.2s;
+    border-radius: 5px;
+  }
+  
+  .sidebar-item:hover {
+    background: #34495e; /* Background on hover */
+  }
+  
+  .sidebar-item.active {
+    background: #1abc9c; /* Background color for active item */
+  }
+  
+  .sidebar-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Center-align the label and add spacing */
+  .sidebar-label {
+    display: none;
+    color: white;
+    margin-left: 15px;
+    font-size: 15px;
+  }
+  
+  .sidebar.expanded .sidebar-label {
+    display: inline-block; /* Show labels when sidebar is expanded */
+  }
+  
+  /* Sidebar alignment when expanded */
+  .sidebar.expanded .sidebar-item {
+    justify-content: flex-start; /* Align items to the left */
+    padding-left: 20px; /* Add padding when expanded */
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 60px; /* Margin for collapsed sidebar */
+    transition: margin-left 0.3s ease-in-out;
+  }
+  
+  /* Adjust margin when sidebar is expanded */
+  .sidebar.expanded ~ .main-content {
+    margin-left: 200px; /* Adjusted margin for expanded sidebar */
+  }
+  
+  /* Search Box */
+  .search-box {
+    margin: 10px 0;
+  }
+  
+  /* Typing Indicator */
+  .typingIndicatorContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  
+  .typingDot {
+    font-size: 30px;
+    color: #888;
+    margin: 0 2px;
+  }
+  

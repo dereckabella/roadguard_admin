@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { ref, get, child, remove, update } from 'firebase/database';
 import { database } from './firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +15,6 @@ const Posts = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [editPost, setEditPost] = useState(null);
   const [deleteReason, setDeleteReason] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [sortOption, setSortOption] = useState('Most Recent');
   const [errorMessage, setErrorMessage] = useState('');
@@ -23,23 +22,18 @@ const Posts = () => {
 
   const dropdownRef = useRef(null);
 
-  const postsPerPage = 6;
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const dbRef = ref(database);
         const snapshot = await get(child(dbRef, 'posts'));
-
         if (snapshot.exists()) {
           const postsData = [];
-          snapshot.forEach(childSnapshot => {
+          snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             postsData.push({
               id: childSnapshot.key,
-              ...data
+              ...data,
             });
           });
           setPosts(postsData);
@@ -55,44 +49,46 @@ const Posts = () => {
 
     fetchPosts();
   }, []);
-// Event listener to handle closing the dropdown when clicking outside or scrolling
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setDropdownOpen(null);
-    }
-  };
 
-  const handleScroll = () => {
-    setDropdownOpen(null);
-  };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(null);
+      }
+    };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  window.addEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
 
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-    window.removeEventListener('scroll', handleScroll);
-  };
-}, []);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const initMaps = (sortedPosts) => {
     try {
-      const currentPosts = sortedPosts.slice(indexOfFirstPost, indexOfLastPost);
-
-      currentPosts.forEach((post) => {
+      sortedPosts.forEach((post) => {
         if (post.location) {
           const mapElement = document.getElementById(`map-${post.id}`);
           if (!mapElement) return;
 
           const map = new window.google.maps.Map(mapElement, {
             center: { lat: post.location.latitude, lng: post.location.longitude },
-            zoom: 13
+            zoom: 17,
+            disableDefaultUI: true,
+            gestureHandling: 'none',
+            draggable: false,
+            scrollwheel: false,
+            keyboardShortcuts: false,
+            mapTypeId: 'hybrid',
+            tilt: 45,
+            heading: 90,
           });
 
           new window.google.maps.Marker({
             position: { lat: post.location.latitude, lng: post.location.longitude },
             map,
-            title: post.title
+            title: post.title,
           });
 
           const geocoder = new window.google.maps.Geocoder();
@@ -143,7 +139,7 @@ useEffect(() => {
         initMaps(sortedPosts);
       }, 500);
     }
-  }, [sortOption, currentPage]);
+  }, [sortOption]);
 
   const handleDeleteClick = (post) => {
     setSelectedPost(post);
@@ -190,14 +186,12 @@ useEffect(() => {
     try {
       await update(ref(database, `posts/${editPost.id}`), {
         title: editPost.title,
-        body: editPost.body
+        body: editPost.body,
       });
       setPosts(posts.map((p) => (p.id === editPost.id ? editPost : p)));
       setSuccessMessage('Post updated successfully!');
       setErrorMessage('');
       setShowEditModal(false);
-
-      // Scroll to the top of the page after successful update
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error updating post:', error);
@@ -221,14 +215,12 @@ useEffect(() => {
     if (sortOption === 'Most Recent') {
       return new Date(b.createdAt) - new Date(a.createdAt);
     } else if (sortOption === 'Most Voted') {
-      return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes);
+      return b.upvotes - b.downvotes - (a.upvotes - a.downvotes);
     } else if (sortOption === 'Least Voted') {
-      return (a.upvotes - a.downvotes) - (b.upvotes - b.downvotes);
+      return a.upvotes - a.downvotes - (b.upvotes - b.downvotes);
     }
     return 0;
   });
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -238,9 +230,9 @@ useEffect(() => {
     <div className="reported-posts-container p-4">
       <h1 className="text-2xl font-bold mb-4">Reported Posts</h1>
       {successMessage && <p className="text-green-500">{successMessage}</p>}
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-4" ref={dropdownRef}>
         <div className="relative">
-          <button className="bg-gray-200 px-4 py-2 rounded" onClick={() => setDropdownOpen('sort')}>
+          <button className="bg-gray-200 px-4 py-2 rounded" onClick={() => setDropdownOpen((prev) => (prev === 'sort' ? null : 'sort'))}>
             Sort by: {sortOption}
           </button>
           {dropdownOpen === 'sort' && (
@@ -254,7 +246,7 @@ useEffect(() => {
       </div>
 
       <div className="posts-list grid grid-cols-1 gap-4">
-        {sortedPosts.slice(indexOfFirstPost, indexOfLastPost).map((post) => (
+        {sortedPosts.map((post) => (
           <div key={post.id} className="post-item bg-white p-4 rounded-lg shadow-md relative">
             <div className="absolute top-6 right-6">
               <FontAwesomeIcon icon={faEllipsisV} size="lg" className="cursor-pointer" onClick={() => setDropdownOpen(post.id)} />
@@ -270,13 +262,12 @@ useEffect(() => {
             </div>
 
             <div className="flex items-center mb-2">
-  <img src={post.photoURL || '/path-to-default-user-photo.png'} alt="User Photo" className="user-photo mr-2 fixed-size" />
-  <p className="text-sm text-gray-600">
-    <strong>{post.displayName || 'Anonymous User'}</strong>
-  </p>
-  {post.resolved && <span className="badge-resolved">Resolved</span>}
-</div>
-
+              <img src={post.photoURL || '/path-to-default-user-photo.png'} alt="User Photo" className="user-photo mr-2 fixed-size" />
+              <p className="text-sm text-gray-600">
+                <strong>{post.displayName || 'Anonymous User'}</strong>
+              </p>
+              {post.resolved && <span className="badge-resolved">Resolved</span>}
+            </div>
 
             <h2 className="text-3xl font-bold mb-2">{post.title || 'Untitled Post'}</h2>
             <p className="mb-3 text-xl">{post.body || 'No content available for this post.'}</p>
@@ -285,11 +276,7 @@ useEffect(() => {
               <strong>Created At:</strong> {post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A'}
             </p>
 
-            <img
-              src={post.imageURL || '/path-to-default-image.png'}
-              alt={post.title || 'Post Image'}
-              className="post-image mb-2 rounded fixed-size"
-            />
+            <img src={post.imageURL || '/path-to-default-image.png'} alt={post.title || 'Post Image'} className="post-image mb-2 rounded fixed-size" />
 
             <p className="text-sm text-gray-600 mb-2">
               <strong>Location:</strong>
@@ -298,9 +285,7 @@ useEffect(() => {
               </span>
             </p>
 
-            {post.location && (
-              <div id={`map-${post.id}`} className="map-container mb-2 rounded fixed-size"></div>
-            )}
+            {post.location && <div id={`map-${post.id}`} className="map-container mb-2 rounded fixed-size"></div>}
 
             <div className="flex justify-end">
               <p className="text-sm text-gray-600 mb-2 mr-4"><strong>Upvotes:</strong> {post.upvotes || 0}</p>
@@ -310,27 +295,11 @@ useEffect(() => {
         ))}
       </div>
 
-      <div className="flex justify-center mt-4">
-        {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, index) => (
-          <button
-            key={index + 1}
-            onClick={() => paginate(index + 1)}
-            className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
-
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-4 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Delete Post</h2>
-            <textarea
-              className="w-full p-2 mb-4 border rounded"
-              value={deleteReason}
-              onChange={(e) => setDeleteReason(e.target.value)}
-            />
+            <textarea className="w-full p-2 mb-4 border rounded" value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} />
             <div className="flex justify-end">
               <button className="bg-gray-500 text-white px-4 py-2 rounded mr-2" onClick={() => setShowModal(false)}>Cancel</button>
               <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleDeleteConfirm}>Delete</button>
@@ -348,21 +317,12 @@ useEffect(() => {
 
             <label className="block mb-2">
               Title:
-              <input
-                type="text"
-                className="w-full p-2 mb-4 border rounded"
-                value={editPost?.title || ''}
-                onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
-              />
+              <input type="text" className="w-full p-2 mb-4 border rounded" value={editPost?.title || ''} onChange={(e) => setEditPost({ ...editPost, title: e.target.value })} />
             </label>
 
             <label className="block mb-2">
               Body:
-              <textarea
-                className="w-full p-2 mb-4 border rounded"
-                value={editPost?.body || ''}
-                onChange={(e) => setEditPost({ ...editPost, body: e.target.value })}
-              />
+              <textarea className="w-full p-2 mb-4 border rounded" value={editPost?.body || ''} onChange={(e) => setEditPost({ ...editPost, body: e.target.value })} />
             </label>
 
             <div className="flex justify-end">
