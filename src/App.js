@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import roadguardLogo from './images/roadguardlogo.png';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';  // Importing Eye icons
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import roadImage from './images/road.jpg';
+import logiImage from './images/road1.png';
+import tireImage from './images/hihi.jpg';
 import './App.css';
 
 const App = () => {
@@ -11,29 +17,27 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
-  // Load stored ID from localStorage if 'Remember Me' was selected
   useEffect(() => {
     const storedId = localStorage.getItem('rememberedId');
     if (storedId) setId(storedId);
   }, []);
 
-  // Session timeout logic (15 minutes)
   useEffect(() => {
     const timer = setTimeout(() => {
       setMessage("Session expired, please log in again.");
       navigate('/login');
     }, 15 * 60 * 1000); // 15 minutes session timeout
 
-    return () => clearTimeout(timer); // Clear timeout on component unmount
-  }, []);
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Validate inputs
     if (!id || !password) {
       setMessage('Please enter both ID and password.');
       return;
@@ -44,7 +48,6 @@ const App = () => {
       return;
     }
 
-    // Rate limiting logic
     if (attempts >= 3) {
       setMessage('Too many failed attempts. Please try again later.');
       return;
@@ -52,94 +55,136 @@ const App = () => {
 
     setLoading(true);
 
-    // Simulate login request (you can replace this with an API call)
     setTimeout(() => {
       setLoading(false);
 
       if (id === 'Admin' && password === 'Admin123') {
         setMessage('Login successful!');
-
-        // Navigate based on user role (you can adjust this logic based on your app)
+        if (rememberMe) {
+          localStorage.setItem('rememberedId', id);
+        }
         navigate('/admin-home');
       } else {
         setAttempts(attempts + 1);
         setMessage(`Invalid credentials. You have ${3 - attempts} attempts left.`);
       }
-    }, 2000); // Simulating delay
+    }, 2000);
   };
 
+  const carouselImages = [roadImage, logiImage, tireImage];
+
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
   return (
     <div className="login-container">
-      {/* Left Section with Logo */}
-      <div className="logo-section">
-        <img
-          src={roadguardLogo}
-          alt="Roadguard Logo"
-          className="roadguard-logo"
-        />
-        <h1 className="roadguard-title">Roadguard</h1>
-        <p className="roadguard-tagline">Your Safety, Our Priority</p>
-      </div>
-
-      {/* Right Section with Login Form */}
-      <div className="login-form">
-        <h2 className="login-title">Login</h2>
-
-        {/* ID Input */}
-        <div className="input-container">
-          <FaUser className="input-icon" />
-          <label htmlFor="id" className="input-label">ID</label>
-          <input
-            id="id"
-            type="text"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            className="input-field"
-            onFocus={(e) => (e.target.style.border = '1px solid #FFD700')}
-            onBlur={(e) => (e.target.style.border = '1px solid #ccc')}
-          />
+      {/* Split Container */}
+      <div className="split-container">
+        {/* Left Section with Carousel */}
+        <div className="logo-section">
+          <Slider {...carouselSettings} className="carousel-background">
+            {carouselImages.map((image, index) => (
+              <div key={index}>
+                <img src={image} alt={`carousel-${index}`} className="carousel-image" />
+              </div>
+            ))}
+          </Slider>
         </div>
 
-        {/* Password Input with Toggle */}
-        <div className="input-container">
-          <FaLock className="input-icon" />
-          <label htmlFor="password" className="input-label">Password</label>
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input-field"
-            onFocus={(e) => (e.target.style.border = '1px solid #FFD700')}
-            onBlur={(e) => (e.target.style.border = '1px solid #ccc')}
-          />
+        {/* Right Section with Login Form */}
+        <div className="login-form-section">
+          <div className="login-header">
+            <img src={roadguardLogo} alt="Roadguard Logo" className="header-logo" /> {/* Logo in Header */}
+            <h2 className="login-title">Welcome Back!</h2>
+            <p className="login-subtitle">Please enter your ID and password to continue</p>
+          </div>
+
+          {/* ID Input */}
+          <div className="input-container">
+            <FaUser className="input-icon" />
+            <input
+              id="id"
+              type="text"
+              placeholder="Enter ID"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          {/* Password Input with Toggle */}
+          <div className="input-container">
+            <FaLock className="input-icon" />
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+            />
+            <button
+              type="button"
+              className="toggle-password-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+
+          {/* Remember Me and Forgot Password */}
+          <div className="login-options">
+            <label className="remember-me">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              Remember Me
+            </label>
+          </div>
+
+          {/* Login Button */}
           <button
-            type="button"
-            className="toggle-password-btn"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={handleLogin}
+            disabled={loading}
+            className="login-button"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Using icons instead of text */}
+            {loading ? "Logging in..." : "LOGIN"}
           </button>
+
+          {/* Login Message */}
+          {message && (
+            <p className="login-message">
+              {message}
+            </p>
+          )}
+
+          {/* Social Media Login Options */}
+          <div className="social-login">
+            <p>Follow us</p>
+            <div className="social-icons">
+              <a href="https://www.facebook.com/solondiovic" target="_blank" rel="noopener noreferrer">
+                <button className="social-btn facebook">
+                  <FaFacebook /> 
+                </button>
+              </a>
+            </div>
+          </div>
+
+          {/* Footer Text */}
+          <div className="login-footer">
+            <p>Powered by <strong>RoadGuard 2024.</strong></p>
+          </div>
         </div>
-
-        {/* Login Button */}
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="login-button"
-        >
-          {loading ? "Logging in..." : "LOGIN"}
-        </button>
-
-        {/* Login Message */}
-        {message && (
-          <p className="login-message">
-            {message}
-          </p>
-        )}
       </div>
     </div>
   );
 };
-    
+
 export default App;

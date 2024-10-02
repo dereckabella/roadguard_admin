@@ -1,176 +1,326 @@
-/* Overall container to center all content */
+/* Overall Container */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  width: 100vw;
-  background-color: #f0f4f8; /* Slightly softer background color */
+  width: 100%;
+  background: #F5F7F8; /* Attractive gradient background */
   font-family: 'Poppins', sans-serif;
-  padding: 20px;
-  transition: all 0.3s ease;
+}
+
+/* Split Container */
+.split-container {
+  display: flex;
+  width: 100%; /* Full width container */
+  max-width: 1600px; /* Set max width */
+  height: 100vh; /* Full height */
 }
 
 /* Left Section: Logo, Title, and Tagline */
+/* Remove background image from logo-section */
 .logo-section {
-  text-align: center;
-  margin-right: 50px;
+  flex: 1.5;
+  width: 100%;
+  height: 100vh; /* Full height of the viewport */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
 }
 
+
+.carousel-background {
+  width: 100%;
+  height: 100%;
+}
+
+/* Carousel Image */
+.carousel-image {
+  width: 100%;
+  height: 100vh; /* Full height */
+  object-fit: cover; /* Ensure the image covers the whole section */
+}
+
+/* Make sure the login-form-section stays visible */
+.login-form-section {
+  flex: 1;
+  width: 50%; /* Make it take half the width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #F5F7F8;
+  padding: 40px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1; /* Ensure it stays on top */
+}
 .roadguard-logo {
-  width: 270px; /* Slightly larger logo for more impact */
-  object-fit: cover;
+  width: 150px;
+  margin-right: 30px;
+  margin-top:20px
 }
 
 .roadguard-title {
-  font-weight: 900;
-  font-size: 50px; /* Slightly larger for impact */
-  line-height: 60px;
-  color: #2c3e50;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  margin-left: -10px;
+  font-weight: 800;
+  font-size: 1.7rem;
+  color: #000;
+  margin-right: 30px;
 }
 
 .roadguard-tagline {
-  font-weight: 400;
-  font-size: 20px; /* Increase size for better readability */
-  line-height: 24px;
-  color: #FFD700;
-  text-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
+  max-width: 400px;
+  color: #000;
+  font-weight: 500;
+  margin-bottom: 100px;
+  margin-right: 30px;
 }
 
-/* Right Section: Login Form */
-.login-form {
-  width: 380px; /* Make the form slightly wider */
-  background: linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%);
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow for more depth */
-  border-radius: 20px; /* Smoother rounded corners */
-  padding: 40px; /* Increase padding for more breathing space */
-  text-align: center;
+.login-form-section {
+  flex: 1;
+  width: 50%; /* Make it take half the width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background:#F5F7F8;
+  padding: 40px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Login Title */
 .login-title {
   font-weight: 700;
-  font-size: 32px; /* Slightly larger font */
-  color: #2c3e50;
+  font-size: 2rem;
+  color: #111827;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 /* Input Container */
 .input-container {
-  width: 100%;
-  margin-bottom: 25px; /* Increase space between inputs */
+  display: flex;
+  align-items: center;
+  width: 80%;
   position: relative;
+  margin-bottom: 20px;
+}
+
+/* Input Field */
+.input-field {
+  margin-left: 60px;
+  width: 80%;
+  height: 50px;
+  padding: 0 20px;
+  font-size: 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  background: #f8fafc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Focus Effect for Input */
+.input-field:focus {
+  border-color: #8EACCD;
+  box-shadow: 0 0 0 4px rgba(0, 198, 255, 0.2);
+  outline: none;
 }
 
 /* Input Icon */
 .input-icon {
   position: absolute;
-  left: 10px;
-  top: 12px;
-  font-size: 18px;
-  color: #777;
+  left: 30px;
+  color: #367286;
 }
 
-/* Input Field */
-.input-field {
-  width: 100%;
-  height: 45px; /* Slightly larger input field */
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  box-shadow: inset 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 5px 40px; /* Adjust padding to make room for icons */
-  font-size: 16px;
-  outline: none;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input-field:focus {
-  border-color: #FFD700;
-  box-shadow: 0px 0px 8px rgba(255, 215, 0, 0.5); /* More prominent focus effect */
-}
 
 /* Toggle Password Button */
 .toggle-password-btn {
+  position: absolute;
+  right: 22px;
+  color: #367286;
+  cursor: pointer;
   background: none;
   border: none;
-  font-size: 18px;
-  color: #777;
-  cursor: pointer;
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: color 0.3s ease;
+  font-size: 1.2rem;
 }
 
 .toggle-password-btn:hover {
-  color: #000;
-}
-
-.toggle-password-btn:focus {
-  outline: none;
+  color: #111827;
 }
 
 /* Login Button */
 .login-button {
-  width: 100%;
-  height: 45px; /* Slightly larger button */
-  background: linear-gradient(180deg, #FFFFFF, #E0E0E0); /* Subtle gradient for depth */
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 16px;
-  color: #2c3e50;
+  width: 50%;
+  padding: 14px 0;
+  background: linear-gradient(180deg, #90d7ec 0%, #73b2c7 50%, #4b93ac 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #000;
+  font-size: 1.125rem;
   cursor: pointer;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
+  margin-left: 60px;
 }
 
 .login-button:hover {
-  background: linear-gradient(180deg, #F5F5F5, #DDDDDD); /* Slight hover effect */
-  transform: scale(1.04); /* Slight scaling */
+  background: linear-gradient(180deg, #5aa6c1 0%, #4b93ac 50%, #367286 100%);
+  transform: translateY(-2px);
 }
 
 .login-button:disabled {
-  background-color: #ccc;
+  background-color: #9ca3af;
   cursor: not-allowed;
 }
 
+
+.login-header {
+  text-align: center;
+  margin-bottom: 5px;
+  
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+/* Remember Me and Forgot Password */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.remember-me {
+  font-size: 0.9rem;
+  color: linear-gradient(180deg, #5aa6c1 0%, #4b93ac 50%, #367286 100%);
+  margin-left: 60px;
+  width: 80%;
+}
+
+
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Social Media Login */
+.social-login {
+  text-align: center;
+  margin-top: 20px;
+  margin-left: 50px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
+}
+
+
+.social-btn.facebook {
+  background: #3B5998;
+}
+
+
+.social-btn:hover {
+  opacity: 0.9;
+}
+.header-logo {
+  width: 150px; /* Adjust width as needed */
+  margin-top: 20px; /* Space below the logo */
+}
+
+/* Footer Text */
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  margin-left: 55px;
+  font-size: 0.9rem;
+  color: linear-gradient(180deg, #5aa6c1 0%, #4b93ac 50%, #367286 100%);
+}
+
+/* Decorative Tire Images */
+.tire-design-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent interaction */
+}
+
+.tire-image {
+  width: 60px; /* Adjust size as needed */
+  height: auto;
+  opacity: 0.8; /* Slight transparency */
+}
+
+.small-tire.top-left {
+  top: 10px;
+  left: 10px;
+  transform: rotate(45deg);
+}
+
+.small-tire.bottom-right {
+  bottom: 10px;
+  right: 10px;
+  transform: rotate(-45deg);
+}
 /* Login Message */
 .login-message {
   margin-top: 20px;
-  color: #FF0000;
-  font-weight: 700;
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ef4444;
+  text-align: center;
 }
 
-/* Responsive design for smaller screens */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .login-container {
+  .split-container {
     flex-direction: column;
-    padding: 10px;
+    height: 100%;
+  }
+
+  .logo-section,
+  .login-form-section {
+    width: 100%;
+    height: 50%; /* Make each section half height */
   }
 
   .logo-section {
-    margin-right: 0;
-    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain; /* Ensure the background image is fully visible on smaller screens */
   }
 
-  .login-form {
+  .login-form-section {
+    width: 90%;
+    padding: 30px;
+  }
+  .carousel-image {
     width: 100%;
-    padding: 30px; /* Adjust padding for mobile */
+    height: 50vh; /* Adjust height for smaller screens */
   }
 
-  /* Adjusting input-field padding and font-size for small screens */
-  .input-field {
-    font-size: 14px;
-    padding: 5px 35px;
-  }
-
-  /* Scaling down the button size on mobile */
-  .login-button {
-    font-size: 14px;
-    height: 40px;
-  }
+  
 }
