@@ -1,6 +1,6 @@
 /* Overall Container */
 .login-container {
-  display: flex;
+  display:flexbox;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -13,14 +13,14 @@
 .split-container {
   display: flex;
   width: 100%; /* Full width container */
-  max-width: 1600px; /* Set max width */
+  max-width: 2000px; /* Set max width */
   height: 100vh; /* Full height */
 }
 
 /* Left Section: Logo, Title, and Tagline */
 /* Remove background image from logo-section */
 .logo-section {
-  flex: 1.5;
+  flex: 2;
   width: 100%;
   height: 100vh; /* Full height of the viewport */
   display: flex;
@@ -29,7 +29,6 @@
   overflow: hidden;
   position: relative;
 }
-
 
 .carousel-background {
   width: 100%;
@@ -139,7 +138,7 @@
 /* Toggle Password Button */
 .toggle-password-btn {
   position: absolute;
-  right: 22px;
+  right: 29px;
   color: #367286;
   cursor: pointer;
   background: none;
@@ -291,6 +290,17 @@
   font-weight: 600;
   color: #ef4444;
   text-align: center;
+}
+
+.qr-code-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.qr-code {
+  width: 100px; /* Adjust the size as needed */
+  height: auto;
+  margin-bottom: 10px;
 }
 
 /* Responsive Design */

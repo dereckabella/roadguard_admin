@@ -5,9 +5,10 @@ import { FaUser, FaLock, FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-i
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import roadImage from './images/road.jpg';
-import logiImage from './images/road1.png';
-import tireImage from './images/hihi.jpg';
+import roadImage from './images/road2.gif';
+import logiImage from './images/road.jpg';
+import tireImage from './images/road1.png';
+import qrCodeImage from './images/QR.png'; 
 import './App.css';
 
 const App = () => {
@@ -175,6 +176,10 @@ const App = () => {
                 </button>
               </a>
             </div>
+            <div className="qr-code-section">
+    <img src={qrCodeImage} alt="Download the App" className="qr-code" />
+    <p>Download the App Here</p>
+  </div>
           </div>
 
           {/* Footer Text */}
