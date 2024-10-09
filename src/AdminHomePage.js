@@ -11,15 +11,13 @@ import {
 } from '@react-google-maps/api';
 import './AdminHomePage.css';
 import hazardIcon from './images/hazard-icon.png';
-import yellowMarkerIcon from './images/yellow-marker-icon.png';
-import adminIcon from './images/admin-icon.png'; // Import admin icon
 import logo from './images/logo.png';
 import map from './images/map.png';
 import pieIcon from './images/pie.png';
 import usersIcon from './images/users-icon.png';
 import leaderboardIcon from './images/leaderboard-icon.png';
 import reportsIcon from './images/reports-icon.png';
-import subscriptionIcon from './images/subscription.png';
+import subscriptionIcon from './images/subscription.png'; 
 import documentIcon from './images/document-icon.png';
 import logoutIcon from './images/logout.png';
 import Users from './users';
@@ -29,7 +27,7 @@ import DailyAnalytics from './DailyAnalytics';
 import ReviewReports from './ReviewReports';
 import SubscriptionManagement from './SubscriptionManagement';
 import { database } from './firebaseConfig';
-import { ref, get, child, set } from 'firebase/database';
+import { getDatabase, ref, get, child, set } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 
 const API_KEY = 'AIzaSyACvMNE1lw18V00MT1wzRDW1vDlofnOZbw'; // Replace with your actual Google Maps API key
@@ -47,18 +45,13 @@ const AdminHomePage = () => {
   const [showBicyclingLayer, setShowBicyclingLayer] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [showHazardPins, setShowHazardPins] = useState(true);
-  const [pinAnimation, setPinAnimation] = useState(null);
-  const [showMarkerModal, setShowMarkerModal] = useState(false); // New state for marker modal
-  const [newMarkerTitle, setNewMarkerTitle] = useState(''); // New state for the marker title
-  const [searchMarker, setSearchMarker] = useState(null); // New state for search box marker
+  const [showHazardPins, setShowHazardPins] = useState(true); // State to toggle hazard pins
+  const [pinAnimation, setPinAnimation] = useState(null); // State to control marker animation
   const searchBoxRef = useRef(null);
-  const mapRef = useRef(null); // Ref to access the map instance
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [mapCenter, setMapCenter] = useState({ lat: 10.3157, lng: 123.8854 }); // State for map center
-  const [zoomLevel, setZoomLevel] = useState(13); // State for zoom level
-  const navigate = useNavigate();
+  const [selectedPost, setSelectedPost] = useState(null); // Track the selected post for InfoWindow
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
+  // Fetch initial markers from Firebase or local storage
   useEffect(() => {
     fetchPosts().then((posts) => {
       const markerData = posts
@@ -67,15 +60,16 @@ const AdminHomePage = () => {
           id: post.id,
           lat: parseFloat(post.location.latitude),
           lng: parseFloat(post.location.longitude),
-          data: post,
+          data: post, // Ensure the entire post data is passed, including photoURL, title, and displayName
         }));
       setMarkers((prevMarkers) => [...prevMarkers, ...markerData]);
     });
   }, []);
 
   useEffect(() => {
+    // Save markers state to localStorage whenever it changes
     localStorage.setItem('markers', JSON.stringify(markers));
-    saveMarkersToFirebase(markers);
+    saveMarkersToFirebase(markers); // Optionally save markers to Firebase
   }, [markers]);
 
   const center = useMemo(() => ({ lat: 10.3157, lng: 123.8854 }), []);
@@ -89,43 +83,27 @@ const AdminHomePage = () => {
     []
   );
 
-  // Handle the location change based on the search box
+
   const handlePlaceChanged = () => {
     const places = searchBoxRef.current.getPlaces();
     if (!places || places.length === 0) return;
-
-    const place = places[0];
-    setMapCenter({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng() });
-    setZoomLevel(15); // Zoom in closer to the selected location
-
-    // Set the yellow marker to the searched location
-    const newSearchMarker = {
+    const newMarker = {
       id: Date.now(),
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
-      data: { title: 'Searched Location', description: 'Location from search box' },
-      icon: yellowMarkerIcon,
+      lat: places[0].geometry.location.lat(),
+      lng: places[0].geometry.location.lng(),
+      data: { description: 'Custom marker from search box' },
     };
-    setSearchMarker(newSearchMarker);
+    setMarkers([...markers, newMarker]);
   };
 
   const addNewMarker = () => {
-    setShowMarkerModal(true); // Show modal to input title
-  };
-
-  const saveNewMarker = () => {
-    if (!newMarkerTitle) return;
-
     const newMarker = {
       id: Date.now(),
-      lat: mapCenter.lat,
-      lng: mapCenter.lng,
-      data: { title: newMarkerTitle, description: 'New hazard marker', postedBy: 'Admin', photoURL: adminIcon },
+      lat: center.lat,
+      lng: center.lng,
+      data: { description: 'New hazard marker', title: 'Hazard', photoURL: '', displayName: 'Admin' },
     };
     setMarkers([...markers, newMarker]);
-    setShowMarkerModal(false); // Hide modal after saving
-    setNewMarkerTitle(''); // Clear the input field
-    setSearchMarker(null); // Remove the search marker after saving
   };
 
   const fetchPosts = async () => {
@@ -170,6 +148,17 @@ const AdminHomePage = () => {
     setPinAnimation(window.google.maps.Animation.DROP); // Set animation to DROP when showing pins
   };
 
+
+  const handleLogout = () => {
+    // Clear user session data (local storage, etc.)
+    localStorage.removeItem('rememberedId');
+    localStorage.removeItem('markers');
+
+    // Navigate back to login page
+    navigate('/');
+  };
+
+
   const renderContent = () => {
     switch (activeComponent) {
       case 'users':
@@ -182,7 +171,7 @@ const AdminHomePage = () => {
         return <DailyAnalytics />;
       case 'Posts':
         return <Posts />;
-      case 'subscriptionManagement':
+      case 'subscriptionManagement': // Add this case to render SubscriptionManagement
         return <SubscriptionManagement />;
       default:
         return null;
@@ -192,10 +181,11 @@ const AdminHomePage = () => {
   return (
     <LoadScript googleMapsApiKey={API_KEY} libraries={['places']}>
       <div style={{ display: 'flex', height: '100vh', fontFamily: 'Arial, sans-serif' }}>
+        {/* Sidebar with hover effect */}
         <div
           className={`sidebar ${sidebarExpanded ? 'expanded' : ''}`}
-          onMouseEnter={() => setSidebarExpanded(true)}
-          onMouseLeave={() => setSidebarExpanded(false)}
+          onMouseEnter={() => setSidebarExpanded(true)} // Expand sidebar on hover
+          onMouseLeave={() => setSidebarExpanded(false)} // Collapse sidebar when mouse leaves
         >
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" />
@@ -237,25 +227,24 @@ const AdminHomePage = () => {
             active={activeComponent === 'dailyAnalytics'}
             onClick={() => setActiveComponent('dailyAnalytics')}
           />
+          {/* Replaced the Notification icon with Subscription Management */}
           <SidebarItem
             icon={subscriptionIcon}
             label="Subscription Management"
             active={activeComponent === 'subscriptionManagement'}
             onClick={() => setActiveComponent('subscriptionManagement')}
           />
-          <div className="logout-section">
+           <div className="logout-section">
             <SidebarItem
               icon={logoutIcon}
               label="Logout"
-              onClick={() => {
-                localStorage.removeItem('rememberedId');
-                localStorage.removeItem('markers');
-                navigate('/');
-              }}
+              onClick={handleLogout} // Call handleLogout when clicking the Logout menu item
             />
           </div>
         </div>
 
+
+        {/* Main content remains the same */}
         <div className="main-content">
           {activeComponent === 'admin' || activeComponent === '' ? (
             <>
@@ -302,46 +291,34 @@ const AdminHomePage = () => {
               </StandaloneSearchBox>
               <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={mapCenter}
-                zoom={zoomLevel}
+                center={center}
+                zoom={13}
                 bounds={bounds}
-                onLoad={() => setMapLoaded(true)}
-                ref={mapRef}
+                onLoad={() => setMapLoaded(true)} // Set mapLoaded to true when the map is fully loaded
               >
                 {mapLoaded &&
                   window.google &&
                   window.google.maps &&
-                  showHazardPins &&
+                  showHazardPins && // Only show hazard pins if showHazardPins is true
                   markers.map((marker) => (
                     <Marker
                       key={marker.id}
                       position={{ lat: marker.lat, lng: marker.lng }}
-                      onClick={() => setSelectedPost(marker)}
+                      onClick={() => setSelectedPost(marker)} // Set selected marker for InfoWindow
                       icon={{
-                        url: marker.icon || hazardIcon,
+                        url: hazardIcon,
                         scaledSize: new window.google.maps.Size(30, 30),
                         origin: new window.google.maps.Point(0, 0),
                         anchor: new window.google.maps.Point(15, 15),
                       }}
-                      animation={pinAnimation}
+                      animation={pinAnimation} // Apply the animation to each marker
                     />
                   ))}
-                {/* Display yellow marker for search location */}
-                {searchMarker && (
-                  <Marker
-                    key={searchMarker.id}
-                    position={{ lat: searchMarker.lat, lng: searchMarker.lng }}
-                    icon={{
-                      url: searchMarker.icon || hazardIcon,
-                      scaledSize: new window.google.maps.Size(30, 30),
-                      origin: new window.google.maps.Point(0, 0),
-                      anchor: new window.google.maps.Point(15, 15),
-                    }}
-                  />
-                )}
                 {showTrafficLayer && <TrafficLayer />}
                 {showTransitLayer && <TransitLayer />}
                 {showBicyclingLayer && <BicyclingLayer />}
+                
+                {/* Ensure selectedPost has valid position properties before rendering InfoWindow */}
                 {selectedPost && selectedPost.lat && selectedPost.lng && (
                   <InfoWindow
                     position={{
@@ -359,7 +336,7 @@ const AdminHomePage = () => {
                         />
                       )}
                       <h4>{selectedPost.data.title || 'No Title'}</h4>
-                      <p>Posted by: {selectedPost.data.displayName || 'Unknown'}</p>
+                      <p>Posted by: {selectedPost.data.displayName || 'Unknown'}</p> {/* Updated to displayName */}
                       <p>{selectedPost.data.description}</p>
                     </div>
                   </InfoWindow>
@@ -370,30 +347,6 @@ const AdminHomePage = () => {
             renderContent()
           )}
         </div>
-
-        {/* Modal for Adding a New Marker */}
-        {showMarkerModal && (
-          <div className="modal-overlay">
-            <div className="modal-container">
-              <h2 className="modal-header">Add New Hazard Marker</h2>
-              <input
-                type="text"
-                value={newMarkerTitle}
-                onChange={(e) => setNewMarkerTitle(e.target.value)}
-                placeholder="Enter hazard title"
-                className="modal-input"
-              />
-              <div className="modal-buttons">
-                <button onClick={saveNewMarker} className="modal-button submit-button">
-                  Save
-                </button>
-                <button onClick={() => setShowMarkerModal(false)} className="modal-button cancel-button">
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </LoadScript>
   );
