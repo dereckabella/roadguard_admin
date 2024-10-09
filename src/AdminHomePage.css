@@ -1,126 +1,380 @@
-/* AdminHomePage.css */
+/* General styles for the sidebar */
+.sidebar {
+  width: 250px; /* Full width when expanded */
+  height: 100vh;
+  background: #001F3F; /* Sidebar background color */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border-right: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border */
+  transition: width 0.3s ease; /* Smooth transition */
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Relative positioning for nested menus */
+}
 
-/* Container for the entire page */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+/* Collapsed sidebar */
+.sidebar.collapsed {
+  width: 70px; /* Reduced width for collapsed state */
+}
+
+/* Logo styling */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo horizontally */
+  margin-bottom: 20px; /* Space below the logo */
+  padding: 10px; /* Add padding for better spacing */
+}
+
+.sidebar-logo img {
+  width: 40px; /* Adjust logo size */
+}
+
+/* Logo text */
+.logo-text {
+  display: inline; /* Ensure text is displayed inline */
+  transition: opacity 0.3s ease; /* Smooth transition */
+  color: #FCFAEE;
+}
+
+/* Hide logo text when sidebar is collapsed */
+.sidebar.collapsed .logo-text {
+  display: none;
+}
+
+/* Sidebar section headers */
+.sidebar-section {
+  margin-top: 20px; /* Space between sections */
+  font-weight: bold;
+  color: #007BFF; /* Primary color (Deep Blue) */
+  position: relative; /* For absolute positioning of the line */
+  transition: color 0.3s ease; /* Smooth transition for text color */
+  padding: 10px 15px; /* Add padding to section header */
+}
+
+/* Line under section headers */
+.sidebar-section::after {
+  content: "";
+  display: block;
+  height: 2px; /* Thickness of the line */
+  background: #6C757D; /* Neutral color (Slate Gray) */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px; /* Position below the text */
+  opacity: 1; /* Fully visible */
+  transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+/* Show full text when sidebar is hovered */
+.sidebar:hover .sidebar-section {
+  color: #FFC107; /* Change text color to Safety Yellow on hover */
+}
+
+/* Hide lines when sidebar is hovered */
+.sidebar:hover .sidebar-section::after {
+  opacity: 0; /* Make line invisible */
+}
+
+/* Sidebar item styles */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px; /* Increased padding */
+  border-radius: 8px; /* More rounded corners */
+  color: #FAF7F0;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar-item.active {
+  color: #FFC107; /* Updated active item color */
+}
+
+.sidebar-item:hover {
+  background: rgba(0, 123, 255, 0.15); /* Increased hover effect */
+  color: #FCCD2A;
+}
+
+.sidebar-item.active::before {
+  content: '';
+  display: block;
+  width: 4px; /* Thickness of the line */
+  height: 100%; /* Full height of the item */
+  background: #B8001F; /* Line color */
+  position: absolute;
+  left: 0; /* Position the line on the left */
+  top: 50%; /* Center the line vertically */
+  transform: translateY(-50%); /* Adjust the line position */
+}
+
+
+/* Sidebar icon */
+.sidebar-icon {
+  width: 20px; /* Adjust icon size */
+  margin-right: 10px; /* Space between icon and label */
+}
+
+/* Hide text labels when sidebar is collapsed */
+.sidebar.collapsed .sidebar-label {
+  display: none;
+}
+/* Styles for nested menu */
+.nested-menu {
+  display: none; /* Hide nested menu by default */
+  position: fixed; /* Position it outside the expanded sidebar */
+  left: 250px; /* Position it next to the expanded sidebar */
+  background: #063d75; /* Match sidebar background */
+  padding: 10px; /* Optional padding */
+  border-radius: 5px; /* Optional rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Optional shadow for depth */
+  z-index: 999; /* Make sure it's above other elements */
+  width: 200px; /* Set width for the nested menu */
+  transition: left 0.3s ease; /* Smooth transition */
+    top: 9px; /* Adjust the top value to position correctly */
+
+}
+
+/* Show nested menu when hovering over the sidebar item */
+.sidebar-item:hover .nested-menu {
+  display: block; /* Show the nested menu */
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0); /* Slide in */
+}
+
+/* Adjust nested menu position when sidebar is collapsed */
+.sidebar.collapsed .sidebar-item:hover .nested-menu {
+  left: 70px; /* Adjust position when sidebar is collapsed */
+}
+
+
+
+/* Nested Menu Button Styling */
+.nested-menu button {
+  background: transparent; /* Transparent background */
+  color: #FAF7F0; /* Text color */
+  border: none; /* Remove border */
+  padding: 10px 15px; /* Better padding for buttons */
+  cursor: pointer; /* Pointer cursor */
+  text-align: left; /* Align text to the left */
+  width: 100%; /* Full width */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+  font-size: 15px; /* Increased font size */
+}
+
+/* Button Hover Effect */
+.nested-menu button:hover {
+  background: rgba(64, 105, 144, 0.4); /* Light blue hover effect */
+  color: #FCCD2A; /* Safety yellow color on hover */
+}
+
+/* Active Button State */
+.nested-menu button.active {
+  background: #007BFF; /* Active background */
+  color: #FFF; /* White text color */
+}
+
+/* Nested Menu Responsive Adjustments */
+@media (max-width: 768px) {
+  .nested-menu {
+    width: 100%; /* Full width on mobile */
+    box-shadow: none; /* Remove shadow */
+    padding: 15px; /* Increase padding */
   }
-  
-  .sidebar {
-    width: 70px; /* Default width for collapsed sidebar */
-    transition: width 0.3s ease-in-out;
-    background-color: #2c3e50; /* Sidebar background color */
-    height: 100vh; /* Full height */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0; /* Vertical padding */
-    position: relative;
+
+  .nested-menu button {
+    padding: 12px 20px; /* Increase padding */
+    font-size: 16px; /* Larger font size */
   }
-  
-  /* Expanded Sidebar */
-  .sidebar.expanded {
-    width: 200px; /* Expanded width */
-  }
-  
-  /* Sidebar Logo */
-  .sidebar-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-  
-  .sidebar-logo img {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .logo-text {
-    display: none;
-    color: white;
-    font-size: 18px;
-    margin-left: 10px;
-  }
-  
-  .sidebar.expanded .logo-text {
-    display: inline-block; /* Show logo text when sidebar is expanded */
-  }
-  
-  /* Sidebar Items */
-  .sidebar-item {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 0;
-    margin: 5px 0;
-    cursor: pointer;
-    transition: background 0.2s, padding-left 0.2s;
-    border-radius: 5px;
-  }
-  
-  .sidebar-item:hover {
-    background: #34495e; /* Background on hover */
-  }
-  
-  .sidebar-item.active {
-    background: #1abc9c; /* Background color for active item */
-  }
-  
-  .sidebar-icon {
-    width: 24px;
-    height: 24px;
-  }
-  
-  /* Center-align the label and add spacing */
-  .sidebar-label {
-    display: none;
-    color: white;
-    margin-left: 15px;
-    font-size: 15px;
-  }
-  
-  .sidebar.expanded .sidebar-label {
-    display: inline-block; /* Show labels when sidebar is expanded */
-  }
-  
-  /* Sidebar alignment when expanded */
-  .sidebar.expanded .sidebar-item {
-    justify-content: flex-start; /* Align items to the left */
-    padding-left: 20px; /* Add padding when expanded */
-  }
-  
-  /* Main Content */
-  .main-content {
-    flex-grow: 1;
-    padding: 20px;
-    margin-left: 60px; /* Margin for collapsed sidebar */
-    transition: margin-left 0.3s ease-in-out;
-  }
-  
-  /* Adjust margin when sidebar is expanded */
-  .sidebar.expanded ~ .main-content {
-    margin-left: 200px; /* Adjusted margin for expanded sidebar */
-  }
-  
-  /* Search Box */
-  .search-box {
-    margin: 10px 0;
-  }
-  
-  /* Typing Indicator */
-  .typingIndicatorContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
-  }
-  
-  .typingDot {
-    font-size: 30px;
-    color: #888;
-    margin: 0 2px;
-  }
-  
+}
+
+/* Main content container styles */
+.main-content-container {
+  flex-grow: 1;
+  padding: 30px; /* Increased padding */
+  background: white;
+  border-radius: 15px; /* More rounded corners */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+  margin: 20px 20px; /* More space between the sidebar and content */
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable vertical scroll */
+  overflow-x: hidden; /* Hide horizontal overflow */
+  padding: 10px; /* Padding inside the main content */
+  height: 100%; /* Ensure it takes full height */
+}
+
+/* Input, select, and button styling for better alignment */
+.main-content select, .main-content input[type="text"] {
+  width: 200px; /* Adjust width to fit the container */
+  margin: 5px 10px; /* Space between input fields */
+  padding: 8px; /* Padding inside inputs */
+}
+
+.main-content input[type="file"] {
+  margin: 5px 0; /* Adjust margin to fit layout */
+}
+
+.main-content button {
+  margin: 10px 0; /* Space between buttons */
+  padding: 10px 15px; /* Consistent padding */
+}
+
+/* Google Map container styling */
+.map-container {
+  flex: 1; /* Allow map to grow and fill available space */
+  overflow: hidden; /* Prevent overflow */
+  margin-top: 20px; /* Space above the map */
+}
+
+/* InfoWindow styling for better readability */
+.info-window {
+  max-width: 300px; /* Restrict maximum width */
+  text-align: left; /* Align text */
+}
+
+/* Error message styles */
+.error-message {
+  color: #DC3545;
+  font-size: 15px;
+  margin-top: 15px;
+}
+
+/* Heading styles in the main content */
+.main-content h2 {
+  color: #333; /* Heading color */
+  margin-bottom: 20px; /* Space below the heading */
+}
+
+/* Button styles */
+.main-content button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
+}
+
+.main-content button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px); /* Slight elevation effect on hover */
+}
+
+.main-content button:active {
+  background-color: #003d80;
+  transform: translateY(0); /* Remove elevation effect on click */
+}
+
+/* Input field styles */
+.main-content input[type="text"], .main-content select {
+  padding: 12px;
+  margin-right: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 260px; /* Increased width */
+  font-size: 15px; /* Increased font size */
+}
+
+.main-content input[type="text"]:focus, .main-content select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+/* Error message styles */
+.main-content p.error {
+  color: #DC3545; /* Crimson Red color for error messages */
+  margin-top: 10px; /* Space above the error message */
+}
+
+
+
+.marker-form-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px; /* Increased width */
+  background-color: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Increased shadow for better depth */
+  border-radius: 15px; /* More rounded corners */
+  padding: 30px 20px; /* Better padding */
+  z-index: 999;
+  text-align: center;
+}
+
+.marker-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.marker-form h3 {
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 22px; /* Larger font size */
+  font-weight: bold;
+}
+
+.marker-form input[type="text"],
+.marker-form input[type="file"] {
+  width: 100%;
+  padding: 12px; /* More padding */
+  margin: 15px 0; /* Better margin */
+  border: 1px solid #ddd;
+  border-radius: 8px; /* Rounded corners */
+  font-size: 15px; /* Increased font size */
+}
+
+.marker-form input[type="text"]:focus,
+.marker-form input[type="file"]:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+.marker-form button {
+  width: 150px; /* Increased button width */
+  padding: 12px;
+  margin: 15px;
+  border: none;
+  border-radius: 8px; /* Rounded corners */ 
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow transition */
+}
+
+.marker-form button:hover {
+  background-color: #F7E987;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow on hover */
+}
+
+.marker-form button.cancel {
+  background-color: #DC3545;
+}
+
+.marker-form button.cancel:hover {
+  background-color: #C82333;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.map-container {
+  position: relative;
+  height: 650px;
+  width: 100%;
+  border: 1px solid #FFC107;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 1; /* Ensure map is below the nested menu */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
