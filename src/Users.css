@@ -1,7 +1,7 @@
 
 
 .container {
-    margin-left: 50px;
+    margin-left: 0px;
     padding: 20px;
 }
 
@@ -28,7 +28,8 @@ table {
 }
 
 thead {
-    background-color: yellow;
+    background-color: #063d75;
+    color:white;
 }
 
 th, td {
