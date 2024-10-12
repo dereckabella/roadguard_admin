@@ -3,6 +3,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { firestore } from './firebaseConfig';
+import { saveAs } from 'file-saver'; // For CSV export
+import jsPDF from 'jspdf'; // For PDF export
+import 'jspdf-autotable'; // For PDF table export
 import './DailyAnalytics.css';
 
 const COLORS = [
@@ -15,7 +18,6 @@ const COLORS = [
 
 const RADIAN = Math.PI / 180;
 
-// Custom label for the PieChart
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, name }) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 1.2;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -40,6 +42,7 @@ const DailyAnalytics = () => {
     const [analyticsData, setAnalyticsData] = useState([]); // For users data
     const [postAnalyticsData, setPostAnalyticsData] = useState([]); // For all posts data
     const [hazardData, setHazardData] = useState([]); // For hazard posts data (upvotes >= 2)
+    const [subscriptionData, setSubscriptionData] = useState([]); // For subscription data
     const [loading, setLoading] = useState(true);
     const [chartType, setChartType] = useState('Area');  // Default chart type is Area
     const [dataType, setDataType] = useState('users');  // Default data type is users
@@ -173,6 +176,42 @@ const DailyAnalytics = () => {
         fetchPostAnalytics();
     }, [startDate, endDate]);
 
+    // Fetch subscription analytics from Realtime Database
+    useEffect(() => {
+        const fetchSubscriptionAnalytics = async () => {
+            try {
+                const db = getDatabase();
+                const subscriptionsRef = ref(db, 'subscriptions');
+                onValue(subscriptionsRef, (snapshot) => {
+                    const subscriptions = snapshot.val();
+                    const subscriptionsArray = Object.values(subscriptions);
+
+                    // Create a subscription data map
+                    const subscriptionMap = {};
+                    subscriptionsArray.forEach(subscription => {
+                        const plan = subscription.duration;
+                        if (subscriptionMap[plan]) {
+                            subscriptionMap[plan] += 1;
+                        } else {
+                            subscriptionMap[plan] = 1;
+                        }
+                    });
+
+                    const subscriptionData = Object.keys(subscriptionMap).map(plan => ({
+                        name: plan,
+                        value: subscriptionMap[plan] // Number of subscriptions for that plan
+                    }));
+
+                    setSubscriptionData(subscriptionData); // Set subscription data for charting
+                });
+            } catch (error) {
+                console.error('Error fetching subscription analytics data:', error);
+            }
+        };
+
+        fetchSubscriptionAnalytics();
+    }, []);
+
     const handleStartDateChange = (event) => {
         setStartDate(new Date(event.target.value));
     };
@@ -181,9 +220,43 @@ const DailyAnalytics = () => {
         setEndDate(new Date(event.target.value));
     };
 
+    // Export data as CSV
+    const exportToCSV = () => {
+        const data = dataType === 'users' ? analyticsData : dataType === 'posts' ? postAnalyticsData : dataType === 'hazards' ? hazardData : subscriptionData;
+        let csvContent = "data:text/csv;charset=utf-8," + ['Name', 'Value'].join(',') + '\n';
+
+        data.forEach(item => {
+            const row = [item.name, item.value].join(',');
+            csvContent += row + '\n';
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `${dataType}_analytics.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // Export data as PDF
+    const exportToPDF = () => {
+        const doc = new jsPDF();
+        const data = dataType === 'users' ? analyticsData : dataType === 'posts' ? postAnalyticsData : dataType === 'hazards' ? hazardData : subscriptionData;
+
+        doc.text(`${dataType.charAt(0).toUpperCase() + dataType.slice(1)} Analytics`, 14, 16);
+        doc.autoTable({
+            startY: 20,
+            head: [['Name', 'Value']],
+            body: data.map(item => [item.name, item.value]),
+        });
+
+        doc.save(`${dataType}_analytics.pdf`);
+    };
+
     const renderChart = () => {
-        // Choose data to display based on dataType ('users', 'posts', or 'hazards')
-        const data = dataType === 'users' ? analyticsData : dataType === 'posts' ? postAnalyticsData : hazardData;
+        const data = dataType === 'users' ? analyticsData : dataType === 'posts' ? postAnalyticsData : dataType === 'hazards' ? hazardData : subscriptionData;
+
         switch (chartType) {
             case 'Area':
                 return (
@@ -295,6 +368,7 @@ const DailyAnalytics = () => {
                             <option value="users">Users</option>
                             <option value="posts">Posts</option>
                             <option value="hazards">Hazards</option>
+                            <option value="subscriptions">Subscriptions</option> {/* New option for subscriptions */}
                         </select>
                     </div>
                 </div>
@@ -302,8 +376,14 @@ const DailyAnalytics = () => {
 
             {/* Chart */}
             <div className="chart-box">
-                <h3>{chartType} Chart for {dataType === 'users' ? 'Users' : dataType === 'posts' ? 'Posts' : 'Hazards'} from {startDate.toDateString()} to {endDate.toDateString()}</h3>
+                <h3>{chartType} Chart for {dataType === 'users' ? 'Users' : dataType === 'posts' ? 'Posts' : dataType === 'hazards' ? 'Hazards' : 'Subscriptions'} from {startDate.toDateString()} to {endDate.toDateString()}</h3>
                 {renderChart()}
+            </div>
+
+            {/* Export buttons */}
+            <div className="export-buttons">
+                <button onClick={exportToCSV} className="export-button">Export CSV</button>
+                <button onClick={exportToPDF} className="export-button">Export PDF</button>
             </div>
         </div>
     );

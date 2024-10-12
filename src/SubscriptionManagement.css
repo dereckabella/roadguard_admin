@@ -1,140 +1,73 @@
 /* Main container styling */
 .subscription-management {
-    width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-  }
-  
-  /* Title styling */
-  .subscription-management h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  /* Table styling */
-  .subscription-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  .subscription-table th,
-  .subscription-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  /* Table header styling */
-  .subscription-table th {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-  }
-  
-  /* Table row styling */
-  .subscription-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  /* Table row hover effect */
-  .subscription-table tbody tr:hover {
-    background-color: #ddd;
-  }
-  
-  /* Link styling */
-  .subscription-table a {
-    color: #4CAF50;
-    text-decoration: none;
-  }
-  
-  .subscription-table a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Approve button styling */
-  .approve-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .approve-button:hover {
-    background-color: #45a049;
-  }
-  
-  /* Approved status styling */
-  .approved-status {
-    color: #4CAF50;
-    font-weight: bold;
-  }
-  
-  /* Responsive design */
-  @media screen and (max-width: 768px) {
-    .subscription-management {
-      padding: 10px;
-    }
-  
-    .subscription-table th,
-    .subscription-table td {
-      padding: 8px 10px;
-    }
-  
-    .subscription-table {
-      font-size: 14px;
-    }
-  }
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.7); /* Dark background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  /* Modal content container styling */
-  .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 80%;
-    max-height: 80%;
-    overflow: auto;
-  }
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+}
 
-  /* Close button styling */
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 15px;
+/* Title styling */
+.subscription-management h1 {
   font-size: 24px;
-  cursor: pointer;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
 }
 
-/* Modal image styling */
-.modal-image {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+/* Table styling */
+.subscription-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
 }
 
-/* View Proof button styling */
-.view-proof-button {
+.subscription-table th,
+.subscription-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+/* Table header styling */
+.subscription-table th {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+}
+
+/* Table row styling */
+.subscription-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Table row hover effect */
+.subscription-table tbody tr:hover {
+  background-color: #ddd;
+}
+
+/* Status cell styling */
+.approved-status {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.inactive-status {
+  color: #FF0000;
+  font-weight: bold;
+}
+
+/* Link styling */
+.subscription-table a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.subscription-table a:hover {
+  text-decoration: underline;
+}
+
+/* Approve button styling */
+.approve-button {
   background-color: #4CAF50;
   color: white;
   border: none;
@@ -144,23 +77,8 @@
   transition: background-color 0.3s ease;
 }
 
-.view-proof-button:hover {
-  background-color: #45a049;
-}
-
-/* Optional: approve button styling */
-.approve-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
 .approve-button:hover {
-  background-color: #0069d9;
+  background-color: #45a049;
 }
 
 /* Approved status styling */
@@ -169,3 +87,18 @@
   font-weight: bold;
 }
 
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  .subscription-management {
+      padding: 10px;
+  }
+
+  .subscription-table th,
+  .subscription-table td {
+      padding: 8px 10px;
+  }
+
+  .subscription-table {
+      font-size: 14px;
+  }
+}
