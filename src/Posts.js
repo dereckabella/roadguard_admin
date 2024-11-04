@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import './Posts.css';
 
-const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your API Key
+const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY'; 
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
-  const [originalPosts, setOriginalPosts] = useState([]); // Store all posts without filters
+  const [originalPosts, setOriginalPosts] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState(null);
   const [deleteReason, setDeleteReason] = useState('');
