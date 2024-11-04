@@ -5,80 +5,21 @@
   padding: 20px;
 }
 
-/* Leaderboard Layout */
-.leaderboard-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Container for podium and other users */
-.chart-and-other-container {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-/* Podium Container */
-.podium-container {
-  flex: 2; /* Make podium container larger */
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  margin-bottom: 30px;
-  background-color: #f7f7f7;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  height: 450px; /* Set a fixed height */
-  overflow-y: hidden; /* Hide overflow */
-  flex-direction: row-reverse;
-}
-
-/* Other Users Container */
-.other-users-container {
-  flex: 1;
-  background-color:#edebeb;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 1px 1px 15px 20px rgba(0, 0, 0, 0.05);
-  overflow-y: auto; /* Enable scrolling */
-  max-height: 450px;
-}
-
-/* Styling for other users' list */
-.other-users-container ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* Each other user in the list */
-.other-users-container li {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* Other users' avatar */
-.other-users-container img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
 /* Leaderboard Title */
 .leaderboard-title {
   font-size: 36px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   color: #2c3e50;
+}
+
+/* Podium Container */
+.podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 30px;
 }
 
 /* Each Podium Item */
@@ -96,7 +37,6 @@
   position: relative;
   transition: all 0.3s ease-in-out;
 }
-
 
 /* Podium Colors */
 .podium-rank-1 {
@@ -117,6 +57,7 @@
   height: 220px;
 }
 
+/* Additional Podium Ranks */
 .podium-rank-4,
 .podium-rank-5 {
   background-color: #FFA500; /* Orange */
@@ -174,12 +115,44 @@
   color: #34495e;
 }
 
+/* Other Users Container */
+.other-users-container {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Styling for other users' list */
+.other-users-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each other user in the list */
+.other-users-container li {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Other users' avatar */
+.other-users-container img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* Buttons Container */
 .button-container {
-  display: flex;
-  justify-content: flex-start; /* Align buttons to the left */
-  gap: 20px;
-  margin-top: 20px;
+  text-align: center;
+  margin-top: 40px;
 }
 
 /* Add Reward & View Reward Buttons */
@@ -246,7 +219,7 @@
 }
 
 .w-full {
-  width: 50%;
+  width: 100%;
 }
 
 .max-w-lg {
@@ -261,12 +234,15 @@
   overflow-y: auto;
 }
 
+.h- {
+  height: 80%;
+}
+
 .shadow-lg {
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .space-y-4 > :not(:last-child) {
- 
   margin-bottom: 16px;
 }
 
@@ -280,477 +256,4 @@
 
 .mb-4 {
   margin-bottom: 16px;
-}
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* Center the modal container */
-
-.modal-container {
-  position: fixed; /* Center the modal */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center alignment */
-  width: 90%;
-  max-width: 800px; /* Adjusted width */
-  max-height: 80vh; /* Adjusted height */
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  overflow-y: auto; /* Enable scrolling if content overflows */
-}
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: fixed; /* Changed to fixed for better centering */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 800px; /* Reduced max-width for better fit */
-  max-height: 90%; /* Adjusted to cover more vertical space */
-  background-color: #ffffff;
-  border-radius: 20px; /* Slightly increased border-radius for smoother edges */
-  padding: 30px; /* Increased padding for a more spacious look */
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Enhanced shadow for more depth */
-  overflow-y: auto; /* Ensure scrolling is enabled for overflow content */
-  z-index: 1000; /* Ensure the modal is on top */
-}
-
-
-/* Close Button Styling */
-.close-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  font-size: 48px; /* Increase font size */
-  padding: 10px; /* Add some padding */
-  color: #475569;
-  cursor: pointer;
-  transition: color 0.2s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.close-button:hover {
-  color: #e74c3c; /* Change color on hover */
-
-}
-/* Add Reward & View Reward Modal Styles */
-.modal-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 2px;
-  margin-bottom: 100px;
-  color: #1e293b;
-  text-align: center;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: center; /* Center the buttons inside the modal */
-  gap: 20px;
-  margin-top: 24px;
-}
-
-/* Modal Button Styling */
-.modal-button {
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 16px;
-  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-  border: none;
-}
-
-.modal-button.submit-button {
-  background-color: #10b981;
-  color: white;
-}
-
-.modal-button.submit-button:hover {
-  background-color: #059669;
-}
-
-.modal-button.submit-button:active {
-  background-color: #047857;
-}
-
-.modal-button.cancel-button {
-  background-color: #f3f4f6;
-  color: #475569;
-}
-
-.modal-button.cancel-button:hover {
-  background-color: #e5e7eb;
-}
-
-.modal-button.cancel-button:active {
-  background-color: #d1d5db;
-}
-
-.modal-button:active {
-  transform: scale(0.98);
-}
-
-/* Input Labels */
-.input-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 6px;
-}
-
-/* Error Message */
-.error-message {
-  color: #ef4444;
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-/* Success Message */
-.success-message {
-  color: #10b981;
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-/* Animation for Modal */
-@keyframes fadeInUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.modal-container {
-  animation: fadeInUp 0.4s ease-out;
-}
-
-/* View Rewards Modal */
-/* Reward List Container */
-.reward-list-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-top: 20px;
-  padding-top: 20px;
-}
-
-/* Reward List */
-.reward-list-container ul {
-  list-style-type: none;
-  padding: 0;
-  width: 100%;
-}
-
-/* Reward Item Styling */
-.reward-item {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Align items to the start */
-  background-color: #eef7fb; /* Light blue background for rewards */
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-/* Image for the reward item */
-.reward-item img {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px; /* Reduce margin for a tighter fit */
-  margin-left: 0; /* Remove any potential left margin */
-  border: 2px solid #27ae60; /* Green border to highlight image */
-}
-
-
-.reward-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
-}
-
-/* Reward Image */
-
-
-/* Reward Details */
-.reward-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  font-size: 16px;
-  color: #2c3e50;
-  
-}
-
-/* Reward Name Styling */
-.reward-details p:first-child {
-  font-weight: 600;
-  font-size: 18px;
-  margin-bottom: 5px;
-  color: #3498db; /* Use the primary blue color for the reward name */
-}
-
-/* Points Required Styling */
-.points-required {
-  font-size: 14px;
-  color: #e67e22; /* Use a vibrant orange for the points required */
-}
-
-/* Delete Button */
-.delete-button {
-  background-color: #e74c3c;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  margin: left 510px; ;
-}
-
-.delete-button:hover {
-  background-color: #c0392b; /* Darker red on hover */
-}
-
-.delete-button:active {
-  transform: scale(0.95);
-}
-
-/* Modal Title Styling */
-.reward-list-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #111314;
-  border-bottom: 4px solid #111314; /* Primary blue bottom border */
-  padding-bottom: 10px;
-}
-
-/* Scrollbar Styling */
-.reward-list-container::-webkit-scrollbar {
-  width: 10px;
-}
-
-.reward-list-container::-webkit-scrollbar-thumb {
-  background-color: #3498db; /* Blue color for the scrollbar */
-  border-radius: 5px;
-}
-
-.reward-list-container::-webkit-scrollbar-thumb:hover {
-  background-color: #2980b9; /* Darker blue on hover */
-}
-
-/* Subtle gradient background for the modal */
-.bg-white {
-  background: linear-gradient(135deg, #eef7fb 30%, #ffffff 100%);
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-/* Delete Confirmation Modal Styling */
-.bg-white {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); /* Enhance shadow */
-  max-width: 400px; /* Limit the width */
-  position: relative;
-  text-align: center;
-  top: 0%;
-  left: 0%;
-}
-
-/* Modal Background Blur */
-.bg-opacity-50 {
-  backdrop-filter: blur(4px); /* Add blur effect */
-}
-
-/* Button Styling */
-button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:hover {
-  transform: scale(1.05); /* Add scale effect on hover */
-}
-
-button:active {
-  transform: scale(0.95); /* Scale down effect on click */
-}
-
-.bg-red-500 {
-  background-color: #e74c3c; /* Red color for confirm button */
-}
-
-.bg-red-500:hover {
-  background-color: #c0392b; /* Darker red on hover */
-}
-
-.bg-gray-300 {
-  background-color: #95a5a6; /* Neutral gray color for cancel button */
-}
-
-.bg-gray-300:hover {
-  background-color: #7f8c8d; /* Darker gray on hover */
-}
-/* Modal Container for Delete Confirmation */
-/* Delete Confirmation Modal Container */
-.delete-confirmation-container {
-  position: fixed; /* Keep it fixed */
-  top: 0%; /* Align vertically to the center */
-  left: 0%; /* Align horizontally to the center */
-  transform: translate(-50%, -50%); /* Offset by 50% for perfect centering */
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 500px; /* Increase width slightly */
-  text-align: center;
-  z-index: 1000;
-}
-
-/* Modal Overlay Styling */
-.fixed.inset-0 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Add semi-transparent dark background */
-  display: flex;
-  align-items: center; /* Center vertically */
-  justify-content: center; /* Center horizontally */
-  z-index: 999; /* Ensure it’s behind the modal container */
-}
-
-/* Additional Modal Overlay Styling (if needed) */
-
-
-
-/* Add Reward Input Fields */
-.modal-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  margin-bottom: 16px; /* Spacing between inputs */
-  font-size: 16px;
-}
-
-/* File Input Label */
-.file-input-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-}
-
-.file-input-label {
-  background-color: #3498db;
-  color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-}
-
-.file-input {
-  display: none; /* Hide the default file input */
-}
-
-/* File Name Styling */
-.file-name {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #475569;
-}
-
-/* Modal Title */
-.modal-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  text-align: center;
-  color: #2c3e50;
-}
-
-/* Button Styling in Modal */
-.modal-button {
-  display: inline-block;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 16px;
-  margin: 10px 5px;
-  border: none;
-}
-
-.modal-button.submit-button {
-  background-color: #27ae60;
-  color: #ffffff;
-}
-
-.modal-button.submit-button:hover {
-  background-color: #2ecc71;
-}
-
-.modal-button.cancel-button {
-  background-color: #e74c3c;
-  color: #ffffff;
-}
-
-.modal-button.cancel-button:hover {
-  background-color: #c0392b;
-}
-
-/* Confirmation Modal */
-.confirmation-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #e74c3c;
-  margin-bottom: 10px;
-}
-
-.confirmation-text {
-  font-size: 16px;
-  color: #34495e;
-  margin-bottom: 20px;
 }

@@ -18,7 +18,7 @@ import pieIcon from './images/pie.png';
 import usersIcon from './images/users-icon.png';
 import leaderboardIcon from './images/leaderboard-icon.png';
 import reportsIcon from './images/reports-icon.png';
-import subscriptionIcon from './images/subscription.png';
+import subscriptionIcon from './images/subscription.png'; 
 import documentIcon from './images/document-icon.png';
 import logoutIcon from './images/logout.png';
 import Users from './users';
@@ -245,7 +245,7 @@ const AdminHomePage = () => {
         return <DailyAnalytics />;
       case 'Posts':
         return <Posts />;
-      case 'subscriptionManagement':
+      case 'subscriptionManagement': // Add this case to render SubscriptionManagement
         return <SubscriptionManagement />;
       default:
         return null;
