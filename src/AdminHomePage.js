@@ -304,7 +304,7 @@ const AdminHomePage = () => {
         <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" />
-            <span className="logo-text">RoadGuard</span>
+            <span className="logo-text mt-5"></span>
           </div>
   
           {/* Main Menu Section */}

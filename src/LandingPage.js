@@ -85,26 +85,41 @@ const LandingPage = () => {
     <div className="min-h-screen bg-gray-900">
       {/* Enhanced Navbar */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-gray-900/80 backdrop-blur-md border-b border-gray-800' : 'bg-gray-300' // Light asphalt gray background
+        isScrolled ? 'bg-gray-900/80 backdrop-blur-md border-b border- gray-800' : 'bg-gray-300' // Light asphalt gray background
       }`}>
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-20">
-            <img src={RoadGuard} alt="RoadGuard Logo" className="h-10 w-auto" />
+            <img src={RoadGuard} alt="RoadGuard Logo" className="h-10 w-auto rounded-lg" />
             <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => scrollToSection(item)}
-                  className="relative text-black-400 hover:text-yellow-400 transition-colors group"
+                  className="relative bg-gray-300 text-black p-3 w-32 hover:text-black transition-colors group"
                 >
-                  <span className="capitalize font-medium">{item}</span>
+                  <span className="capitalize font-black">{item}</span>
                   <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-yellow-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                 </button>
               ))}
             </nav>
-            <Link to="/app" className="hidden md:inline-flex items-center px-6 py-2.5 font-semibold text-gray-900 bg-yellow-400 rounded-full hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-yellow-400/20 transform hover:-translate-y-0.5">
+            <Link
+              to="/app"
+              className="hidden no-underline md:inline-flex items-center px-6 py-2.5 font-semibold text-gray-900 rounded-full transition-all duration-300 transform hover:-translate-y-0.5"
+              style={{
+                background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
+                border: '1px solid #000000',
+                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+               }}
+               onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
+            >
               Get Started <ChevronRight className="ml-2 h-4 w-4" />
             </Link>
+
           </div>
         </div>
       </header>
@@ -128,9 +143,24 @@ const LandingPage = () => {
                   Stay informed, stay protected.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/app" className="inline-flex items-center justify-center px-8 py-3 bg-yellow-400 text-gray-900 rounded-full hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-yellow-400/20 transform hover:-translate-y-0.5">
+                <Link
+                  to="/app"
+                  className="inline-flex items-center justify-center px-8 py-3 text-gray-900 rounded-full transition-all duration-300 transform hover:-translate-y-0.5 no-underline"
+                  style={{
+                    background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
+                    border: '1px solid #000000',
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
+                >
                     Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
+                </Link>
+
                   <button onClick={() => scrollToSection('about')} className="inline-flex items-center justify-center px-8 py-3 bg-gray-800 text-yellow-400 rounded-full hover:bg-gray-700 transition-all duration-300 shadow-lg">
                     Learn More
                   </button>
@@ -199,46 +229,102 @@ const LandingPage = () => {
        {/* Pricing Section */}
 <section id="pricing" className="py-24 bg-gray-800">
   <div className="container mx-auto px-6">
-    <div className="text-center max-w-3xl mx-auto mb-16">
-      <h2 className="text-4xl font-bold mb-6 text-white">Simple, Transparent Pricing</h2>
-      <p className="text-xl text-gray-400">Choose the perfect plan for your safety needs</p>
-    </div>
-    {/* Pricing Plans Container */}
-    <div className="flex justify-center space-x-8">
-      {[ 
-        { name: 'Basic', price: '0', duration: 'Free', features: ['Up to 500 Alerts', 'Ads', 'Post Newsfeed'] },
-        { name: 'Pro', price: '100', duration: '1 Month', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] },
-        { name: 'Pro', price: '500', duration: '6 Months', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] },
-        { name: 'Pro', price: '1000', duration: '1 Year', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] }
-      ].map((plan) => (
-        <div key={plan.name} className={`w-72 rounded-2xl p-8 ${
-          plan.name === 'Pro' ? 'bg-yellow-400 text-gray-900 ring-4 ring-yellow-400/20' : 'bg-gray-900 text-white'
-        } transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border border-gray-700`}>
-          <h3 className="text-2xl font-semibold text-center mb-4">{plan.name}</h3>
-          <div className="text-center mb-6">
-            <span className="text-5xl font-bold">₱{plan.price}</span>
-            <span className={plan.name === 'Pro' ? 'text-gray-700' : 'text-gray-400'}>/{plan.duration}</span>
-          </div>
-          <ul className="space-y-4 mb-8">
-            {plan.features.map((feature, index) => (
-              <li key={index} className="flex items-center">
-                <CheckCircle className={`w-5 h-5 ${
+  <div className="text-center max-w-3xl mx-auto mb-16">
+    <h2 className="text-4xl font-bold mb-6 text-white">Simple, Transparent Pricing</h2>
+    <p className="text-xl text-gray-400">Choose the perfect plan for your safety needs</p>
+  </div>
+  {/* Pricing Plans Container */}
+  <div className="flex justify-center space-x-8">
+    {[
+      {
+        name: 'Basic',
+        price: '0',
+        duration: 'Free',
+        features: ['Up to 500 Alerts', 'Ads', 'Post Newsfeed'],
+      },
+      {
+        name: 'Pro',
+        price: '100',
+        duration: '1 Month',
+        features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'],
+      },
+      {
+        name: 'Pro',
+        price: '500',
+        duration: '6 Months',
+        features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'],
+      },
+      {
+        name: 'Pro',
+        price: '1000',
+        duration: '1 Year',
+        features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'],
+      },
+    ].map((plan, index) => (
+      <div
+        key={index}
+        className={`w-72 rounded-2xl p-8 ${
+          plan.name === 'Pro'
+            ? 'text-gray-900 ring-4 ring-yellow-400/20'
+            : 'bg-gray-900 text-white'
+        } transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border border-gray-700`}
+        style={
+          plan.name === 'Pro'
+            ? {
+                background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
+              }
+            : null
+        }
+      >
+        <h3 className="text-2xl font-semibold text-center mb-4">{plan.name}</h3>
+        <div className="text-center mb-6">
+          <span className="text-5xl font-bold">₱{plan.price}</span>
+          <span className={plan.name === 'Pro' ? 'text-gray-700' : 'text-gray-400'}>
+            /{plan.duration}
+          </span>
+        </div>
+        <ul className="space-y-4 mb-8">
+          {plan.features.map((feature, featureIndex) => (
+            <li key={featureIndex} className="flex items-center">
+              <CheckCircle
+                className={`w-5 h-5 ${
                   plan.name === 'Pro' ? 'text-gray-900' : 'text-yellow-400'
-                } mr-2`} />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-          <Link
-          to="#"
-          onClick={toggleModal} // Trigger the modal
-          className="hidden md:inline-flex items-center px-6 py-2.5 font-semibold text-gray-900 bg-yellow-400 rounded-full hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-yellow-400/20 transform hover:-translate-y-0.5"
+                } mr-2`}
+              />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <Link
+          to="/app"
+          className="hidden no-underline md:inline-flex items-center px-6 py-2.5 font-semibold rounded-full transition-all duration-300 transform hover:-translate-y-0.5"
+          style={
+            plan.name === 'Pro'
+              ? {
+                  background: '#141329',
+                  color: 'white',
+                  border: '1px solid #ffffff',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                }
+              : {
+                  background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
+                  border: '1px solid #000000',
+                  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                  color: 'black',
+                }
+          }
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '0.8';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '1';
+          }}
         >
           Get Started <ChevronRight className="ml-2 h-4 w-4" />
         </Link>
-        </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
   </div>
 </section>
 
@@ -260,7 +346,7 @@ const LandingPage = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                      className="w-4/5 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
                     />
                   </div>
                   <div>
@@ -270,7 +356,7 @@ const LandingPage = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                      className="w-4/5 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
                     />
                   </div>
                 </div>
@@ -280,17 +366,29 @@ const LandingPage = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                    className="w-11/12 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
                     rows="5"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-yellow-400 text-gray-900 rounded-xl hover:bg-yellow-500 transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="w-full py-3 text-gray-900 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                  style={{
+                    background: 'linear-gradient(180deg, #FAFF00 0%, #E0C55B 100%)',
+                    border: '1px solid #000000',
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1';
+                  }}
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
+
               </form>
             </div>
           </div>
@@ -319,7 +417,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12">
             <div>
-            <img src={RoadGuard} alt="RoadGuard Logo"  className="h-8 w-auto mb-6" />
+            <img src={RoadGuard} alt="RoadGuard Logo"  className="h-14 rounded-lg w-auto mb-6" />
               <p className="text-gray-400">Empowering safer journeys through innovation and community.</p>
             </div>
             <div>
@@ -328,7 +426,7 @@ const LandingPage = () => {
               {navItems.map((item) => (
                   <li key={item}>
                     <button onClick={() => scrollToSection(item)}
-                      className="text-gray-400 hover:text-yellow-400 transition-colors capitalize flex items-center group"
+                      className="text-black hover:text-yellow-400 p-3 w-6/12 transition-colors capitalize flex items-center group"
                     >
                       <ArrowRight className="h-4 w-4 mr-2 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300" />
                       {item}
@@ -366,7 +464,7 @@ const LandingPage = () => {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                    className="w-10/12 px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
                   />
                 </div>
                 <button className="w-full bg-yellow-400 text-gray-900 py-3 rounded-xl hover:bg-yellow-500 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center group">
