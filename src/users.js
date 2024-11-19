@@ -3,44 +3,52 @@ import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase
 import { getAuth, deleteUser } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from './firebaseConfig';
+import { Player } from '@lottiefiles/react-lottie-player';
+import loadingAnimation from './lottie/loading.json';
 import './Users.css';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isLoading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const usersCollection = collection(firestore, 'users');
-            const usersSnapshot = await getDocs(usersCollection);
+            try {
+                const usersCollection = collection(firestore, 'users');
+                const usersSnapshot = await getDocs(usersCollection);
 
-            const usersData = usersSnapshot.docs.map((userDoc) => {
-                const userData = userDoc.data();
-                const userId = userDoc.id;
+                const usersData = usersSnapshot.docs.map((userDoc) => {
+                    const userData = userDoc.data();
+                    const userId = userDoc.id;
 
-                let created = '';
+                    let created = '';
 
-                if (userData.createdAt) {
-                    if (userData.createdAt.seconds) {
-                        created = new Date(userData.createdAt.seconds * 1000).toLocaleString();
-                    } else {
-                        created = userData.createdAt.toString();
+                    if (userData.createdAt) {
+                        if (userData.createdAt.seconds) {
+                            created = new Date(userData.createdAt.seconds * 1000).toLocaleString();
+                        } else {
+                            created = userData.createdAt.toString();
+                        }
                     }
-                }
 
-                return {
-                    id: userId,
-                    ...userData,
-                    created: created,
-                };
-            });
+                    return {
+                        id: userId,
+                        ...userData,
+                        created: created,
+                    };
+                });
 
-            setUsers(usersData);
+                setUsers(usersData);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            } finally {
+                setLoading(false); // Stop loading once data is fetched
+            }
         };
 
-        fetchUsers().catch(error => {
-            console.error('Error fetching users:', error);
-        });
+        fetchUsers();
     }, []);
 
     const handleImageClick = async (userId) => {
@@ -154,6 +162,19 @@ const Users = () => {
         (user.id && user.id.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
+
+    if (isLoading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Player
+                    autoplay
+                    loop
+                    src={loadingAnimation}
+                    style={{ height: '150px', width: '150px' }}
+                />
+            </div>
+        );
+    }
     return (
         <div className="container">
             <h1>Users</h1>
@@ -169,7 +190,7 @@ const Users = () => {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Document ID</th> {/* Display Document ID */}
+                            <th>Document ID</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
@@ -194,7 +215,7 @@ const Users = () => {
                                         {user.displayName}
                                     </div>
                                 </td>
-                                <td>{user.id}</td> {/* Display Document ID */}
+                                <td>{user.id}</td>
                                 <td>{user.created}</td>
                                 <td>
                                     <button onClick={() => editUser(user.id)}>Edit</button>

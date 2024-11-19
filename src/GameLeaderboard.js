@@ -3,6 +3,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import { firestore, database } from './firebaseConfig';  // Ensure the correct database and firestore imports
 import { ref as dbRef, get } from 'firebase/database';  // Import Realtime Database ref and get
 import Crown from './images/crown.png';  // Correctly imported crown image
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "./firebaseConfig"; 
+import { push } from "firebase/database";
 
 import './GameLeaderboard.css';
 
@@ -98,9 +101,38 @@ const GameLeaderboard = () => {
     setRewardImage(event.target.files[0]);
   };
 
-  const handleRewardSubmit = () => {
-    console.log('Reward submitted:', rewardName, pointsRequired, rewardImage);
-    setShowAddRewardModal(false);
+  const handleRewardSubmit = async () => {
+    if (!rewardName || !rewardImage || !pointsRequired) {
+      alert("Please fill out all fields.");
+      return;
+    }
+  
+    try {
+      // Step 1: Upload the image to Firebase Storage
+      const imageRef = storageRef(storage, `rewards/${rewardImage.name}`);
+      await uploadBytes(imageRef, rewardImage);
+      const imageUrl = await getDownloadURL(imageRef);
+  
+      // Step 2: Save reward data to Firebase Realtime Database
+      const rewardsRef = dbRef(database, "rewards");
+      const newReward = {
+        rewardName,
+        pointsRequired: Number(pointsRequired), // Ensure points are stored as a number
+        imageUrl,
+      };
+      await push(rewardsRef, newReward);
+  
+      // Step 3: Clear form fields and close the modal
+      setRewardName("");
+      setRewardImage(null);
+      setPointsRequired("");
+      setShowAddRewardModal(false);
+  
+      alert("Reward added successfully!");
+    } catch (error) {
+      console.error("Error adding reward:", error);
+      alert("An error occurred while adding the reward. Please try again.");
+    }
   };
 
   // Handle reward deletion
@@ -183,65 +215,89 @@ const GameLeaderboard = () => {
         </button>
       </div>
 
-      {/* Add Reward Modal */}
       {showAddRewardModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="modal-container"> 
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowAddRewardModal(false)}
-            >
-              &times;
-            </button>
-            <h2 className="modal-title">Add Reward</h2> 
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-[400px] md:w-[500px] p-6 relative">
+      {/* Close Button */}
+      <button
+        className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring focus:ring-gray-300"
+        onClick={() => setShowAddRewardModal(false)}
+        aria-label="Close"
+      >
+        &times;
+      </button>
 
-            <input
-              type="text"
-              placeholder="Reward Name"
-              value={rewardName}
-              onChange={(e) => setRewardName(e.target.value)}
-              className="modal-input" 
+      {/* Modal Title */}
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">Add Reward</h2>
+
+      {/* Reward Name Input */}
+      <input
+        type="text"
+        placeholder="Reward Name"
+        value={rewardName}
+        onChange={(e) => setRewardName(e.target.value)}
+        className="w-full px-4 py-2 mb-4 border rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+
+      {/* File Input */}
+      <div className="mb-4">
+        <label
+          htmlFor="file-upload"
+          className="flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-500 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <span>{rewardImage ? rewardImage.name : "Choose an image"}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M7 16l-4-4m0 0l4-4m-4 4h18"
             />
+          </svg>
+        </label>
+        <input
+          type="file"
+          id="file-upload"
+          accept="image/*"
+          onChange={handleRewardImageChange}
+          className="hidden"
+        />
+      </div>
 
-            <div className="file-input-container"> 
-              <label className="file-input-label" htmlFor="file-upload"> 
-                Choose File
-              </label>
-              <input
-                type="file"
-                id="file-upload"
-                accept="image/*"
-                onChange={handleRewardImageChange}
-                className="file-input" 
-              />
-              <span>{rewardImage ? rewardImage.name : "No file chosen"}</span>
-            </div>
+      {/* Points Required Input */}
+      <input
+        type="number"
+        placeholder="Points Required"
+        value={pointsRequired}
+        onChange={(e) => setPointsRequired(e.target.value)}
+        className="w-200 px-4 py-2 mb-4 border rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
 
-            <input
-              type="number"
-              placeholder="Points Required"
-              value={pointsRequired}
-              onChange={(e) => setPointsRequired(e.target.value)}
-              className="modal-input" 
-            />
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end space-x-3">
+        <button
+          onClick={() => setShowAddRewardModal(false)}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleRewardSubmit}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
-            <div className="modal-buttons"> 
-              <button
-                onClick={handleRewardSubmit}
-                className="modal-button submit-button" 
-              >
-                Submit
-              </button>
-              <button
-                onClick={() => setShowAddRewardModal(false)}
-                className="modal-button cancel-button" 
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* View Rewards Modal */}
       {showViewRewardsModal && (

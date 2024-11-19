@@ -3,10 +3,22 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Shield, Users, Book, CheckCircle, Twitter, Facebook, Instagram, Linkedin, ArrowRight } from 'lucide-react';
 import RoadGuard from './images/roadguardlogo.png';
 import roadillustration from './images/roadillustration.png';
+import { Player } from '@lottiefiles/react-lottie-player';
+import protectionAnimation from './lottie/protection.json';
+import community from './lottie/community.json'; // Path to your Lottie JSON file
+import book from './lottie/book.json'; 
+import emailjs from 'emailjs-com';
 
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const navItems = ['home', 'about', 'course', 'pricing', 'contact'];
+  const navItems = ['home', 'about', 'pricing', 'contact'];
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +31,55 @@ const LandingPage = () => {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const emailData = {
+    user_name: formData.name,
+    user_email: formData.email,
+    user_message: formData.message,
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  
+    setIsSubmitting(true);
+  
+    const serviceId = 'service_m6cxy9e';  // Your EmailJS service ID
+    const templateId = 'template_2hi8it9';  // Your EmailJS template ID
+    const userId = 'bENKQCzvMg3hcfLjW';  // Your EmailJS user ID
+  
+    const emailData = {
+      user_name: formData.name,
+      user_email: formData.email,
+      user_message: formData.message,
+    };
+  
+    console.log('Form Data:', formData);  // Check the form data
+  
+    emailjs
+      .send(serviceId, templateId, emailData, userId)
+      .then(
+        (response) => {
+          console.log('Message sent successfully', response);
+          setIsSubmitting(false);
+          alert('Message Sent!');
+        },
+        (error) => {
+          console.error('Error sending message', error);
+          setIsSubmitting(false);
+          alert('Oops! Something went wrong. Please try again.');
+        }
+      );
   };
   return (
     <div className="min-h-screen bg-gray-900">
@@ -100,12 +161,33 @@ const LandingPage = () => {
             </div>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: Shield, title: '24/7 Protection', desc: 'Real-time alerts and continuous monitoring for your safety' },
-                { icon: Users, title: 'Community Driven', desc: 'Powered by a network of vigilant road users' },
-                { icon: Book, title: 'Expert Resources', desc: 'Access to comprehensive safety guides and tips' }
+                {
+                  animation: protectionAnimation, // Replace the icon with the animation
+                  title: '24/7 Protection',
+                  desc: 'Real-time alerts and continuous monitoring for your safety',
+                },
+                {
+                  animation: community,
+                  title: 'Community Driven',
+                  desc: 'Powered by a network of vigilant road users',
+                },
+                {
+                  animation: book,
+                  title: 'Expert Resources',
+                  desc: 'Access to comprehensive safety guides and tips',
+                },
               ].map((item, index) => (
                 <div key={index} className="p-8 bg-gray-900/50 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-700">
-                  <item.icon className="w-12 h-12 text-yellow-400 mb-6" />
+                  {item.animation ? (
+                    <Player
+                      autoplay
+                      loop
+                      src={item.animation}
+                      className="w-24 h-24 mb-6" // Adjust size here (e.g., w-24 h-24 for 6rem size)
+                    />
+                  ) : (
+                    <item.icon className="w-12 h-12 text-yellow-400 mb-6" />
+                  )}
                   <h3 className="text-xl font-semibold mb-4 text-white">{item.title}</h3>
                   <p className="text-gray-400">{item.desc}</p>
                 </div>
@@ -114,115 +196,123 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Course Section */}
-        <section id="course" className="py-24 bg-gray-900">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-bold mb-6 text-white">Safety Courses</h2>
-              <p className="text-xl text-gray-400">Enhance your road safety knowledge with our expert-led courses</p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { title: 'Defensive Driving', desc: 'Master the art of anticipating and avoiding road hazards' },
-                { title: 'Weather Safety', desc: 'Learn to navigate challenging weather conditions safely' },
-                { title: 'Night Driving', desc: 'Essential skills for safe nighttime navigation' }
-              ].map((course, index) => (
-                <div key={index} className="bg-gray-800 rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 border border-gray-700">
-                  <div className="relative">
-                    <img src="/api/placeholder/400/250" alt={course.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="p-8">
-                    <h3 className="text-xl font-semibold mb-4 text-white">{course.title}</h3>
-                    <p className="text-gray-400 mb-6">{course.desc}</p>
-                    <button className="w-full bg-yellow-400 text-gray-900 py-3 rounded-xl hover:bg-yellow-500 transition-colors flex items-center justify-center group">
-                      Learn More
-                      <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+       {/* Pricing Section */}
+<section id="pricing" className="py-24 bg-gray-800">
+  <div className="container mx-auto px-6">
+    <div className="text-center max-w-3xl mx-auto mb-16">
+      <h2 className="text-4xl font-bold mb-6 text-white">Simple, Transparent Pricing</h2>
+      <p className="text-xl text-gray-400">Choose the perfect plan for your safety needs</p>
+    </div>
+    {/* Pricing Plans Container */}
+    <div className="flex justify-center space-x-8">
+      {[ 
+        { name: 'Basic', price: '0', duration: 'Free', features: ['Up to 500 Alerts', 'Ads', 'Post Newsfeed'] },
+        { name: 'Pro', price: '100', duration: '1 Month', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] },
+        { name: 'Pro', price: '500', duration: '6 Months', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] },
+        { name: 'Pro', price: '1000', duration: '1 Year', features: ['Unlimited Alerts Received', '24/7 Support', 'API Access'] }
+      ].map((plan) => (
+        <div key={plan.name} className={`w-72 rounded-2xl p-8 ${
+          plan.name === 'Pro' ? 'bg-yellow-400 text-gray-900 ring-4 ring-yellow-400/20' : 'bg-gray-900 text-white'
+        } transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border border-gray-700`}>
+          <h3 className="text-2xl font-semibold text-center mb-4">{plan.name}</h3>
+          <div className="text-center mb-6">
+            <span className="text-5xl font-bold">₱{plan.price}</span>
+            <span className={plan.name === 'Pro' ? 'text-gray-700' : 'text-gray-400'}>/{plan.duration}</span>
           </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section id="pricing" className="py-24 bg-gray-800">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-bold mb-6 text-white">Simple, Transparent Pricing</h2>
-              <p className="text-xl text-gray-400">Choose the perfect plan for your safety needs</p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {[
-                { name: 'Basic', price: '0', features: ['Basic Alerts', 'Community Access', 'Safety Tips'] },
-                { name: 'Pro', price: '29', features: ['Advanced Alerts', 'Premium Support', 'Course Access', 'Real-time Updates'] },
-                { name: 'Enterprise', price: '99', features: ['Custom Solutions', '24/7 Support', 'API Access', 'Dedicated Manager'] }
-              ].map((plan) => (
-                <div key={plan.name} className={`rounded-2xl p-8 ${
-                  plan.name === 'Pro' ? 'bg-yellow-400 text-gray-900 ring-4 ring-yellow-400/20' : 'bg-gray-900 text-white'
-                } transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border border-gray-700`}>
-                  <h3 className="text-2xl font-semibold text-center mb-4">{plan.name}</h3>
-                  <div className="text-center mb-6">
-                    <span className="text-5xl font-bold">${plan.price}</span>
-                    <span className={plan.name === 'Pro' ? 'text-gray-700' : 'text-gray-400'}>/month</span>
-                  </div>
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center">
-                        <CheckCircle className={`w-5 h-5 ${
-                          plan.name === 'Pro' ? 'text-gray-900' : 'text-yellow-400'
-                        } mr-2`} />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <button className={`w-full py-3 rounded-xl transition-all duration-300 ${
-                    plan.name === 'Pro'
-                      ? 'bg-gray-900 text-white hover:bg-gray-800'
-                      : 'bg-yellow-400 text-gray-900 hover:bg-yellow-500'
-                  }`}>
-                    Get Started
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          <ul className="space-y-4 mb-8">
+            {plan.features.map((feature, index) => (
+              <li key={index} className="flex items-center">
+                <CheckCircle className={`w-5 h-5 ${
+                  plan.name === 'Pro' ? 'text-gray-900' : 'text-yellow-400'
+                } mr-2`} />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+          <Link
+          to="#"
+          onClick={toggleModal} // Trigger the modal
+          className="hidden md:inline-flex items-center px-6 py-2.5 font-semibold text-gray-900 bg-yellow-400 rounded-full hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-yellow-400/20 transform hover:-translate-y-0.5"
+        >
+          Get Started <ChevronRight className="ml-2 h-4 w-4" />
+        </Link>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
         {/* Contact Section */}
         <section id="contact" className="py-24 bg-gray-900">
-          <div className="container mx-auto px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-bold mb-6 text-white">Get in Touch</h2>
-              <p className="text-xl text-gray-400">We're here to help with any questions about road safety</p>
-            </div>
-            <div className="max-w-2xl mx-auto">
-              <div className="bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
-                <form className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-gray-300 font-medium mb-2">Name</label>
-                      <input type="text" className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300" />
-                    </div>
-                    <div>
-                      <label className="block text-gray-300 font-medium mb-2">Email</label>
-                      <input type="email" className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300" />
-                    </div>
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-4xl font-bold mb-6 text-white">Get in Touch</h2>
+            <p className="text-xl text-gray-400">We're here to help with any questions about road safety</p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-gray-300 font-medium mb-2">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                    />
                   </div>
                   <div>
-                    <label className="block text-gray-300 font-medium mb-2">Message</label>
-                    <textarea className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300 h-32"></textarea>
+                    <label className="block text-gray-300 font-medium mb-2">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                    />
                   </div>
-                  <button className="w-full bg-yellow-400 text-gray-900 py-3 rounded-xl hover:bg-yellow-500 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-yellow-400/20">
-                    Send Message
-                  </button>
-                </form>
-              </div>
+                </div>
+                <div>
+                  <label className="block text-gray-300 font-medium mb-2">Message</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300"
+                    rows="5"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-yellow-400 text-gray-900 rounded-xl hover:bg-yellow-500 transition-all duration-300 transform hover:-translate-y-0.5"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </form>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
       </main>
+
+      {isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg max-w-xs w-full">
+      <h3 className="text-center text-xl mb-4">Scan the QR Code to Download App</h3>
+      <img src={require('./images/QR.png')} alt="QR Code" className="w-full h-auto" />
+      <button
+        onClick={toggleModal}
+        className="w-full mt-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white pt-24 pb-12 border-t border-gray-800">
