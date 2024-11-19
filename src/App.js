@@ -99,8 +99,8 @@ const App = () => {
 
         {/* Right Section with Login Form */}
         <div className="login-form-section">
-          <div className="login-header">
-            <img src={roadguardLogo} alt="Roadguard Logo" className="header-logo" /> {/* Logo in Header */}
+          <div className="login-header mt-28">
+            <img src={roadguardLogo} alt="Roadguard Logo" className="header-logo rounded-2xl" /> {/* Logo in Header */}
             <h2 className="login-title">Welcome Back!</h2>
             <p className="login-subtitle">Please enter your ID and password to continue</p>
           </div>
@@ -167,10 +167,10 @@ const App = () => {
           )}
 
           {/* Social Media Login Options */}
-          <div className="social-login">
+          <div className="social-login mb-20">
             <p>Follow us</p>
             <div className="social-icons">
-              <a href="https://www.facebook.com/solondiovic" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.facebook.com/profile.php?id=100067045089619" target="_blank" rel="noopener noreferrer">
                 <button className="social-btn facebook">
                   <FaFacebook /> 
                 </button>
