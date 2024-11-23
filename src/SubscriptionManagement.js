@@ -1,19 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { ref, get, child, update, set, push } from 'firebase/database';
+import { ref, get, child, update, set, push,  remove } from 'firebase/database';
 import { database } from './firebaseConfig'; // Your Firebase configuration file
 import './SubscriptionManagement.css'; // Optional: Add CSS for styling
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const SubscriptionManagement = () => {
-  const [subscriptions, setSubscriptions] = useState([]);  // Initialize subscriptions as an empty array
+  const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal visibility
-  const [selectedInvoice, setSelectedInvoice] = useState(null); // Add state for selected invoice details
-  const [activating, setActivating] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); 
-  const [plans, setPlans] = useState([]); // State for subscription plans
-  const [newPlan, setNewPlan] = useState({ name: '', price: '', duration: '' }); // State for new plan
+  const [isModalOpen, setIsModalOpen] = useState(false); // Generic modal state
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [plans, setPlans] = useState([]);
+  const [newPlan, setNewPlan] = useState({ name: '', price: '', duration: '' });
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [showAddPlanForm, setShowAddPlanForm] = useState(false);
+  const [notification] = useState({ type: '', message: '' });
+  const [planToDelete, setPlanToDelete] = useState(null);
+  const [viewingInvoice, setViewingInvoice] = useState(false); // Track if invoice is being viewed
+  const [isActivationModalOpen, setIsActivationModalOpen] = useState(false);
+const [activationMessage, setActivationMessage] = useState('');
+const [isDeactivationModalOpen, setIsDeactivationModalOpen] = useState(false);
+const [deactivationMessage, setDeactivationMessage] = useState('');
+const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+const [ setDeleteMessage] = useState('');
+const [isAddPlanModalOpen, setIsAddPlanModalOpen] = useState(false);
+const [addPlanMessage, setAddPlanMessage] = useState('');
+const [deleteFeedbackModalOpen, setDeleteFeedbackModalOpen] = useState(false);
+const [deleteFeedbackMessage, setDeleteFeedbackMessage] = useState('');
+const [isButtonDisabled, setIsButtonDisabled] = useState(false); // State to track button disable
 
-  // Fetch subscriptions from Firebase
+  useEffect(() => {
+    if (isActivationModalOpen) {
+        const timer = setTimeout(() => {
+            setIsActivationModalOpen(false); // Automatically close the modal after 3 seconds
+        }, 3000); // 3 seconds
+
+        return () => clearTimeout(timer); // Clean up the timer on unmount
+    }
+}, [isActivationModalOpen]);
+
+useEffect(() => {
+  if (isDeactivationModalOpen) {
+    const timer = setTimeout(() => {
+      setIsDeactivationModalOpen(false); // Automatically close the modal after 3 seconds
+    }, 3000); // 3 seconds
+
+    return () => clearTimeout(timer); // Clean up the timer on unmount
+  }
+}, [isDeactivationModalOpen]);
+
+  
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
@@ -38,105 +74,96 @@ const SubscriptionManagement = () => {
     fetchSubscriptions();
   }, []);
 
-  // Function to check if the subscription is expired
   const checkIfExpired = (endDate) => {
     const currentDate = new Date();
     const expirationDate = new Date(endDate);
     return expirationDate < currentDate;
   };
-
-  // Function to activate subscription
+  
   const activateSubscription = async (subscriptionId) => {
+    if (!subscriptionId) {
+      setActivationMessage('Invalid subscription ID.');
+      setIsActivationModalOpen(true);
+      return;
+    }
+  
+    setIsButtonDisabled(true); // Disable buttons
     try {
       const dbRef = ref(database, `subscriptions/${subscriptionId}`);
-      await update(dbRef, { active: true }); // Set subscription as active
-      const subscription = subscriptions.find((sub) => sub.id === subscriptionId);
-      const invoice = generateInvoice(subscription);
-      console.log('Generated Invoice:', invoice); // You can log it or save it to your database
+      await update(dbRef, { active: true });
+  
       setSubscriptions((prev) =>
         prev.map((sub) =>
           sub.id === subscriptionId ? { ...sub, active: true } : sub
         )
       );
-      alert('Subscription activated and invoice generated!');
+  
+      setActivationMessage('Subscription activated successfully!');
+      setIsActivationModalOpen(true);
     } catch (error) {
       console.error('Error activating subscription:', error);
-      alert('Failed to activate subscription. Please try again.');
+      setActivationMessage('Failed to activate subscription. Please try again.');
+      setIsActivationModalOpen(true);
+    } finally {
+      setTimeout(() => setIsButtonDisabled(false), 3000); // Re-enable buttons after timeout
     }
   };
   
-  // Function to deactivate subscription
+  
+
   const deactivateSubscription = async (subscriptionId) => {
+    if (!subscriptionId) {
+      setDeactivationMessage('Invalid subscription ID.');
+      setIsDeactivationModalOpen(true);
+      return;
+    }
+  
+    setIsButtonDisabled(true); // Disable buttons
     try {
       const dbRef = ref(database, `subscriptions/${subscriptionId}`);
       await update(dbRef, { active: false });
-      alert('Subscription deactivated successfully!');
+  
       setSubscriptions((prev) =>
-        prev.map((subscription) =>
-          subscription.id === subscriptionId ? { ...subscription, active: false } : subscription
+        prev.map((sub) =>
+          sub.id === subscriptionId ? { ...sub, active: false } : sub
         )
       );
+  
+      setDeactivationMessage('Subscription deactivated successfully!');
+      setIsDeactivationModalOpen(true);
     } catch (error) {
       console.error('Error deactivating subscription:', error);
-      alert('Failed to deactivate subscription. Please try again.');
+      setDeactivationMessage('Failed to deactivate subscription. Please try again.');
+      setIsDeactivationModalOpen(true);
+    } finally {
+      setTimeout(() => setIsButtonDisabled(false), 3000); // Re-enable buttons after timeout
     }
   };
 
-  // Function to fix active status for expired subscriptions
-  const fixActiveStatus = async () => {
-    const dbRef = ref(database, 'subscriptions');
-    const snapshot = await get(dbRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      Object.entries(data).forEach(([id, subscription]) => {
-        if (subscription.active && checkIfExpired(subscription.endDate)) {
-          update(ref(database, `subscriptions/${id}`), { active: false });
-        }
-      });
-    }
-  };
-
-  useEffect(() => {
-    fixActiveStatus(); // Only run once on component mount
-  }, []);
-
-  const createSubscription = async (subscriptionData) => {
-    const newSubscription = {
-      ...subscriptionData,
-      active: false, // Ensure the subscription is inactive by default
-    };
   
-    const newRef = ref(database, 'subscriptions');
-    const newSubscriptionRef = push(newRef);
-    await set(newSubscriptionRef, newSubscription); // Set the new subscription data
-  };
 
-  const generateInvoice = (subscription) => {
-    const invoice = {
-      email: subscription.email,
-      plan: subscription.plan,
-      amount: subscription.amount,
-      startDate: new Date(subscription.startDate).toLocaleDateString(),
-      endDate: new Date(subscription.endDate).toLocaleDateString(),
-      invoiceDate: new Date().toLocaleDateString(), // Date of invoice generation
-      invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`, // Generate a unique invoice number
-    };
-  
-    return invoice;
-  };
+  const generateInvoice = (subscription) => ({
+    email: subscription.email,
+    plan: subscription.plan,
+    amount: subscription.amount,
+    startDate: new Date(subscription.startDate).toLocaleDateString(),
+    endDate: new Date(subscription.endDate).toLocaleDateString(),
+    invoiceDate: new Date().toLocaleDateString(),
+    invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`,
+  });
 
   const viewInvoice = (subscriptionId) => {
     const subscription = subscriptions.find((sub) => sub.id === subscriptionId);
     if (subscription) {
       const invoice = generateInvoice(subscription);
-      setSelectedInvoice(invoice); // Set the invoice to be shown in the modal or new page
-      setIsModalOpen(true); // Show the modal with invoice details
+      setSelectedInvoice(invoice);
+      setIsModalOpen(true); // Open the invoice modal
+      setViewingInvoice(true); // Track that the invoice modal is open
     }
   };
-
   const fetchPlans = async () => {
     try {
-      const dbRef = ref(database, 'plans'); // Assuming "plans" node in Firebase
+      const dbRef = ref(database, 'plans');
       const snapshot = await get(dbRef);
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -153,46 +180,196 @@ const SubscriptionManagement = () => {
     }
   };
 
-  // Add a new subscription plan
-  const addNewPlan = async () => {
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const handleDeletePlan = async (planId) => {
     try {
-      const newPlanRef = push(ref(database, 'plans'));
-      await set(newPlanRef, newPlan);
-      setPlans([...plans, { id: newPlanRef.key, ...newPlan }]); // Update local state
-      setNewPlan({ name: '', price: '', duration: '' }); // Reset form
-      alert('Plan added successfully!');
+      const planRef = ref(database, `plans/${planId}`);
+      await remove(planRef); // Delete plan from the database
+      setPlans((prev) => prev.filter((plan) => plan.id !== planId)); // Update local state
+  
+      // Show success feedback
+      setDeleteFeedbackMessage('Plan deleted successfully!');
+      setDeleteFeedbackModalOpen(true);
+    } catch (error) {
+      console.error('Error deleting plan:', error);
+  
+      // Show error feedback
+      setDeleteFeedbackMessage('Failed to delete the plan. Please try again.');
+      setDeleteFeedbackModalOpen(true);
+    } finally {
+      setIsDeleteModalOpen(false); // Close delete modal
+      setPlanToDelete(null); // Reset the selected plan
+    }
+  };
+  
+  const openDeleteModal = (planId) => {
+    setPlanToDelete(planId); // Set plan to delete
+    setIsDeleteModalOpen(true); // Open the confirmation modal
+  };
+  
+  const confirmDelete = async () => {
+    if (!planToDelete) return; // Prevent execution if no plan is selected
+    await handleDeletePlan(planToDelete);
+  };
+  
+  
+  
+  
+  useEffect(() => {
+    if (deleteFeedbackModalOpen) {
+      const timer = setTimeout(() => {
+        setDeleteFeedbackModalOpen(false); // Close feedback modal
+        setDeleteFeedbackMessage(''); // Clear message
+      }, 3000); // 3 seconds delay
+  
+      return () => clearTimeout(timer); // Cleanup timer on unmount
+    }
+  }, [deleteFeedbackModalOpen]);
+  
+const handleButtonClick = (e) => {
+  if (isDeleteModalOpen) {
+    e.preventDefault(); // Prevent any button clicks when the modal is open
+  }
+};
+
+  const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setPlanToDelete(null); // Clear the selected plan ID
+  };
+
+  const openModal = () => {
+    setIsPlanModalOpen(true);
+    fetchPlans(); // Fetch the current plans when the modal is opened
+  };
+
+  // Close Modal
+  const closeModal = () => {
+    setIsPlanModalOpen(false);
+    setShowAddPlanForm(false); // Reset to show the list of plans
+    setIsModalOpen(false); // Close the modal
+  setViewingInvoice(false); // Reset viewing invoice flag
+  };
+
+  
+
+const openConfirmationModal = (planId) => {
+  if (viewingInvoice) return; // Prevent opening confirmation modal if viewing invoice
+
+  setPlanToDelete(planId);
+  setDeleteMessage("Are you sure you want to delete this plan?"); // Set the confirmation message
+  setIsDeleteModalOpen(true); // Open the confirmation modal
+};
+
+
+  const handleNewPlanInput = (e) => {
+    const { name, value } = e.target;
+    setNewPlan({
+      ...newPlan,
+      [name]: value
+    });
+  
+    // Example validation (you can adjust based on your requirements)
+    if (value === "") {
+      e.target.classList.add("error"); // Adds the error class
+    } else {
+      e.target.classList.remove("error"); // Removes the error class
+    }
+  };
+  
+
+  const addNewPlan = async (e) => {
+    e.preventDefault();
+  
+    // Validate required fields
+    if (!newPlan.name || !newPlan.price || !newPlan.duration) {
+      setAddPlanMessage('All fields are required.');
+      setIsAddPlanModalOpen(true);
+      return;
+    }
+  
+    try {
+      // Generate unique ID using Firebase push
+      const dbRef = ref(database, 'plans');
+      const newPlanRef = push(dbRef); // Creates a new entry with a unique key
+      const newPlanData = { ...newPlan, id: newPlanRef.key };
+  
+      // Save new plan to Firebase
+      await set(newPlanRef, newPlanData);
+  
+      // Update local state
+      setPlans((prev) => [...prev, newPlanData]);
+  
+      // Reset the form and close the add plan form
+      setNewPlan({ name: '', price: '', duration: '' });
+      setShowAddPlanForm(false);
+  
+      // Show success modal
+      setAddPlanMessage('Plan added successfully!');
+      setIsAddPlanModalOpen(true);
     } catch (error) {
       console.error('Error adding plan:', error);
-      alert('Failed to add plan. Please try again.');
+  
+      // Show error modal
+      setAddPlanMessage('Failed to add the plan. Please try again.');
+      setIsAddPlanModalOpen(true);
     }
-
+  };
+  
+  useEffect(() => {
+    if (isAddPlanModalOpen) {
+      const timer = setTimeout(() => {
+        setIsAddPlanModalOpen(false); // Automatically close the modal after 3 seconds
+      }, 3000);
+  
+      return () => clearTimeout(timer); // Cleanup timer
+    }
+  }, [isAddPlanModalOpen]);
+  
+ 
+  
   return (
     <div className="subscription-management">
-      <h1>Subscription Management</h1>
-      {loading ? (
-        <p>Loading subscriptions...</p>
+{/* Manage Plans Button */}
+<button className="manage-plans-button" onClick={openModal}>
+  Manage Plans
+</button>
+
+{loading ? (
+    <CircularProgress />
       ) : (
         <table className="subscription-table">
           <thead>
             <tr>
-              <th>Email</th>
+               <th>Email</th>
               <th>Amount</th>
               <th>Duration</th>
               <th>Start Date</th>
               <th>End Date</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {subscriptions.map((subscription) => {
-              const isExpired = checkIfExpired(subscription.endDate); // Check if expired
+              const isExpired = checkIfExpired(subscription.endDate);
               return (
                 <tr key={subscription.id}>
                   <td>{subscription.email}</td>
                   <td>{subscription.amount}</td>
                   <td>{subscription.duration}</td>
-                  <td>{subscription.startDate ? new Date(subscription.startDate).toLocaleDateString() : 'N/A'}</td>
-                  <td>{subscription.endDate ? new Date(subscription.endDate).toLocaleDateString() : 'N/A'}</td>
+                  <td>
+                    {subscription.startDate
+                      ? new Date(subscription.startDate).toLocaleDateString()
+                      : 'N/A'}
+                  </td>
+                  <td>
+                    {subscription.endDate
+                      ? new Date(subscription.endDate).toLocaleDateString()
+                      : 'N/A'}
+                  </td>
                   <td>
                     {isExpired ? (
                       <span className="expired-status">Expired</span>
@@ -201,33 +378,31 @@ const SubscriptionManagement = () => {
                     ) : (
                       <span className="inactive-status">Inactive</span>
                     )}
-
-                    {/* View Invoice button for all subscriptions (active or expired) */}
+                  </td>
+                  <td>
                     <button
                       className="view-invoice-button"
                       onClick={() => viewInvoice(subscription.id)}
                     >
                       View Invoice
                     </button>
-
-                    {/* Show Deactivate button only for active subscriptions */}
                     {!isExpired && subscription.active && (
                       <button
-                        className="deactivate-button"
-                        onClick={() => deactivateSubscription(subscription.id)}
-                      >
-                        Deactivate
-                      </button>
+                      className="deactivate-button"
+                      onClick={() => deactivateSubscription(subscription.id)}
+                      disabled={isButtonDisabled} // Disable button when isButtonDisabled is true
+                    >
+                      Deactivate
+                    </button>
                     )}
-
-                    {/* Show Activate button only for inactive subscriptions */}
                     {!isExpired && !subscription.active && (
                       <button
-                        className="activate-button"
-                        onClick={() => activateSubscription(subscription.id)}
-                      >
-                        Activate
-                      </button>
+                      className="activate-button"
+                      onClick={() => activateSubscription(subscription.id)}
+                      disabled={isButtonDisabled} // Disable button when isButtonDisabled is true
+                    >
+                      Activate
+                    </button>
                     )}
                   </td>
                 </tr>
@@ -237,80 +412,148 @@ const SubscriptionManagement = () => {
         </table>
       )}
 
-      {isModalOpen && selectedInvoice && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close-button" onClick={() => setIsModalOpen(false)}>
+     {/* Invoice Modal */}
+     {isModalOpen && selectedInvoice && viewingInvoice && (
+        <div className="invoice-modal" onClick={closeModal}>
+          <div className="invoice-modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-button" onClick={closeModal}>
               &times;
             </span>
-            <h2>Invoice</h2>
             <p><strong>Invoice Number:</strong> {selectedInvoice.invoiceNumber}</p>
             <p><strong>Email:</strong> {selectedInvoice.email}</p>
             <p><strong>Plan:</strong> {selectedInvoice.plan}</p>
-            <p><strong>Amount:</strong> ${selectedInvoice.amount}</p>
+            <p><strong>Amount:</strong> {selectedInvoice.amount}</p>
             <p><strong>Start Date:</strong> {selectedInvoice.startDate}</p>
             <p><strong>End Date:</strong> {selectedInvoice.endDate}</p>
-            <p><strong>Invoice Date:</strong> {selectedInvoice.invoiceDate}</p>
           </div>
         </div>
       )}
 
-      {/* Button to manage subscription plans */}
-      <button onClick={() => setIsPlanModalOpen(true)}>Manage Plans</button>
+{/*Plan Modal */}
+{isPlanModalOpen && (
+ <div className="plan-modal" onClick={closeModal}>
+ <div className="plan-modal-content" onClick={(e) => e.stopPropagation()}>
 
-      {/* Plan Modal */}
-      {isPlanModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsPlanModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Subscription Plans</h2>
-            <ul>
-              {plans.map((plan) => (
-                <li key={plan.id}>
-                  {plan.name} - ${plan.price} for {plan.duration} days
-                </li>
-              ))}
-            </ul>
-            <h3>Add New Plan</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                addNewPlan();
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Plan Name"
-                value={newPlan.name}
-                onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
-                required
-              />
-              <input
-                type="number"
-                placeholder="Price"
-                value={newPlan.price}
-                onChange={(e) => setNewPlan({ ...newPlan, price: e.target.value })}
-                required
-              />
-              <input
-                type="number"
-                placeholder="Duration (days)"
-                value={newPlan.duration}
-                onChange={(e) =>
-                  setNewPlan({ ...newPlan, duration: e.target.value })
-                }
-                required
-              />
-              <button type="submit">Add Plan</button>
-              <button
-                type="button"
-                onClick={() => setIsPlanModalOpen(false)}
-              >
-                Close
-              </button>
-            </form>
-          </div>
-        </div>
+
+   {showAddPlanForm ? (
+     <form onSubmit={addNewPlan}>
+       <input
+         type="text"
+         name="name"
+         value={newPlan.name}
+         onChange={handleNewPlanInput}
+         placeholder="Plan Name"
+         className="input-field"
+         required
+       />
+       <input
+         type="number"
+         name="price"
+         value={newPlan.price}
+         onChange={handleNewPlanInput}
+         placeholder="Price"
+         className="input-field"
+         required
+       />
+       <input
+         type="number"
+         name="duration"
+         value={newPlan.duration}
+         onChange={handleNewPlanInput}
+         placeholder="Duration (month(s))"
+         className="input-field"
+         required
+       />
+       <div style={{ textAlign: 'center' }}>
+       <button type="submit" class="add-plan">Add Plan</button>
+         <button
+           type="add-plan-button"
+           onClick={() => setShowAddPlanForm(false)}
+         >
+           Cancel
+         </button>
+       </div>
+     </form>
+   ) : (
+        <>
+          {/* Plans List */}
+          <ul className="plans-list">
+          <span className="plan-close-button" onClick={closeModal}>
+     &times;
+   </span>
+  {plans.map((plan) => (
+    <li key={plan.id} className="plan-item">
+      <span className="plan-details">
+        {plan.name} - ₱{plan.price} ({plan.duration} months)
+      </span>
+      <button
+  className="delete-button"
+  onClick={() => openDeleteModal(plan.id)} // Open confirmation modal
+>
+  Delete
+</button>
+
+    </li>
+  ))}
+</ul>
+
+          {/* Add New Plan Button */}
+          <div className="add-plan-container">
+  <button className="add-new-plan" onClick={() => setShowAddPlanForm(true)}>
+    Add New Plan
+  </button>
+</div>
+        </>
       )}
+    </div>
+  </div>
+)}
+
+       {deleteFeedbackModalOpen && (
+  <div className="feedback-modal">
+    <p>{deleteFeedbackMessage}</p>
+  </div>
+)}
+
+
+{isActivationModalOpen && (
+    <div className="activation-modal">
+        <p>{activationMessage}</p>
+    </div>
+)}
+
+{isDeactivationModalOpen && (
+  <div className="deactivation-modal">
+    <p>{deactivationMessage}</p>
+  </div>
+)}
+{isDeleteModalOpen && (
+  <>
+    {/* Full-screen overlay to block interaction */}
+    <div className="overlay"></div>
+    <div className="delete-modal">
+      <p>Are you sure you want to delete this plan?</p>
+      <div>
+        <button onClick={confirmDelete}>Confirm Delete</button>
+        <button onClick={cancelDelete}>Cancel</button>
+      </div>
+    </div>
+  </>
+)}
+
+
+{deleteFeedbackModalOpen && (
+  <div className="feedback-modal">
+    <p>{deleteFeedbackMessage}</p>
+  </div>
+)}
+
+ {isAddPlanModalOpen && (
+      <div className="add-plan-modal">
+        <p>{addPlanMessage}</p>
+      </div>
+    )}
+
     </div>
   );
 };
