@@ -12,7 +12,6 @@ const Users = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setLoading] = useState(true);
 
-
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -44,7 +43,10 @@ const Users = () => {
             } catch (error) {
                 console.error('Error fetching users:', error);
             } finally {
-                setLoading(false); // Stop loading once data is fetched
+                // Simulate a loading delay (5 seconds)
+                setTimeout(() => {
+                    setLoading(false); // Stop loading once data is fetched
+                }, 2000); // 5-second delay
             }
         };
 
@@ -189,10 +191,10 @@ const Users = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Document ID</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
+                            <th>NAME</th>
+                            <th>DOCUMENT ID</th>
+                            <th>CREATED AT</th>
+                            <th style={{ textAlign: 'center' }}>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>

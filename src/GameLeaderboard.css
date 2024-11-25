@@ -1,3 +1,6 @@
+@tailwind components;
+@tailwind utilities;
+
 /* Container for the whole leaderboard */
 .container {
   max-width: 1200px;
@@ -16,10 +19,14 @@
 
 /* Podium Container */
 .podium-container {
+  position: inherit;
+  border: 0.5px solid black;
+  padding: 70px 20px;
+  border-radius: 25px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 30px;
+  margin: 30px;
 }
 
 /* Each Podium Item */
@@ -31,38 +38,39 @@
   margin: 0 20px;
   text-align: center;
   background-color: #f7f7f7;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   transition: all 0.3s ease-in-out;
+  width: 100px;
 }
 
 /* Podium Colors */
 .podium-rank-1 {
   background-color: #FFD700; /* Gold */
-  width: 130px;
-  height: 300px;
+  width: auto;
+  height: auto;
 }
 
 .podium-rank-2 {
   background-color: #C0C0C0; /* Silver */
-  width: 120px;
-  height: 260px;
+  width: auto;
+  height: auto;
 }
 
 .podium-rank-3 {
   background-color: #CD7F32; /* Bronze */
-  width: 110px;
-  height: 220px;
+  width: auto;
+  height: auto;
 }
 
 /* Additional Podium Ranks */
 .podium-rank-4,
 .podium-rank-5 {
   background-color: #FFA500; /* Orange */
-  width: 100px;
-  height: 160px;
+  width: auto;
+  height: auto;
 }
 
 /* Tied Users */
@@ -157,16 +165,23 @@
 
 /* Add Reward & View Reward Buttons */
 .button-container button {
-  padding: 12px 24px;
-  border-radius: 8px;
+  background-color: #3498db;
+  padding: 15px;
+  border-radius: 25px;
   font-size: 16px;
   font-weight: bold;
   transition: transform 0.3s ease, background-color 0.3s ease;
   cursor: pointer;
+  margin: 15px;
+  width: 30%;
+  color: white;
 }
 
 .button-container button:hover {
+  background-color: #2a74a6;
+  opacity: 0.9;
   transform: scale(1.05);
+  color: white;
 }
 
 /* Button Colors */
@@ -179,7 +194,7 @@
 }
 
 .bg-blue-500 {
-  background-color: #3498db;
+  background-color: #2a74a6;
 }
 
 .bg-blue-500:hover {
@@ -257,3 +272,65 @@
 .mb-4 {
   margin-bottom: 16px;
 }
+
+.modal{
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal .delete-button{
+  width: 50%;
+  background-color: #ff4d4f;
+}
+
+.modal .delete-button:hover{
+  width: 50%;
+  background-color: #b33a3c;
+}
+
+.reward-list-container {
+  display: flex;
+  flex-wrap: wrap; /* To allow wrapping of reward items */
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically (if needed) */
+  gap: 20px; /* Adds spacing between items */
+  padding: 10px;
+}
+
+.reward-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers content horizontally */
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  width: 500px; /* Optional: limit item width */
+  text-align: center; /* Centers text */
+}
+
+.reward-item img {
+  display: block;
+  margin: 0 auto;
+  width: 200px; /* Prevents overflow */
+  height: 200px; /* Maintains aspect ratio */
+  border-radius: 8px; /* Optional: adds rounded corners */
+}
+
+.reward-details {
+  margin-top: 10px;
+}
+
+.reward-list-container ul {
+  list-style-type: none; /* Removes bullets */
+}
+
+.reward-list-container li {
+  border: 1px solid black;
+  margin: 20px;
+  padding: 25px 20px;
+  border-radius: 50px;
+
+}
+

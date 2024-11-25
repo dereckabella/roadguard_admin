@@ -109,7 +109,7 @@
 /* Input Field */
 .input-field {
   margin-left: 60px;
-  width: 80%;
+  width: auto;
   height: 50px;
   padding: 0 20px;
   font-size: 1rem;
@@ -129,16 +129,17 @@
 
 /* Input Icon */
 .input-icon {
-  position: absolute;
-  left: 30px;
+  position: inherit;
+  left: -10px;
   color: #367286;
 }
 
 
 /* Toggle Password Button */
 .toggle-password-btn {
-  position: absolute;
-  right: 29px;
+  position: inherit;
+  right: 0;
+  margin-left: 10px;
   color: #367286;
   cursor: pointer;
   background: none;

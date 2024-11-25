@@ -31,7 +31,7 @@ import { database } from './firebaseConfig';
 import { ref, onValue, off, set, remove } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 
-const API_KEY = 'AIzaSyACvMNE1lw18V00MT1wzRDW1vDlofnOZbw';
+const API_KEY = 'AIzaSyDZShgCYNWnTIkKJFRGsqY8GZDax9Ykqo0';
 const containerStyle = { width: '100%', height: '600px' };
 
 // Define the Cebu City bounds to restrict both the map and search box

@@ -3,11 +3,13 @@ import { ref, get, child, update, set, push,  remove } from 'firebase/database';
 import { database } from './firebaseConfig'; // Your Firebase configuration file
 import './SubscriptionManagement.css'; // Optional: Add CSS for styling
 import CircularProgress from '@mui/material/CircularProgress';
+import { Player } from '@lottiefiles/react-lottie-player';
+import loadingAnimation from './lottie/loading.json';
 
 
 const SubscriptionManagement = () => {
   const [subscriptions, setSubscriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false); // Generic modal state
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [plans, setPlans] = useState([]);
@@ -50,29 +52,33 @@ useEffect(() => {
 }, [isDeactivationModalOpen]);
 
   
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const dbRef = ref(database);
-        const snapshot = await get(child(dbRef, 'subscriptions'));
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          const formattedData = Object.entries(data).map(([key, value]) => ({
-            id: key,
-            ...value,
-          }));
-          setSubscriptions(formattedData);
-        } else {
-          console.log('No data available');
-        }
-      } catch (error) {
-        console.error('Error fetching subscriptions:', error);
+  
+useEffect(() => {
+  const fetchSubscriptions = async () => {
+    try {
+      const dbRef = ref(database);
+      const snapshot = await get(child(dbRef, 'subscriptions'));
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const formattedData = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value,
+        }));
+        setSubscriptions(formattedData);
+      } else {
+        console.log('No data available');
       }
-      setLoading(false);
-    };
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error);
+    }
+    // Simulate a loading delay (2 seconds) before hiding the loader
+    setTimeout(() => {
+      setLoading(false); // Stop loading once data is fetched
+    }, 2000); // 2-second delay
+  };
 
-    fetchSubscriptions();
-  }, []);
+  fetchSubscriptions();
+}, []);
 
   const checkIfExpired = (endDate) => {
     const currentDate = new Date();
@@ -328,7 +334,7 @@ const openConfirmationModal = (planId) => {
     }
   }, [isAddPlanModalOpen]);
   
- 
+
   
   return (
     <div className="subscription-management">
@@ -337,19 +343,26 @@ const openConfirmationModal = (planId) => {
   Manage Plans
 </button>
 
-{loading ? (
-    <CircularProgress />
+{isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <Player
+            autoplay
+            loop
+            src={loadingAnimation}
+            style={{ height: '150px', width: '150px' }}
+          />
+        </div>
       ) : (
         <table className="subscription-table">
           <thead>
             <tr>
-               <th>Email</th>
+              <th>Email</th>
               <th>Amount</th>
               <th>Duration</th>
               <th>Start Date</th>
               <th>End Date</th>
               <th>Status</th>
-              <th>Actions</th>
+              <th style={{ textAlign: 'center' }}>Actions</th>
             </tr>
           </thead>
           <tbody>

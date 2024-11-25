@@ -66,7 +66,11 @@
   border-radius: 50%;
   border: 2px solid #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-right: 12px;
+}
+
+.user-photo img {
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 /* Post Image */
@@ -96,14 +100,15 @@
 /* Dropdown Menu */
 .dropdown-menu.glassmorphism {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  top: 50px;
+  right: 20px;
   width: 250px;
+  margin-top: 5px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 10px 0;
+  padding: 10px;
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
@@ -137,14 +142,16 @@
 
 .dropdown-item.active {
   font-weight: bold;
-  background: rgba(255, 255, 255, 0.15);
+  opacity: 0.5;
   border-left: 4px solid #FFC107;
   padding-left: 20px;
 }
 
 /* Sort Button */
 .sort-button {
-  width: 100%;
+  position: inherit;
+  right: 20px;
+  width: auto;
   padding: 12px 16px;
   background: rgba(30, 30, 30, 0.5);
   color: #ffffff;
@@ -164,51 +171,163 @@
 }
 
 .sort-button .chevron-icon {
-  margin-left: auto;
+  margin-left: 20px;
   transition: transform 0.3s ease;
 }
 
 .sort-button.open .chevron-icon {
   transform: rotate(180deg);
 }
+/* Modal Container */
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  max-width: 500px;
+  width: 100%;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-/* Modal */
+/* Modal Header */
+.modal-header {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #6e7bff, #4d52f5); /* Gradient header */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Modal Body */
+.modal-body {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Modal Buttons */
+.modal-button {
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #6e7bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-button:hover {
+  background-color: #4d52f5;
+}
+
+.modal-button:active {
+  transform: scale(0.98); /* Button click effect */
+  background-color: #3d45d6;
+}
+
+/* Close Button */
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  transition: color 0.3s ease;
+}
+
+.close-modal-btn:hover {
+  color: #ff4d4d;
+}
+
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  transition: opacity 0.3s ease;
 }
 
-.modal-container {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 32px;
-  width: 420px;
-  max-width: 90%;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-  text-align: center;
-  animation: slideIn 0.3s ease-in-out;
-  position: relative;
+/* Smooth transition for modal show/hide */
+.modal-container.show, .modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
 }
 
-.modal-close-button {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #333;
+.modal-container.hide, .modal-overlay.hide {
+  opacity: 0;
+  visibility: hidden;
 }
+
+/* Fade In/Out for Modal */
+.modal-container.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.modal-container.hide {
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0;
+}
+
+/* Modal Input Fields */
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-input:focus {
+  border-color: #6e7bff;
+}
+
+/* Adjusting responsiveness for small screens */
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .modal-header {
+    font-size: 20px;
+  }
+
+  .modal-button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+
 
 /* Pagination */
 .pagination-container {
@@ -236,6 +355,8 @@
   background-color: #96ba40;
   color: #ffffff;
 }
+
+/* Coordinates */
 .coordinates {
   margin-bottom: 10px;
   font-size: 14px;

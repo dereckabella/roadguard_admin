@@ -99,7 +99,7 @@ const App = () => {
 
         {/* Right Section with Login Form */}
         <div className="login-form-section">
-          <div className="login-header mt-28">
+          <div className="login-header mt-28" >
             <img src={roadguardLogo} alt="Roadguard Logo" className="header-logo rounded-2xl" /> {/* Logo in Header */}
             <h2 className="login-title">Welcome Back!</h2>
             <p className="login-subtitle">Please enter your ID and password to continue</p>
@@ -138,17 +138,7 @@ const App = () => {
             </button>
           </div>
 
-          {/* Remember Me and Forgot Password */}
-          <div className="login-options">
-            <label className="remember-me">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              Remember Me
-            </label>
-          </div>
+        
 
           {/* Login Button */}
           <button

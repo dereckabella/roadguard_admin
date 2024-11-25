@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Manage Plans Button */
 .manage-plans-button {
   padding: 12px 24px;
@@ -93,6 +96,10 @@
   border-bottom-right-radius: 12px;
 }
 
+.subscription-table button{
+  margin: 5px;
+}
+
 /* Status Styling */
 .expired-status {
   color: #e74c3c;
@@ -139,6 +146,7 @@ button {
 .view-invoice-button {
   background: linear-gradient(135deg, #16a085, #1abc9c); /* Green gradient */
   color: white;
+  margin-right: 20px;
 }
 
 .view-invoice-button:hover {
@@ -162,6 +170,7 @@ button {
 .deactivate-button {
   background: linear-gradient(135deg, #e74c3c, #c0392b); /* Red gradient */
   color: white;
+  margin-left: 20px;
 }
 
 .deactivate-button:hover {
@@ -858,3 +867,8 @@ button {
   overflow: hidden;
 }
 
+.actions{
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
