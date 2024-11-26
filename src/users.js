@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
-import { getAuth, deleteUser } from 'firebase/auth';
+import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from './firebaseConfig';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import loadingAnimation from './lottie/loading.json';
 import './Users.css';
 
@@ -43,10 +44,9 @@ const Users = () => {
             } catch (error) {
                 console.error('Error fetching users:', error);
             } finally {
-                // Simulate a loading delay (5 seconds)
                 setTimeout(() => {
-                    setLoading(false); // Stop loading once data is fetched
-                }, 2000); // 5-second delay
+                    setLoading(false);
+                }, 2000);
             }
         };
 
@@ -54,6 +54,7 @@ const Users = () => {
     }, []);
 
     const handleImageClick = async (userId) => {
+        toast.dismiss(); // Dismiss any existing toasts
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -72,86 +73,78 @@ const Users = () => {
                 await updateDoc(userDoc, { photoURL: newPhotoURL });
 
                 setUsers(users.map(user => user.id === userId ? { ...user, photoURL: newPhotoURL } : user));
+                toast.success('Profile picture updated successfully!', { autoClose: 500 });
             } catch (error) {
                 console.error('Error uploading image or updating Firestore:', error);
+                toast.error('Failed to update profile picture!', { autoClose: 500 });
             }
         };
 
         fileInput.click();
     };
 
-    // Function to edit document ID and displayName
     const editUser = async (userId) => {
+        toast.dismiss(); // Dismiss any existing toasts
         const user = users.find(user => user.id === userId);
 
-        const newId = prompt('Enter new document ID (should match email):', userId);
-        const newDisplayName = prompt('Enter new display name:', user.displayName);
+        const newDocumentId = prompt('Enter new Document ID (email):', userId);
+        const newDisplayName = prompt('Enter new Display Name:', user.displayName);
 
-        if (!newId || !newDisplayName) {
-            alert("Document ID and display name are required!");
+        // Validation checks
+        if (!newDocumentId || !newDisplayName || newDocumentId.trim() === '' || newDisplayName.trim() === '') {
+            toast.error('Document ID and Display Name cannot be empty!', { autoClose: 500 });
             return;
         }
 
         try {
-            // Check if the new document ID already exists
-            const existingUserDoc = await getDocs(collection(firestore, 'users'));
-            const existingUserIds = existingUserDoc.docs.map(doc => doc.id);
-            
-            if (existingUserIds.includes(newId) && newId !== userId) {
-                alert("Document ID already exists. Please use a different ID.");
-                return;
-            }
+            if (newDocumentId !== userId) {
+                const oldUserDoc = doc(firestore, 'users', userId);
+                const newUserDoc = doc(firestore, 'users', newDocumentId);
 
-            if (newId === userId) {
-                // If the ID has not changed, update the display name only
-                const userDoc = doc(firestore, 'users', userId);
-                await updateDoc(userDoc, { displayName: newDisplayName });
-                setUsers(users.map(user => user.id === userId ? { ...user, displayName: newDisplayName } : user));
-                console.log('User displayName updated successfully');
-            } else {
-                // If the ID has changed, create a new document and delete the old one
-                const newUserDoc = doc(firestore, 'users', newId);
                 await setDoc(newUserDoc, {
                     ...user,
-                    id: newId,
+                    id: newDocumentId,
                     displayName: newDisplayName,
-                    email: user.email // Keep the email unchanged
+                    email: newDocumentId,
                 });
 
-                // Delete the old document
-                const oldUserDoc = doc(firestore, 'users', userId);
                 await deleteDoc(oldUserDoc);
 
-                // Update the UI
-                setUsers(users.map(user => user.id === userId ? { ...user, id: newId, displayName: newDisplayName } : user));
-                console.log('User updated and Document ID changed successfully');
+                setUsers(users.map(user =>
+                    user.id === userId
+                        ? { ...user, id: newDocumentId, displayName: newDisplayName, email: newDocumentId }
+                        : user
+                ));
+                toast.success('Document ID and Display Name updated successfully!', { autoClose: 500 });
+            } else {
+                const userDoc = doc(firestore, 'users', userId);
+                await updateDoc(userDoc, { displayName: newDisplayName });
+
+                setUsers(users.map(user =>
+                    user.id === userId
+                        ? { ...user, displayName: newDisplayName }
+                        : user
+                ));
+                toast.success('Display Name updated successfully!', { autoClose: 500 });
             }
         } catch (error) {
             console.error('Error updating user:', error);
+            toast.error('Failed to update user!', { autoClose: 500 });
         }
     };
 
-    const deleteUserFromFirestoreAndAuth = async (userId) => {
+    const disableUser = async (userId, currentDisabledStatus) => {
+        toast.dismiss(); // Dismiss any existing toasts
         const userDoc = doc(firestore, 'users', userId);
-        const auth = getAuth();
+        const newStatus = !currentDisabledStatus;
 
         try {
-            await deleteDoc(userDoc);
-            const userAuth = auth.currentUser;
-            if (userAuth && userAuth.email === userId) {
-                await deleteUser(userAuth);
-            }
-
-            setUsers(users.filter(user => user.id !== userId));
+            await updateDoc(userDoc, { disabled: newStatus });
+            setUsers(users.map(user => user.id === userId ? { ...user, disabled: newStatus } : user));
+            toast.success(`User ${newStatus ? 'disabled' : 'enabled'} successfully!`, { autoClose: 500 });
         } catch (error) {
-            console.error('Error deleting user:', error);
-        }
-    };
-
-    const confirmDeleteUser = (userId) => {
-        const confirmed = window.confirm('Are you sure you want to delete this user?');
-        if (confirmed) {
-            deleteUserFromFirestoreAndAuth(userId);
+            console.error('Error updating user disabled status:', error);
+            toast.error('Failed to update user status!', { autoClose: 500 });
         }
     };
 
@@ -163,7 +156,6 @@ const Users = () => {
         (user.displayName && user.displayName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (user.id && user.id.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-
 
     if (isLoading) {
         return (
@@ -177,6 +169,7 @@ const Users = () => {
             </div>
         );
     }
+
     return (
         <div className="container">
             <h1>Users</h1>
@@ -194,6 +187,7 @@ const Users = () => {
                             <th>NAME</th>
                             <th>DOCUMENT ID</th>
                             <th>CREATED AT</th>
+                            <th>DISABLED</th>
                             <th style={{ textAlign: 'center' }}>ACTIONS</th>
                         </tr>
                     </thead>
@@ -219,15 +213,33 @@ const Users = () => {
                                 </td>
                                 <td>{user.id}</td>
                                 <td>{user.created}</td>
+                                <td>{user.disabled ? 'Yes' : 'No'}</td>
                                 <td>
-                                    <button onClick={() => editUser(user.id)}>Edit</button>
-                                    <button onClick={() => confirmDeleteUser(user.id)}>Delete</button>
+                                    <button
+                                        className="edit-btn"
+                                        onClick={() => editUser(user.id)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className={`disable-btn ${user.disabled ? 'enable' : 'disable'}`}
+                                        onClick={() => disableUser(user.id, user.disabled)}
+                                    >
+                                        {user.disabled ? 'Enable' : 'Disable'}
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+            <ToastContainer
+                position="top-center"
+                autoClose={500} // 0.5 seconds
+                hideProgressBar
+                closeOnClick
+                transition={Slide}
+            />
         </div>
     );
 };

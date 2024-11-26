@@ -244,7 +244,7 @@ const Posts = () => {
             <p><strong>Latitude:</strong> {post.location.latitude}</p>
             <p><strong>Longitude:</strong> {post.location.longitude}</p>
           </div>
-          <div id={`map-${post.id}`} className="map-container" style={{ height: '300px', width: '100%' }}></div>
+         
         </div>
       );
     }

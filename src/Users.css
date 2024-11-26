@@ -1,10 +1,18 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    line-height: 1.6;
+    
+}
 
-
+/* Container Styling */
 .container {
-    margin-left: 0px;
+    margin-left: 0;
     padding: 20px;
 }
 
+/* Search Input */
 .search-input {
     width: 70%;
     padding: 10px;
@@ -12,20 +20,31 @@
     border: 1px solid #ddd;
     border-radius: 30px;
     box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
 
+.search-input:focus {
+    border-color: #4CAF50; /* Green border on focus */
+}
+
+/* Table Container */
 .table-container {
     overflow-x: auto;
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.table-container button{
+.table-container button {
     margin: 5px;
 }
 
+/* Table Styling */
 table {
     width: 100%;
     border-collapse: separate;
@@ -38,8 +57,8 @@ table {
 }
 
 thead {
-    background-color: #2c3e50; /* Darker shade for headers */
-    color:white;
+    background-color: #2c3e50; /* Dark Header */
+    color: white;
 }
 
 th, td {
@@ -53,26 +72,130 @@ th {
 }
 
 tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #f1f1f1; /* Light gray on hover */
 }
 
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    th, td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .search-input {
+        width: 90%;
+    }
+}
+
+/* Buttons - General */
 button {
-    margin-right: 5px;
-    padding: 5px 10px;
+    padding: 10px 15px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 14px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
 }
 
-button:hover {
-    background-color: #ddd;
+button:focus {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
 }
 
+/* Edit Button */
+.edit-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.edit-btn:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+/* Disable Button */
+.disable-btn.disable {
+    background-color: #f44336; /* Red for "Disable" */
+}
+
+.disable-btn.disable:hover {
+    background-color: #d32f2f; /* Darker Red */
+}
+
+.disable-btn.enable {
+    background-color: #4CAF50; /* Green for "Enable" */
+}
+
+.disable-btn.enable:hover {
+    background-color: #45a049; /* Darker Green */
+}
+
+/* Toast Notifications */
+.Toastify__toast-container {
+    text-align: center;
+}
+
+/* Success Toast Styling */
+.Toastify__toast--success {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    font-weight: bold;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+
+/* Error Toast Styling */
+.Toastify__toast--error {
+    background-color: #dc3545; /* Red background for errors */
+    color: white; /* White text */
+    font-weight: bold;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Loading Container */
 .loading-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    background: #f9f9f9;
+    animation: pulse 1.5s infinite;
 }
 
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
