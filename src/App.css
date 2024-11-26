@@ -302,6 +302,75 @@
   margin-bottom: 10px;
 }
 
+/* Export Button Container */
+.export-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Export Dropdown Button */
+.export-dropdown-button {
+  background-color: #4b93ac; /* Matches the primary gradient color */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.export-dropdown-button:hover {
+  background-color: #367286; /* Darker shade on hover */
+  transform: translateY(-2px);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  display: none; /* Initially hidden */
+  min-width: 160px;
+}
+
+.export-container:hover .dropdown-menu {
+  display: block; /* Show dropdown on hover */
+}
+
+/* Dropdown Menu Item */
+.dropdown-item {
+  padding: 10px 15px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #111827;
+  cursor: pointer;
+  background: #ffffff;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+/* Dropdown Divider */
+.dropdown-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 5px 0;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .split-container {
@@ -329,6 +398,9 @@
   .carousel-image {
     width: 100%;
     height: 50vh; /* Adjust height for smaller screens */
+  }
+  .export-container {
+    justify-content: center; /* Center align export button on smaller screens */
   }
 
   

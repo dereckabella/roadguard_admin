@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore, database } from './firebaseConfig';  // Ensure the correct database and firestore imports
-import { ref as dbRef, get, push, set, remove } from 'firebase/database';  // Import Realtime Database methods
+import { ref as dbRef, get, push, set, remove, update, onvalue } from 'firebase/database';  // Import Realtime Database methods
 import Crown from './images/crown.png';  // Correctly imported crown image
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseConfig"; 
@@ -21,7 +21,39 @@ const GameLeaderboard = () => {
   const [pointsRequired, setPointsRequired] = useState('');
   const [rewards, setRewards] = useState([]);
   const [editingReward, setEditingReward] = useState(null); // New state to track editing
+  const [claims, setClaims] = useState([]); // State to hold claims
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [selectedClaim, setSelectedClaim] = useState(null); // Selected claim for verification
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
+
+
+  // Fetch claim rewards data
+  useEffect(() => {
+    const fetchClaimRewards = async () => {
+      try {
+        const claimsRef = dbRef(database, 'claim_reward');
+        const snapshot = await get(claimsRef);
+
+        if (snapshot.exists()) {
+          const claimsData = Object.keys(snapshot.val()).map((key) => ({
+            id: key,
+            ...snapshot.val()[key],
+          }));
+          setClaims(claimsData);
+        } else {
+          setClaims([]);
+        }
+      } catch (error) {
+        console.error('Error fetching claims:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClaimRewards();
+  }, []);
   // Fetch leaderboard data
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -105,6 +137,39 @@ const GameLeaderboard = () => {
 
   const handleRewardImageChange = (event) => {
     setRewardImage(event.target.files[0]);
+  };
+
+  
+
+
+  // Handle claim verification
+  const handleVerifyClaim = async (claimId) => {
+    try {
+      const claimRef = dbRef(database, `claim_reward/${claimId}`);
+      await update(claimRef, { status: 'verified' });
+
+      // Update local claims state
+      setClaims((prevClaims) =>
+        prevClaims.map((claim) =>
+          claim.id === claimId ? { ...claim, status: 'verified' } : claim
+        )
+      );
+      toast.success('Claim verified successfully!');
+    } catch (error) {
+      console.error('Error verifying claim:', error);
+      toast.error('Failed to verify claim. Please try again.');
+    }
+  };
+
+  // Open Claim Modal
+  const openClaimModal = () => {
+    setShowClaimModal(true);
+  };
+
+  // Close Claim Modal
+  const closeClaimModal = () => {
+    setSelectedClaim(null);
+    setShowClaimModal(false);
   };
 
   const handleRewardSubmit = async () => {
@@ -200,24 +265,119 @@ const GameLeaderboard = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="leaderboard-title mb-6">
-        Game Leaderboard
-      </h1>
+      <h1 className="leaderboard-title">Claim Rewards</h1>
 
-      <div className="button-container mt-8">
+      {/* Claim Reward Button */}
+      <div className="text-center mb-6">
         <button
-          onClick={() => setShowAddRewardModal(true)}
-          className="bg-blue-500 p-4 rounded text-white"
+          className="claim-reward-btn bg-blue-500 text-white px-6 py-2 rounded shadow"
+          onClick={openClaimModal}
         >
-          Add Reward
-        </button>
-        <button
-          onClick={() => setShowViewRewardsModal(true)}
-          className="bg-green-500 p-4 rounded text-white"
-        >
-          View Rewards
+          Claim Reward
         </button>
       </div>
+
+      {/* Claim Modal */}
+      {showClaimModal && (
+        <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={closeClaimModal}
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold mb-4">Claim Rewards</h2>
+
+            {/* Claim List */}
+            {claims.length > 0 ? (
+              <div className="claims-list">
+                {claims.map((claim) => (
+                  <div
+                    key={claim.id}
+                    className="claim-item border p-4 rounded-lg mb-4 shadow"
+                  >
+                    <p>
+                      <strong>Name:</strong> {claim.fullName}
+                    </p>
+                    <p>
+                      <strong>Reward:</strong> {claim.rewardName}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {claim.status}
+                    </p>
+                    <button
+                      className="view-details-btn bg-green-500 text-white px-4 py-2 mt-2 rounded"
+                      onClick={() => setSelectedClaim(claim)}
+                    >
+                      View Details
+                    </button>
+                    {claim.status === 'pending' && (
+                      <button
+                        className="verify-btn bg-blue-500 text-white px-4 py-2 mt-2 ml-2 rounded"
+                        onClick={() => handleVerifyClaim(claim.id)}
+                      >
+                        Verify
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No claims available.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Claim Details Modal */}
+      {selectedClaim && (
+        <div className="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedClaim(null)}
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold mb-4">Claim Details</h2>
+            <p>
+              <strong>Name:</strong> {selectedClaim.fullName}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedClaim.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedClaim.phoneNumber}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedClaim.address}
+            </p>
+            <p>
+              <strong>Reward:</strong> {selectedClaim.rewardName}
+            </p>
+            <p>
+              <strong>Status:</strong> {selectedClaim.status}
+            </p>
+            {selectedClaim.rewardImageUrl && (
+              <img
+                src={selectedClaim.rewardImageUrl}
+                alt={selectedClaim.rewardName}
+                className="w-full mt-4 rounded-lg"
+              />
+            )}
+            {selectedClaim.status === 'pending' && (
+              <button
+                className="verify-btn bg-blue-500 text-white px-4 py-2 mt-4 w-full rounded"
+                onClick={() => handleVerifyClaim(selectedClaim.id)}
+              >
+                Verify Claim
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
 
       {/* Toast Notifications */}
       <ToastContainer position="top-center" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />

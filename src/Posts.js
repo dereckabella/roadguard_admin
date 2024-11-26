@@ -6,12 +6,72 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import './Posts.css';
 import { Player } from '@lottiefiles/react-lottie-player';
 import loadingAnimation from './lottie/loading.json';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDZShgCYNWnTIkKJFRGsqY8GZDax9Ykqo0';
 
 const Posts = () => {
+  
+// Helper function to export CSV
+const exportToCSV = (data, filename) => {
+  const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
+  const rows = data.map(post => [
+    post.id,
+    post.title || 'Untitled Post',
+    post.body || 'No content',
+    post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
+    post.location?.latitude || 'N/A',
+    post.location?.longitude || 'N/A',
+    post.upvotes || 0,
+    post.downvotes || 0,
+  ]);
+
+  const csvContent =
+    'data:text/csv;charset=utf-8,' +
+    [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `${filename}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Helper function to export PDF
+const exportToPDF = (data, filename) => {
+  const doc = new jsPDF();
+
+  // Add title
+  doc.setFontSize(18);
+  doc.text('Posts Report', 14, 20);
+
+  // Add table headers
+  const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
+  const rows = data.map(post => [
+    post.id,
+    post.title || 'Untitled Post',
+    post.body || 'No content',
+    post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
+    post.location?.latitude || 'N/A',
+    post.location?.longitude || 'N/A',
+    post.upvotes || 0,
+    post.downvotes || 0,
+  ]);
+
+  doc.autoTable({
+    head: [headers],
+    body: rows,
+    startY: 30,
+    styles: { fontSize: 10 },
+  });
+
+  doc.save(`${filename}.pdf`);
+};
+
   const [posts, setPosts] = useState([]);
   const [originalPosts, setOriginalPosts] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -135,6 +195,14 @@ const Posts = () => {
   const handleDeleteClick = (post) => {
     setSelectedPost(post);
     setShowDeleteModal(true);
+  };
+
+  const handleExport = format => {
+    if (format === 'csv') {
+      exportToCSV(posts, 'Posts_Report');
+    } else if (format === 'pdf') {
+      exportToPDF(posts, 'Posts_Report');
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -267,6 +335,19 @@ const Posts = () => {
 
   return (
     <div className="container">
+       <div className="export-container">
+        <div className="dropdown">
+          <button className="export-dropdown-button">Export</button>
+          <div className="dropdown-menu">
+            <button onClick={() => handleExport('csv')} className="dropdown-item">
+              Export as CSV
+            </button>
+            <button onClick={() => handleExport('pdf')} className="dropdown-item">
+              Export as PDF
+            </button>
+          </div>
+        </div>
+      </div>
       {successMessage && <p className="success-message">{successMessage}</p>}
 
       <div className="flex justify-end mb-4">
@@ -275,7 +356,7 @@ const Posts = () => {
             className={`sort-button ${dropdownOpen === 'sort' ? 'open' : ''}`}
             onClick={() => setDropdownOpen((prev) => (prev === 'sort' ? null : 'sort'))}
           >
-            Sort by: {sortOption} 
+            {sortOption} 
             <span className={`chevron-icon ${dropdownOpen === 'sort' ? 'rotate-180' : ''}`}>
               ▼
             </span>
@@ -322,8 +403,12 @@ const Posts = () => {
               </div>
               {dropdownOpen === post.id && (
                 <div className="dropdown-menu">
-                  <button className="dropdown-item" onClick={() => handleDeleteClick(post)}>Delete</button>
-                  <button className="dropdown-item" onClick={() => handleEditClick(post)}>Edit</button>
+                  <button className="dropdown-item" onClick={() => handleDeleteClick(post)}>
+                    Delete
+                  </button>
+                  <button className="dropdown-item" onClick={() => handleEditClick(post)}>
+                    Edit
+                  </button>
                 </div>
               )}
             </div>
