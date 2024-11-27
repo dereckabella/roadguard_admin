@@ -35,9 +35,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { storage } from './firebaseConfig'; // Import storage from your Firebase configuration
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import adminImage from './images/admin.jpg';
-
-
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {  Slide } from 'react-toastify';
@@ -49,9 +46,8 @@ const cebuCityBounds = {
   north: 10.4510, // Slightly extended northern boundary
   south: 10.2110, // Slightly extended southern boundary
   east: 124.0240, // Slightly extended eastern boundary
-  west: 123.7990, // Slightly extended western boundary
+  west: 123.7990, // Slightly extended western boundary,
 };
-
 
 // Map options to restrict the viewable area to Cebu City
 const mapOptions = {
@@ -64,7 +60,6 @@ const mapOptions = {
   streetViewControl: true, // Enable Street View control
   fullscreenControl: false,
 };
-
 
 const AdminHomePage = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -109,7 +104,22 @@ const [streetViewVisible, setStreetViewVisible] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   
-  
+  useEffect(() => {
+    // Fetch the admin profile image URL from Firebase Storage
+    const fetchAdminProfileImage = async () => {
+      try {
+        const adminImageRef = storageRef(storage, 'admin/admin.png');
+        const adminImageURL = await getDownloadURL(adminImageRef);
+        setEditPhotoURL(adminImageURL); // Set the photoURL for the admin profile image
+      } catch (err) {
+        console.error('Error fetching admin profile image:', err);
+        setErrorMessage('Error fetching admin profile image. Please try again.');
+      }
+    };
+    
+    fetchAdminProfileImage();
+  }, []);
+
   const handleStreetViewToggle = () => {
     setStreetViewVisible(!streetViewVisible);
   };
@@ -279,17 +289,7 @@ const [streetViewVisible, setStreetViewVisible] = useState(false);
         return;
       }
     
-      let uploadedImageURL;
-    
-      try {
-        // Adjusting the path to match the actual folder structure seen in Firebase Storage
-        const adminImageRef = storageRef(storage, 'admin/admin.jpg'); // Note the path "admin/admin.jpg"
-        uploadedImageURL = await getDownloadURL(adminImageRef);
-      } catch (err) {
-        console.error('Error fetching admin image:', err);
-        setErrorMessage('Error fetching admin image. Please try again.');
-        return;
-      }
+      let uploadedImageURL = '';
     
       // If the user uploads an image, upload it to Firebase Storage
       if (imageFile) {
@@ -310,8 +310,8 @@ const [streetViewVisible, setStreetViewVisible] = useState(false);
         createdAt: new Date().toISOString(),
         displayName: 'Admin',
         email: 'admin@example.com',
-        imageURL: uploadedImageURL,
-        photoURL: uploadedImageURL, // Set photoURL for the admin image or the uploaded image
+        imageURL: uploadedImageURL, // Image of the post
+        photoURL: editPhotoURL, // Set photoURL for the admin profile image
         upvotes: 2, // Automatically set upvotes to 2
         location: {
           latitude: selectedLocation.lat,
@@ -498,8 +498,6 @@ const [streetViewVisible, setStreetViewVisible] = useState(false);
   if (!selectedPost) return null;
 
   return (
-
-    
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       onClick={onClose}
