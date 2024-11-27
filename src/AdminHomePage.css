@@ -232,6 +232,7 @@
   flex: 1; /* Allow map to grow and fill available space */
   overflow: hidden; /* Prevent overflow */
   margin-top: 20px; /* Space above the map */
+  z-index: 0;
 }
 
 /* InfoWindow styling for better readability */
@@ -377,6 +378,6 @@
   border: 1px solid #FFC107;
   border-radius: 10px;
   overflow: hidden;
-  z-index: 1; /* Ensure map is below the nested menu */
+  z-index: 0; /* Ensure map is below the nested menu */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

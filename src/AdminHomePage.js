@@ -309,7 +309,7 @@ const AdminHomePage = () => {
   
           {/* Main Menu Section */}
           <SidebarItem icon={map} label="Map Management" active={activeComponent === 'admin'} onClick={() => setActiveComponent('admin')}>
-            <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', zIndex: '2' }}>
               <button onClick={startAddMarkerProcess} style={{ marginBottom: '10px' }}>Add Marker</button>
               <button onClick={handleShowHazardPins} style={{ marginBottom: '10px' }}>{showHazardPins ? 'Hide Hazard Pins' : 'Show Hazard Pins'}</button>
               <button onClick={() => setShowTrafficLayer(!showTrafficLayer)} style={{ marginBottom: '10px' }}>{showTrafficLayer ? 'Hide Traffic Layer' : 'Show Traffic Layer'}</button>

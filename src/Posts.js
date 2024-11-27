@@ -3,7 +3,6 @@ import { ref, get, child, remove, update } from 'firebase/database';
 import { database } from './firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import './Posts.css';
 import { Player } from '@lottiefiles/react-lottie-player';
 import loadingAnimation from './lottie/loading.json';
 import { jsPDF } from 'jspdf';
@@ -11,7 +10,7 @@ import 'jspdf-autotable';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {  Slide } from 'react-toastify';
-
+import './Posts.css';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDZShgCYNWnTIkKJFRGsqY8GZDax9Ykqo0';
 
@@ -326,62 +325,62 @@ const Posts = () => {
             />
 
   
-      {/* Export dropdown */}
-      <div className="export-container">
-        <div className="dropdown">
-          <button className="export-dropdown-button">Export</button>
-          <div className="dropdown-menu">
-            <button onClick={() => handleExport('csv')} className="dropdown-item">
-              Export as CSV
-            </button>
-            <button onClick={() => handleExport('pdf')} className="dropdown-item">
-              Export as PDF
-            </button>
-          </div>
-        </div>
-      </div>
+      
 
       {successMessage && <p className="success-message">{successMessage}</p>}
 
       {/* Sort dropdown */}
       <div className="flex justify-end mb-4">
-        <div className="relative dropdown-container">
-          <button
-            className={`sort-button ${dropdownOpen === 'sort' ? 'open' : ''}`}
-            onClick={() => setDropdownOpen((prev) => (prev === 'sort' ? null : 'sort'))}
-          >
-            {sortOption} 
-            <span className={`chevron-icon ${dropdownOpen === 'sort' ? 'rotate-180' : ''}`}>
-              ▼
-            </span>
-          </button>
+        {/* Export dropdown */}
+      <div className="export-container">
+        <text>Export as<br></br>
+            <button onClick={() => handleExport('csv')} className="export-button-posts">
+            CSV
+            </button>
+            <button onClick={() => handleExport('pdf')} className="export-button-posts">
+            PDF
+            </button>
+        </text>
+      </div>
+      
+      <div className="relative dropdown-container posts">
+        <button
+          className={`sort-button ${dropdownOpen === 'sort' ? 'open' : ''}`}
+          onClick={() => setDropdownOpen((prev) => (prev === 'sort' ? null : 'sort'))}
+        >
+          {sortOption} 
+          <span className={`chevron-icon ${dropdownOpen === 'sort' ? 'rotate-180' : ''}`}>
+            ▼
+          </span>
+        </button>
 
-          {dropdownOpen === 'sort' && (
-            <div className="dropdown-menu glassmorphism">
-              <button
-                className={`dropdown-item ${sortOption === 'Most Recent' ? 'active' : ''}`}
-                onClick={() => handleSortChange('Most Recent')}
-              >
-                Most Recent
-                {sortOption === 'Most Recent' && <span className="checkmark-icon"></span>}
-              </button>
-              <button
-                className={`dropdown-item ${sortOption === 'Most Voted' ? 'active' : ''}`}
-                onClick={() => handleSortChange('Most Voted')}
-              >
-                Most Voted
-                {sortOption === 'Most Voted' && <span className="checkmark-icon"></span>}
-              </button>
-              <button
-                className={`dropdown-item ${sortOption === 'Least Voted' ? 'active' : ''}`}
-                onClick={() => handleSortChange('Least Voted')}
-              >
-                Least Voted
-                {sortOption === 'Least Voted' && <span className="checkmark-icon"></span>}
-              </button>
-            </div>
-          )}
-        </div>
+        {dropdownOpen === 'sort' && (
+          <div className="dropdown-menu">
+            <button
+              className={`dropdown-item ${sortOption === 'Most Recent' ? 'active' : ''}`}
+              onClick={() => handleSortChange('Most Recent')}
+            >
+              Most Recent
+              {sortOption === 'Most Recent' && <span className="checkmark-icon"></span>}
+            </button>
+            <button
+              className={`dropdown-item ${sortOption === 'Most Voted' ? 'active' : ''}`}
+              onClick={() => handleSortChange('Most Voted')}
+            >
+              Most Voted
+              {sortOption === 'Most Voted' && <span className="checkmark-icon"></span>}
+            </button>
+            <button
+              className={`dropdown-item ${sortOption === 'Least Voted' ? 'active' : ''}`}
+              onClick={() => handleSortChange('Least Voted')}
+            >
+              Least Voted
+              {sortOption === 'Least Voted' && <span className="checkmark-icon"></span>}
+            </button>
+    </div>
+        )}
+</div>
+
       </div>
 
       {/* Posts list */}
