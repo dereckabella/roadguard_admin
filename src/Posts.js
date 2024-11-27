@@ -266,19 +266,18 @@ const Posts = () => {
   };
   
 
-  // Sort posts handler
   const handleSortChange = (option) => {
     setSortOption(option);
     let sortedPosts = [...originalPosts];
-
+  
     if (option === 'Most Recent') {
       sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else if (option === 'Most Voted') {
-      sortedPosts.sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
+      sortedPosts.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0));
     } else if (option === 'Least Voted') {
-      sortedPosts.sort((a, b) => (a.upvotes - a.downvotes) - (b.upvotes - b.downvotes));
+      sortedPosts.sort((a, b) => (b.downvotes || 0) - (a.downvotes || 0));
     }
-
+  
     setPosts(sortedPosts);
     setShowAllPosts(false);
   };

@@ -232,7 +232,6 @@
   flex: 1; /* Allow map to grow and fill available space */
   overflow: hidden; /* Prevent overflow */
   margin-top: 20px; /* Space above the map */
-  z-index: 0;
 }
 
 /* InfoWindow styling for better readability */
@@ -378,6 +377,142 @@
   border: 1px solid #FFC107;
   border-radius: 10px;
   overflow: hidden;
-  z-index: 0; /* Ensure map is below the nested menu */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+.info-window {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  width: 280px;
+  z-index: 1000;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.info-window h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f39c12;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.info-window p {
+  margin: 5px 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.info-window img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.info-window button {
+  display: block;
+  margin: 15px auto 0;
+  padding: 8px 15px;
+  border: none;
+  background: linear-gradient(90deg, #e74c3c, #ff5733);
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.info-window button:hover {
+  background: linear-gradient(90deg, #ff5733, #e74c3c);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+}
+
+.info-window button:active {
+  transform: scale(0.95);
+}
+
+.info-window .info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.info-window .info-header h3 {
+  flex-grow: 1;
+  text-align: center;
+  color: #f39c12;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.info-window .close-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: auto;
+  transition: color 0.2s ease;
+}
+
+.info-window .close-btn:hover {
+  color: #000000;
+}
+
+
+.Toastify__toast-container {
+  text-align: center;
+}
+
+/* Success Toast Styling */
+.Toastify__toast--success {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+
+/* Error Toast Styling */
+.Toastify__toast--error {
+  background-color: #dc3545; /* Red background for errors */
+  color: white; /* White text */
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
+  }
 }

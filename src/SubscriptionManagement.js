@@ -5,6 +5,11 @@ import './SubscriptionManagement.css'; // Optional: Add CSS for styling
 import CircularProgress from '@mui/material/CircularProgress';
 import { Player } from '@lottiefiles/react-lottie-player';
 import loadingAnimation from './lottie/loading.json';
+import {  Slide } from 'react-toastify';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const SubscriptionManagement = () => {
@@ -88,59 +93,51 @@ useEffect(() => {
   
   const activateSubscription = async (subscriptionId) => {
     if (!subscriptionId) {
-      setActivationMessage('Invalid subscription ID.');
-      setIsActivationModalOpen(true);
+      toast.error('Invalid subscription ID.', { autoClose: 1500 });
       return;
     }
-  
+
     setIsButtonDisabled(true); // Disable buttons
     try {
       const dbRef = ref(database, `subscriptions/${subscriptionId}`);
       await update(dbRef, { active: true });
-  
+
       setSubscriptions((prev) =>
         prev.map((sub) =>
           sub.id === subscriptionId ? { ...sub, active: true } : sub
         )
       );
-  
-      setActivationMessage('Subscription activated successfully!');
-      setIsActivationModalOpen(true);
+
+      toast.success('Subscription activated successfully!', { autoClose: 1500 });
     } catch (error) {
       console.error('Error activating subscription:', error);
-      setActivationMessage('Failed to activate subscription. Please try again.');
-      setIsActivationModalOpen(true);
+      toast.error('Failed to activate subscription. Please try again.', { autoClose: 1500 });
     } finally {
       setTimeout(() => setIsButtonDisabled(false), 3000); // Re-enable buttons after timeout
     }
   };
-  
-  
 
   const deactivateSubscription = async (subscriptionId) => {
     if (!subscriptionId) {
-      setDeactivationMessage('Invalid subscription ID.');
-      setIsDeactivationModalOpen(true);
+      toast.error('Invalid subscription ID.', { autoClose: 1500 });
       return;
     }
-  
+
     setIsButtonDisabled(true); // Disable buttons
     try {
       const dbRef = ref(database, `subscriptions/${subscriptionId}`);
       await update(dbRef, { active: false });
-  
+
       setSubscriptions((prev) =>
         prev.map((sub) =>
           sub.id === subscriptionId ? { ...sub, active: false } : sub
         )
       );
-  
-      setDeactivationMessage('Subscription deactivated successfully!');
-      setIsDeactivationModalOpen(true);
+
+      toast.success('Subscription deactivated successfully!', { autoClose: 1500 });
     } catch (error) {
       console.error('Error deactivating subscription:', error);
-      setDeactivationMessage('Failed to deactivate subscription. Please try again.');
-      setIsDeactivationModalOpen(true);
+      toast.error('Failed to deactivate subscription. Please try again.', { autoClose: 1500 });
     } finally {
       setTimeout(() => setIsButtonDisabled(false), 3000); // Re-enable buttons after timeout
     }
@@ -196,15 +193,10 @@ useEffect(() => {
       await remove(planRef); // Delete plan from the database
       setPlans((prev) => prev.filter((plan) => plan.id !== planId)); // Update local state
   
-      // Show success feedback
-      setDeleteFeedbackMessage('Plan deleted successfully!');
-      setDeleteFeedbackModalOpen(true);
+      toast.success('Plan deleted successfully!', { autoClose: 1500 });
     } catch (error) {
       console.error('Error deleting plan:', error);
-  
-      // Show error feedback
-      setDeleteFeedbackMessage('Failed to delete the plan. Please try again.');
-      setDeleteFeedbackModalOpen(true);
+      toast.error('Failed to delete the plan. Please try again.', { autoClose: 1500 });
     } finally {
       setIsDeleteModalOpen(false); // Close delete modal
       setPlanToDelete(null); // Reset the selected plan
@@ -291,8 +283,7 @@ const openConfirmationModal = (planId) => {
   
     // Validate required fields
     if (!newPlan.name || !newPlan.price || !newPlan.duration) {
-      setAddPlanMessage('All fields are required.');
-      setIsAddPlanModalOpen(true);
+      toast.error('All fields are required.', { autoClose: 1500 });
       return;
     }
   
@@ -312,17 +303,14 @@ const openConfirmationModal = (planId) => {
       setNewPlan({ name: '', price: '', duration: '' });
       setShowAddPlanForm(false);
   
-      // Show success modal
-      setAddPlanMessage('Plan added successfully!');
-      setIsAddPlanModalOpen(true);
+      // Show success toast
+      toast.success('Plan added successfully!', { autoClose: 1500 });
     } catch (error) {
       console.error('Error adding plan:', error);
-  
-      // Show error modal
-      setAddPlanMessage('Failed to add the plan. Please try again.');
-      setIsAddPlanModalOpen(true);
+      toast.error('Failed to add the plan. Please try again.', { autoClose: 1500 });
     }
   };
+
   
   useEffect(() => {
     if (isAddPlanModalOpen) {
@@ -337,7 +325,18 @@ const openConfirmationModal = (planId) => {
 
   
   return (
+
+    
     <div className="subscription-management">
+
+<ToastContainer
+                position="top-center"
+                autoClose={500} // 0.5 seconds
+                hideProgressBar
+                closeOnClick
+                transition={Slide}
+            />
+
 {/* Manage Plans Button */}
 <button className="manage-plans-button" onClick={openModal}>
   Manage Plans
