@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin: 30px;
+  margin: 20px;
 }
 
 /* Each Podium Item */
@@ -332,6 +332,138 @@
 
 }
 
+.Toastify__toast-container {
+  text-align: center;
+}
+
+/* Success Toast Styling */
+.Toastify__toast--success {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+
+/* Error Toast Styling */
+.Toastify__toast--error {
+  background-color: #dc3545; /* Red background for errors */
+  color: white; /* White text */
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s; /* Appears and fades out smoothly */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+      opacity: 1;
+  }
+  to {
+      opacity: 0;
+  }
+}
+/* Modal Container */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Content */
+.modal .modal-content {
+  background: linear-gradient(to bottom, #fff, #f7f7f7);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.modal h2 {
+  color: #1c4b9b;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Claim Item */
+.claim-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.claim-item:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Status Badge */
+.claim-item .status-badge {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.status-badge.pending {
+  background-color: #fffbcc;
+  color: #ff9900;
+}
+
+.status-badge.verified {
+  background-color: #ccffdd;
+  color: #33cc66;
+}
+
+/* Buttons */
+.modal button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.modal button:hover {
+  transform: scale(1.05);
+}
+
+.modal .view-details-btn {
+  background-color: #1d72f3;
+  color: white;
+}
+
+.modal .view-details-btn:hover {
+  background-color: #155bb5;
+}
+
+.modal .verify-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal .verify-btn:hover {
+  background-color: #218838;
+}
 .Toastify__toast-container {
   text-align: center;
 }
