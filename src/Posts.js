@@ -2,75 +2,76 @@ import React, { useEffect, useState, useRef } from 'react';
 import { ref, get, child, remove, update } from 'firebase/database';
 import { database } from './firebaseConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import './Posts.css';
 import { Player } from '@lottiefiles/react-lottie-player';
 import loadingAnimation from './lottie/loading.json';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {  Slide } from 'react-toastify';
 
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDZShgCYNWnTIkKJFRGsqY8GZDax9Ykqo0';
 
 const Posts = () => {
-  
-// Helper function to export CSV
-const exportToCSV = (data, filename) => {
-  const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
-  const rows = data.map(post => [
-    post.id,
-    post.title || 'Untitled Post',
-    post.body || 'No content',
-    post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
-    post.location?.latitude || 'N/A',
-    post.location?.longitude || 'N/A',
-    post.upvotes || 0,
-    post.downvotes || 0,
-  ]);
+  // Helper function to export CSV
+  const exportToCSV = (data, filename) => {
+    const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
+    const rows = data.map(post => [
+      post.id,
+      post.title || 'Untitled Post',
+      post.body || 'No content',
+      post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
+      post.location?.latitude || 'N/A',
+      post.location?.longitude || 'N/A',
+      post.upvotes || 0,
+      post.downvotes || 0,
+    ]);
 
-  const csvContent =
-    'data:text/csv;charset=utf-8,' +
-    [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `${filename}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `${filename}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-// Helper function to export PDF
-const exportToPDF = (data, filename) => {
-  const doc = new jsPDF();
+  // Helper function to export PDF
+  const exportToPDF = (data, filename) => {
+    const doc = new jsPDF();
 
-  // Add title
-  doc.setFontSize(18);
-  doc.text('Posts Report', 14, 20);
+    // Add title
+    doc.setFontSize(18);
+    doc.text('Posts Report', 14, 20);
 
-  // Add table headers
-  const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
-  const rows = data.map(post => [
-    post.id,
-    post.title || 'Untitled Post',
-    post.body || 'No content',
-    post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
-    post.location?.latitude || 'N/A',
-    post.location?.longitude || 'N/A',
-    post.upvotes || 0,
-    post.downvotes || 0,
-  ]);
+    // Add table headers
+    const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
+    const rows = data.map(post => [
+      post.id,
+      post.title || 'Untitled Post',
+      post.body || 'No content',
+      post.createdAt ? new Date(post.createdAt).toLocaleString() : 'N/A',
+      post.location?.latitude || 'N/A',
+      post.location?.longitude || 'N/A',
+      post.upvotes || 0,
+      post.downvotes || 0,
+    ]);
 
-  doc.autoTable({
-    head: [headers],
-    body: rows,
-    startY: 30,
-    styles: { fontSize: 10 },
-  });
+    doc.autoTable({
+      head: [headers],
+      body: rows,
+      startY: 30,
+      styles: { fontSize: 10 },
+    });
 
-  doc.save(`${filename}.pdf`);
-};
+    doc.save(`${filename}.pdf`);
+  };
 
   const [posts, setPosts] = useState([]);
   const [originalPosts, setOriginalPosts] = useState([]);
@@ -87,9 +88,9 @@ const exportToPDF = (data, filename) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const dropdownRef = useRef(null);
-  
+  const dropdownRefs = useRef({});
 
+  // Fetch posts on component mount
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -109,21 +110,32 @@ const exportToPDF = (data, filename) => {
         } else {
           console.log("No data available");
         }
-        setTimeout(() => {
-          setLoading(false); // Stop loading once data is fetched
-      }, 1000); // 5-second delay
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching users:', error);
-    } finally {
-        // Simulate a loading delay (5 seconds)
-        setTimeout(() => {
-            setLoading(false); // Stop loading once data is fetched
-        }, 5000); // 5-second delay
-    }
+        setLoading(false);
+      }
     };
     fetchPosts();
   }, []);
 
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      Object.values(dropdownRefs.current).forEach((ref) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setDropdownOpen(null);
+        }
+      });
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Google Maps script loading
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`;
@@ -146,26 +158,7 @@ const exportToPDF = (data, filename) => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(null);
-      }
-    };
-
-    const handleScroll = () => {
-      setDropdownOpen(null);
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
+  // Initialize Google Maps for posts with location
   const initializeMap = (postId, lat, lng) => {
     const mapElement = document.getElementById(`map-${postId}`);
     if (mapElement && window.google) {
@@ -182,6 +175,7 @@ const exportToPDF = (data, filename) => {
     }
   };
 
+  // Render maps when posts or Google Maps script loads
   useEffect(() => {
     if (window.google) {
       posts.forEach((post) => {
@@ -192,11 +186,13 @@ const exportToPDF = (data, filename) => {
     }
   }, [posts]);
 
+  // Delete post handler
   const handleDeleteClick = (post) => {
     setSelectedPost(post);
     setShowDeleteModal(true);
   };
 
+  // Export posts handler
   const handleExport = format => {
     if (format === 'csv') {
       exportToCSV(posts, 'Posts_Report');
@@ -205,45 +201,36 @@ const exportToPDF = (data, filename) => {
     }
   };
 
+  // Confirm delete post
   const handleDeleteConfirm = async () => {
     if (selectedPost) {
       try {
-        setDeleting(true);  // Start deleting (disable UI interactions)
-        await remove(ref(database, `posts/${selectedPost.id}`));  // Remove from Firebase Realtime Database
-        // Update the local state to remove the deleted post
+        setDeleting(true);
+        await remove(ref(database, `posts/${selectedPost.id}`));
         setPosts((prevPosts) => prevPosts.filter((post) => post.id !== selectedPost.id));
         setOriginalPosts((prevPosts) => prevPosts.filter((post) => post.id !== selectedPost.id));
-        setSuccessMessage('Post deleted successfully!');  // Show success message
+        toast.success("Post deleted successfully!"); // Success toast
       } catch (error) {
         console.error('Error deleting post:', error);
-        setErrorMessage('Failed to delete the post. Please try again.');  // Show error message
+        toast.error("Failed to delete the post. Please try again."); // Error toast
       } finally {
-        setDeleting(false);  // Reset deleting state (reenable UI interactions)
-        setShowDeleteModal(false);  // Close the delete confirmation modal
-        setSelectedPost(null);  // Reset selected post
+        setDeleting(false);
+        setShowDeleteModal(false);
+        setSelectedPost(null);
       }
     }
   };
   
+
+  // Close delete modal
   const handleCloseDeleteModal = () => {
     setIsClosing(true);
     setTimeout(() => {
-      setShowDeleteModal(false);  // Close modal after animation
-    }, 300);  // Adjust the timing for the animation if needed
+      setShowDeleteModal(false);
+    }, 300);
   };
 
-  const handleMarkResolved = async (post) => {
-    try {
-      await update(ref(database, `posts/${post.id}`), { resolved: true });
-      setPosts(posts.map((p) => (p.id === post.id ? { ...p, resolved: true } : p)));
-      setSuccessMessage('Post marked as resolved!');
-      setDropdownOpen(null);
-    } catch (error) {
-      console.error('Error marking post as resolved:', error);
-      setErrorMessage('Error marking post as resolved. Please try again.');
-    }
-  };
-
+  // Edit post handler
   const handleEditClick = (post) => {
     setEditPost(post);
     setShowEditModal(true);
@@ -257,19 +244,10 @@ const exportToPDF = (data, filename) => {
     }, 100);
   };
 
-  const handleCloseModal = () => {
-    setShowEditModal(false);
-    document.body.style.overflow = 'auto';
-  };
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => setShowDeleteModal(false), 300);
-  };
-
+  // Submit edited post
   const handleEditSubmit = async () => {
     if (!editPost?.title.trim() || !editPost?.body.trim()) {
-      setErrorMessage('Title and Body cannot be empty.');
+      toast.error("Title and Body cannot be empty."); // Error toast
       return;
     }
 
@@ -277,17 +255,19 @@ const exportToPDF = (data, filename) => {
       await update(ref(database, `posts/${editPost.id}`), {
         title: editPost.title,
         body: editPost.body,
-      });      
+      });
+
       setPosts(posts.map((p) => (p.id === editPost.id ? editPost : p)));
-      setSuccessMessage('Post updated successfully!');
+      toast.success("Post updated successfully!"); // Success toast
       setShowEditModal(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
-      console.error('Error updating post:', error);
-      setErrorMessage('Failed to update the post. Please try again.');
+      console.error("Error updating post:", error);
+      toast.error("Failed to update the post. Please try again."); // Error toast
     }
   };
+  
 
+  // Sort posts handler
   const handleSortChange = (option) => {
     setSortOption(option);
     let sortedPosts = [...originalPosts];
@@ -304,6 +284,7 @@ const exportToPDF = (data, filename) => {
     setShowAllPosts(false);
   };
 
+  // Render location section for posts
   const renderLocationSection = (post) => {
     if (post.location?.latitude && post.location?.longitude) {
       return (
@@ -312,30 +293,41 @@ const exportToPDF = (data, filename) => {
             <p><strong>Latitude:</strong> {post.location.latitude}</p>
             <p><strong>Longitude:</strong> {post.location.longitude}</p>
           </div>
-         
         </div>
       );
     }
     return null;
   };
 
-  
+  // Loading state
   if (isLoading) {
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Player
-                autoplay
-                loop
-                src={loadingAnimation}
-                style={{ height: '150px', width: '150px' }}
-            />
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Player
+          autoplay
+          loop
+          src={loadingAnimation}
+          style={{ height: '150px', width: '150px' }}
+        />
+      </div>
     );
-}
+  }
 
   return (
+
     <div className="container">
-       <div className="export-container">
+  
+    <ToastContainer
+                position="top-center"
+                autoClose={500} // 0.5 seconds
+                hideProgressBar
+                closeOnClick
+                transition={Slide}
+            />
+
+  
+      {/* Export dropdown */}
+      <div className="export-container">
         <div className="dropdown">
           <button className="export-dropdown-button">Export</button>
           <div className="dropdown-menu">
@@ -348,8 +340,10 @@ const exportToPDF = (data, filename) => {
           </div>
         </div>
       </div>
+
       {successMessage && <p className="success-message">{successMessage}</p>}
 
+      {/* Sort dropdown */}
       <div className="flex justify-end mb-4">
         <div className="relative dropdown-container">
           <button
@@ -390,6 +384,7 @@ const exportToPDF = (data, filename) => {
         </div>
       </div>
 
+      {/* Posts list */}
       <div className="posts-list">
         {(showAllPosts ? originalPosts : posts).map((post) => (
           <div key={post.id} className="post-item">
@@ -397,20 +392,25 @@ const exportToPDF = (data, filename) => {
               <div className="user-info">
                 <img src={post.photoURL || '/path-to-default-user-photo.png'} alt="User Photo" className="user-photo" />
                 <p className="username">{post.displayName || 'Anonymous User'}</p>
-                <button className="dropdown-btn" onClick={() => setDropdownOpen(post.id)}>
-                  <FontAwesomeIcon icon={faEllipsisV} />
-                </button>
-              </div>
-              {dropdownOpen === post.id && (
-                <div className="dropdown-menu">
-                  <button className="dropdown-item" onClick={() => handleDeleteClick(post)}>
-                    Delete
+
+                {/* Replace ellipsis dropdown with action icons */}
+                <div className="icon-actions">
+                  <button
+                    className="icon-button edit-button"
+                    onClick={() => handleEditClick(post)}
+                    title="Edit Post"
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
                   </button>
-                  <button className="dropdown-item" onClick={() => handleEditClick(post)}>
-                    Edit
+                  <button
+                    className="icon-button delete-button"
+                    onClick={() => handleDeleteClick(post)}
+                    title="Delete Post"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="post-body">
@@ -436,58 +436,61 @@ const exportToPDF = (data, filename) => {
       </div>
 
       {/* Delete Confirmation Modal */}
-{showDeleteModal && (
-  <div className={`modal-container ${isClosing ? 'closing' : ''}`}>
-    <div className="modal-content">
-      <h3>Are you sure you want to delete this post?</h3>
-      <p className="confirmation-text">This action cannot be undone.</p>
-      <div className="modal-actions">
-        <button onClick={handleCloseDeleteModal} disabled={deleting} className="cancel-button">
-          Cancel
-        </button>
-        <button onClick={handleDeleteConfirm} disabled={deleting} className="delete-button">
-          {deleting ? 'Deleting...' : 'Delete'}
-        </button>
+      {showDeleteModal && (
+      <div className={`modal-container ${isClosing ? 'closing' : ''}`}>
+        <div className="modal-content">
+          <h3>Are you sure you want to delete this post?</h3>
+          <p className="confirmation-text">This action cannot be undone.</p>
+          <div className="modal-actions">
+            <button onClick={handleCloseDeleteModal} disabled={deleting} className="cancel-button">
+              Cancel
+            </button>
+            <button onClick={handleDeleteConfirm} disabled={deleting} className="delete-button">
+              {deleting ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {successMessage && <p className="success-message">{successMessage}</p>}
+        </div>
       </div>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      {successMessage && <p className="success-message">{successMessage}</p>}
-    </div>
-  </div>
-)}
+    )}
 
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-container edit-modal">
-            <h2>Edit Post</h2>
-            <input
-              type="text"
-              placeholder="Enter title"
-              value={editPost?.title || ""}
-              onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
-            />
-            <textarea
-              placeholder="Enter body"
-              value={editPost?.body || ""}
-              onChange={(e) => setEditPost({ ...editPost, body: e.target.value })}
-            />
-            <div className="modal-actions">
-              <button
-                className="modal-button cancel"
-                onClick={() => setShowEditModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="modal-button confirm"
-                onClick={handleEditSubmit}
-              >
-                Save
-              </button>
-            </div>
+
+{showEditModal && (
+      <div className="modal-overlay">
+        <div className="modal-container edit-modal">
+          <h2>Edit Post</h2>
+          <input
+            className="modal-input"
+            type="text"
+            placeholder="Enter title"
+            value={editPost?.title || ""}
+            onChange={(e) => setEditPost({ ...editPost, title: e.target.value })}
+          />
+          <textarea
+            className="modal-textarea"
+            placeholder="Enter body"
+            value={editPost?.body || ""}
+            onChange={(e) => setEditPost({ ...editPost, body: e.target.value })}
+          />
+          <div className="modal-actions">
+            <button
+              className="modal-button cancel"
+              onClick={() => setShowEditModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="modal-button confirm"
+              onClick={handleEditSubmit}
+            >
+              Save
+            </button>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    )}
+  </div>
   );
 };
 
