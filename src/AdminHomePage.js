@@ -31,7 +31,7 @@ import { ref, onValue, off, set, remove } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { storage } from './firebaseConfig'; // Import storage from your Firebase configuration
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
