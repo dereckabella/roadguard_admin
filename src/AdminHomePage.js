@@ -30,7 +30,7 @@ import { database } from './firebaseConfig';
 import { ref, onValue, off, set, remove } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import DatePicker from "react-datepicker";
+
 
 import { storage } from './firebaseConfig'; // Import storage from your Firebase configuration
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -804,111 +804,6 @@ useEffect(() => {
   </div>
 )}
 
-{showFilterModal && (
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    }}
-  >
-    <div
-      style={{
-        width: "400px",
-        background: "#FFF",
-        borderRadius: "10px",
-        padding: "20px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
-      }}
-    >
-      <h3 style={{ marginBottom: "20px", textAlign: "center" }}>Filter Markers</h3>
-
-      {/* Date Filter */}
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ display: "block", marginBottom: "5px" }}>Date Range</label>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          selectsStart
-          startDate={startDate}
-          endDate={endDate}
-          placeholderText="Start Date"
-          style={{ marginBottom: "10px" }}
-        />
-        <DatePicker
-          selected={endDate}
-          onChange={(date) => setEndDate(date)}
-          selectsEnd
-          startDate={startDate}
-          endDate={endDate}
-          minDate={startDate}
-          placeholderText="End Date"
-        />
-      </div>
-
-      {/* Category Filter */}
-      <div style={{ marginBottom: "15px" }}>
-      <label style={{ display: "block", marginBottom: "5px" }}>Filter by Category</label>
-      <select
-    value={tempFilterCategory}
-    onChange={(e) => setTempFilterCategory(e.target.value)}
-    style={{
-      width: "100%",
-      padding: "10px",
-      borderRadius: "5px",
-      border: "1px solid #ddd",
-    }}
-  >
-    {categories.map((category) => (
-      <option key={category} value={category}>
-        {category}
-      </option>
-    ))}
-  </select>
-      </div>
-
-      {/* Modal Actions */}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button
-          onClick={() => setShowFilterModal(false)}
-          style={{
-            padding: "10px 15px",
-            borderRadius: "5px",
-            background: "#6C757D",
-            color: "#FFF",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={() => {
-            setFilterCategory(tempFilterCategory);
-            handleDateFilter(); // Apply date filter
-            setShowFilterModal(false);
-          }}
-          style={{
-            padding: "10px 15px",
-            borderRadius: "5px",
-            background: "#007BFF",
-            color: "#FFF",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Apply Filters
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
 
 {selectedPost && !showFormModal && (
