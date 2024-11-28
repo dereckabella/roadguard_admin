@@ -1,14 +1,12 @@
 /* Analytics Container */
 .analytics-container {
-    background: linear-gradient(135deg, #000B58, #1C2E68); /* Gradient matching the navbar's blue */
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
     max-width: 1200px;
     width: 90%;
     margin: 20px auto;
     animation: fadeIn 1s ease-in-out;
-    color: #E0E0E0; /* Light text for better readability */
+    color: black; /* Light text for better readability */
 }
 
 /* Fade-in Animation */
@@ -46,12 +44,19 @@ input[type="date"], select {
     padding: 12px;
     font-size: 1rem;
     border-radius: 8px;
-
-    border: 1px solid #FFD700; /* Yellow border for accents */
+    border: 1px solid #ccc; /* Yellow border for accents */
     transition: all 0.3s ease;
     color: #000;
     outline: none;
     font-weight: bold;
+}
+
+.main-content-container input{
+    width: 100%;
+}
+
+.chart-controls input{
+    width: 100%;
 }
 
 input[type="date"]:focus, select:focus {
@@ -71,7 +76,6 @@ input[type="date"]:focus, select:focus {
 
 label {
     font-size: 1rem;
-    color: #FFD700; /* Yellow text for labels */
     font-weight: bold;
 }
 
@@ -121,13 +125,15 @@ h3 {
     cursor: pointer;
     transition: all 0.3s ease;
     color: #FFF;
-    background: linear-gradient(45deg, #FFD700, #FFB300); /* Yellow gradient for buttons */
+    background: linear-gradient(to bottom, #FFD700, #FFB300); /* Yellow gradient for buttons */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     font-weight: bold;
 }  
 
 .export-button:hover {
     transform: translateY(-3px); /* Hover effect */
+    opacity: 0.5;
+    color: black;
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 

@@ -1,23 +1,53 @@
 .review-reports table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 20px auto;
-    background-color: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .review-reports th,
-  .review-reports td {
-    border: 1px solid #ddd;
-    padding: 20px;
-    text-align: left;
-  }
-  
-  .review-reports th {
-    background-color: #2c3e50; /* Darker shade for headers */
-    border: 0;
-    padding: 20px;
-  }
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.review-reports th,
+.review-reports td {
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: left;
+}
+
+.review-reports th {
+  background-color: #2c3e50; /* Darker shade for headers */
+  border: 0;
+  padding: 20px;
+}
+.export-buttons {
+  display: flex;
+  justify-content: flex-start; /* Align content to the left */
+  padding: 10px 0; /* Add some padding for spacing */
+}
+
+.export-button {
+  padding: 10px 20px;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce); /* Gradient */
+  color: white; /* Text color */
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px; /* Rounded corners */
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+
+.export-button:hover {
+  background: linear-gradient(to bottom, #3182ce, #6b46c1); /* Reverse gradient on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+}
+
+.export-button:active {
+  transform: translateY(1px); /* Press effect */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Reduced shadow on press */
+}

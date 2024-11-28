@@ -6,11 +6,19 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Player } from '@lottiefiles/react-lottie-player';
 import loadingAnimation from './lottie/loading.json';
 import {  Slide } from 'react-toastify';
-
+import jsPDF from 'jspdf'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {
+  Chart,
+  ArcElement,
+  Tooltip,
+  Legend,
+  PieController,
+} from 'chart.js';  
 
 
+Chart.register(PieController, ArcElement, Tooltip, Legend);
 
 const SubscriptionManagement = () => {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -35,6 +43,7 @@ const [addPlanMessage, setAddPlanMessage] = useState('');
 const [deleteFeedbackModalOpen, setDeleteFeedbackModalOpen] = useState(false);
 const [deleteFeedbackMessage, setDeleteFeedbackMessage] = useState('');
 const [isButtonDisabled, setIsButtonDisabled] = useState(false); // State to track button disable
+
 
   useEffect(() => {
     if (isActivationModalOpen) {
@@ -62,28 +71,134 @@ useEffect(() => {
   const fetchSubscriptions = async () => {
     try {
       const dbRef = ref(database);
-      const snapshot = await get(child(dbRef, 'subscriptions'));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        const formattedData = Object.entries(data).map(([key, value]) => ({
-          id: key,
-          ...value,
-        }));
-        setSubscriptions(formattedData);
-      } else {
-        console.log('No data available');
-      }
+
+      // Fetch current subscriptions
+      const subscriptionsSnapshot = await get(child(dbRef, 'subscriptions'));
+      const subscriptionsData = subscriptionsSnapshot.exists()
+        ? Object.entries(subscriptionsSnapshot.val()).map(([key, value]) => ({
+            id: key,
+            type: 'Current', // Label for current subscriptions
+            ...value,
+          }))
+        : [];
+
+      // Fetch subscription history
+      const historySnapshot = await get(child(dbRef, 'subscriptions_history'));
+      const historyData = historySnapshot.exists()
+        ? Object.entries(historySnapshot.val()).flatMap(([userId, history]) =>
+            Object.entries(history).map(([key, value]) => ({
+              id: key,
+              userId,
+              type: 'History', // Label for subscription history
+              ...value,
+            }))
+          )
+        : [];
+
+      // Combine current subscriptions and history
+      const combinedData = [...subscriptionsData, ...historyData];
+      setSubscriptions(combinedData);
     } catch (error) {
       console.error('Error fetching subscriptions:', error);
+    } finally {
+      setLoading(false);
     }
-    // Simulate a loading delay (2 seconds) before hiding the loader
-    setTimeout(() => {
-      setLoading(false); // Stop loading once data is fetched
-    }, 2000); // 2-second delay
   };
 
   fetchSubscriptions();
 }, []);
+
+
+
+const exportToPDF = async () => {
+  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait orientation, mm units, A4 size
+
+  // Add Title Section
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.text('Subscription Management Report', 15, 15);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.text(`Generated On: ${new Date().toLocaleString()}`, 15, 22);
+
+  // Add Summary Section
+  const summaryX = 15;
+  let summaryY = 30;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.text('Summary', summaryX, summaryY);
+
+  const summaryData = [
+    ['Total Sales', `₱ ${totalSales.toLocaleString()}`],
+    ['Total Users', totalEmails],
+    ['Active Subscriptions', totalActive],
+    ['Inactive Subscriptions', totalInactive],
+    ['Expired Subscriptions', totalExpired],
+  ];
+
+  doc.setFontSize(12);
+  summaryData.forEach(([key, value], index) => {
+    doc.text(`${key}:`, summaryX, summaryY + 8 + index * 6);
+    doc.text(value.toString(), summaryX + 60, summaryY + 8 + index * 6);
+  });
+
+  // Add Subscription Table
+  const headers = [['Email', 'Amount', 'Duration', 'Start Date', 'End Date', 'Status']];
+  const rows = subscriptions.map((sub) => [
+    sub.email,
+    sub.amount,
+    sub.duration,
+    sub.startDate ? new Date(sub.startDate).toLocaleDateString() : 'N/A',
+    sub.endDate ? new Date(sub.endDate).toLocaleDateString() : 'N/A',
+    sub.active
+      ? 'Active'
+      : checkIfExpired(sub.endDate)
+      ? 'Expired'
+      : 'Inactive',
+  ]);
+
+  doc.autoTable({
+    startY: summaryY + 40,
+    head: headers,
+    body: rows,
+    theme: 'grid',
+    headStyles: { fillColor: [33, 150, 243], textColor: 255, fontSize: 10 },
+    bodyStyles: { fontSize: 9, textColor: 50 },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+  });
+
+  // Add Chart Section
+  const chartYPosition = doc.lastAutoTable.finalY + 10;
+
+  // Create Canvas for Charts
+  const canvas = document.createElement('canvas');
+  canvas.width = 300;
+  canvas.height = 150;
+
+  const ctx = canvas.getContext('2d');
+
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Active', 'Inactive', 'Expired'],
+      datasets: [
+        {
+          data: [totalActive, totalInactive, totalExpired],
+          backgroundColor: ['#2ecc71', '#f1c40f', '#e74c3c'],
+        },
+      ],
+    },
+    options: { responsive: false },
+  });
+
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for chart rendering
+
+  const chartDataURL = canvas.toDataURL('image/png');
+  doc.addImage(chartDataURL, 'PNG', 15, chartYPosition, 180, 90);
+
+  // Save the PDF
+  doc.save('subscription_report.pdf');
+};
 
   const checkIfExpired = (endDate) => {
     const currentDate = new Date();
@@ -91,6 +206,18 @@ useEffect(() => {
     return expirationDate < currentDate;
   };
   
+ // Ensure 'amount' values are numbers and sum them up
+ const totalSales = subscriptions.reduce((sum, sub) => {
+  const rawAmount = sub.amount || "0"; // Default to "0" if amount is missing
+  const numericAmount = parseFloat(rawAmount.replace(/[^0-9.]/g, "")); // Remove non-numeric characters
+  return sum + (isNaN(numericAmount) ? 0 : numericAmount); // Add only valid numbers
+}, 0);
+
+  const totalEmails = new Set(subscriptions.map((sub) => sub.email)).size;
+  const totalActive = subscriptions.filter((sub) => sub.active).length;
+  const totalInactive = subscriptions.filter((sub) => !sub.active && !checkIfExpired(sub.endDate)).length;
+  const totalExpired = subscriptions.filter((sub) => checkIfExpired(sub.endDate)).length;
+
   const activateSubscription = async (subscriptionId) => {
     if (!subscriptionId) {
       toast.error('Invalid subscription ID.', { autoClose: 1500 });
@@ -335,12 +462,43 @@ const openConfirmationModal = (planId) => {
                 hideProgressBar
                 closeOnClick
                 transition={Slide}
+                closeButton={true}
             />
 
 {/* Manage Plans Button */}
-<button className="manage-plans-button" onClick={openModal}>
-  Manage Plans
-</button>
+<div className="top-content">
+  <div className="top-buttons">
+    <button className="manage-plans-button" onClick={openModal}>
+      Manage Plans
+    </button>
+    <button className="export-pdf-button" onClick={exportToPDF}>
+      Export to PDF
+    </button>
+  </div>
+    {/* Summary Container */}
+  <div className="summary-container">
+    <div className="summary-item">
+      <h3>Total Sales</h3>
+      <p>₱{totalSales.toLocaleString()}</p> {/* Formats the number with commas */}
+    </div>
+      <div className="summary-item">
+        <h3>Total Users</h3>
+        <p>{totalEmails}</p>
+      </div>
+      <div className="summary-item">
+        <h3>Active</h3>
+        <p>{totalActive}</p>
+      </div>
+      <div className="summary-item">
+        <h3>Inactive</h3>
+        <p>{totalInactive}</p>
+      </div>
+      <div className="summary-item">
+        <h3>Expired</h3>
+        <p>{totalExpired}</p>
+      </div>
+  </div>
+</div>
 
 {isLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -353,75 +511,58 @@ const openConfirmationModal = (planId) => {
         </div>
       ) : (
         <table className="subscription-table">
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Amount</th>
-              <th>Duration</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Status</th>
-              <th style={{ textAlign: 'center' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((subscription) => {
-              const isExpired = checkIfExpired(subscription.endDate);
-              return (
-                <tr key={subscription.id}>
-                  <td>{subscription.email}</td>
-                  <td>{subscription.amount}</td>
-                  <td>{subscription.duration}</td>
-                  <td>
-                    {subscription.startDate
-                      ? new Date(subscription.startDate).toLocaleDateString()
-                      : 'N/A'}
-                  </td>
-                  <td>
-                    {subscription.endDate
-                      ? new Date(subscription.endDate).toLocaleDateString()
-                      : 'N/A'}
-                  </td>
-                  <td>
-                    {isExpired ? (
-                      <span className="expired-status">Expired</span>
-                    ) : subscription.active ? (
-                      <span className="approved-status">Active</span>
-                    ) : (
-                      <span className="inactive-status">Inactive</span>
-                    )}
-                  </td>
-                  <td>
-                    <button
-                      className="view-invoice-button"
-                      onClick={() => viewInvoice(subscription.id)}
-                    >
-                      View Invoice
-                    </button>
-                    {!isExpired && subscription.active && (
-                      <button
-                      className="deactivate-button"
-                      onClick={() => deactivateSubscription(subscription.id)}
-                      disabled={isButtonDisabled} // Disable button when isButtonDisabled is true
-                    >
-                      Deactivate
-                    </button>
-                    )}
-                    {!isExpired && !subscription.active && (
-                      <button
-                      className="activate-button"
-                      onClick={() => activateSubscription(subscription.id)}
-                      disabled={isButtonDisabled} // Disable button when isButtonDisabled is true
-                    >
-                      Activate
-                    </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Amount</th>
+      <th>Duration</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Status</th>
+      <th style={{ textAlign: 'center' }}>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {subscriptions.map((subscription) => {
+      const isExpired = subscription.endDate && new Date(subscription.endDate) < new Date();
+      return (
+        <tr key={subscription.id}>
+          <td>{subscription.email}</td>
+          <td>{subscription.amount}</td>
+          <td>{subscription.duration}</td>
+          <td>
+            {subscription.startDate
+              ? new Date(subscription.startDate).toLocaleDateString()
+              : 'N/A'}
+          </td>
+          <td>
+            {subscription.endDate
+              ? new Date(subscription.endDate).toLocaleDateString()
+              : 'N/A'}
+          </td>
+          <td>
+            {isExpired ? (
+              <span className="expired-status">Expired</span>
+            ) : subscription.active ? (
+              <span className="approved-status">Active</span>
+            ) : (
+              <span className="inactive-status">Cancelled</span>
+            )}
+          </td>
+          <td>
+            <button
+              className="view-invoice-button"
+              onClick={() => viewInvoice(subscription.id)}
+            >
+              View Invoice
+            </button>
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+
       )}
 
      {/* Invoice Modal */}

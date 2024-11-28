@@ -180,6 +180,8 @@
 
 .login-header {
   text-align: center;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 5px;
   
 }
@@ -245,7 +247,11 @@
   opacity: 0.9;
 }
 .header-logo {
+  display: flex;
+  position: inherit;
+  margin-left: 90px;
   width: 150px; /* Adjust width as needed */
+  height: auto;
   margin-top: 20px; /* Space below the logo */
 }
 

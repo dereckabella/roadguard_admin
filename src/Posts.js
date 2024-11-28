@@ -15,6 +15,10 @@ import './Posts.css';
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDZShgCYNWnTIkKJFRGsqY8GZDax9Ykqo0';
 
 const Posts = () => {
+
+ 
+  const [selectedPostForPreview, setSelectedPostForPreview] = useState(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   // Helper function to export CSV
   const exportToCSV = (data, filename) => {
     const headers = ['ID', 'Title', 'Content', 'Created At', 'Latitude', 'Longitude', 'Upvotes', 'Downvotes'];
@@ -104,8 +108,14 @@ const Posts = () => {
               ...data,
             });
           });
-          setOriginalPosts(postsData);
-          setPosts(postsData);
+  
+          // Sort posts by most recent first
+          const sortedPosts = postsData.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+  
+          setOriginalPosts(sortedPosts);
+          setPosts(sortedPosts);
         } else {
           console.log("No data available");
         }
@@ -117,6 +127,7 @@ const Posts = () => {
     };
     fetchPosts();
   }, []);
+  
 
   // Handle click outside dropdown
   useEffect(() => {
@@ -200,6 +211,18 @@ const Posts = () => {
     }
   };
 
+
+  // Open preview modal
+  const handleImageClick = (post) => {
+    setSelectedPostForPreview(post);
+    setShowPreviewModal(true);
+  };
+
+  // Close preview modal
+  const handleClosePreviewModal = () => {
+    setShowPreviewModal(false);
+    setSelectedPostForPreview(null);
+  };
   // Confirm delete post
   const handleDeleteConfirm = async () => {
     if (selectedPost) {
@@ -419,7 +442,13 @@ const Posts = () => {
               </p>
 
               {post.imageURL && (
-                <img src={post.imageURL} alt={post.title || 'Post Image'} className="post-image" />
+                <img
+                  src={post.imageURL}
+                  alt={post.title || 'Post Image'}
+                  className="post-image"
+                  onClick={() => handleImageClick(post)} // Click handler
+                  style={{ cursor: 'pointer' }} // Indicate clickability
+                />
               )}
 
               {renderLocationSection(post)}
@@ -453,10 +482,28 @@ const Posts = () => {
       </div>
     )}
 
+{/* Preview Modal */}
+{showPreviewModal && selectedPostForPreview && (
+        <div className="modal-overlay">
+          <div className="modal-container preview-modal">
+            <button className="modal-close" onClick={handleClosePreviewModal}>
+              &times;
+            </button>
+            <h2>{selectedPostForPreview.title || 'Untitled Post'}</h2>
+            <img
+              src={selectedPostForPreview.imageURL}
+              alt={selectedPostForPreview.title || 'Post Image'}
+              className="modal-image"
+            />
+            <p>{selectedPostForPreview.body || 'No content available.'}</p>
+            {renderLocationSection(selectedPostForPreview)}
+          </div>
+        </div>
+      )}
 
 {showEditModal && (
       <div className="modal-overlay">
-        <div className="modal-container edit-modal">
+        <div className="modal-container-edit edit-modal">
           <h2>Edit Post</h2>
           <input
             className="modal-input"

@@ -1,10 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.top-content{
+  position: relative;
+  display: inline-flex;
+  gap: 120px;
+}
+
 /* Manage Plans Button */
 .manage-plans-button {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #3498db, #2c82c9); /* Gradient blue */
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
   color: white;
   border: none;
   border-radius: 8px;
@@ -13,6 +20,8 @@
   transition: all 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
   font-weight: bold;
+display: flex;
+  gap: 16px;
 }
 
 .manage-plans-button:hover {
@@ -27,6 +36,37 @@
 }
 
 .manage-plans-button:active {
+  background: #1f6694; /* Solid darker blue */
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px); /* Pressed effect */
+}
+
+.export-pdf-button {
+  padding: 12px 24px;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  margin-left: auto;
+}
+
+.export-pdf-button:hover {
+  background: linear-gradient(135deg, #2980b9, #2575a6); /* Darker gradient */
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.5), 0 3px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.export-pdf-button:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4); /* Add focus ring */
+}
+
+.export-pdf-button:active {
   background: #1f6694; /* Solid darker blue */
   box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4), 0 1px 3px rgba(0, 0, 0, 0.1);
   transform: translateY(1px); /* Pressed effect */
@@ -144,15 +184,17 @@ button {
 
 /* View Invoice Button */
 .view-invoice-button {
-  background: linear-gradient(135deg, #16a085, #1abc9c); /* Green gradient */
+  background: linear-gradient(to top, #6b46c1, #3182ce);
   color: white;
   margin-right: 20px;
 }
 
 .view-invoice-button:hover {
-  background: linear-gradient(135deg, #149174, #16a085);
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
+  color: black;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.5;
 }
 
 .view-invoice-button:focus {
@@ -168,15 +210,17 @@ button {
 
 /* Deactivate Button */
 .deactivate-button {
-  background: linear-gradient(135deg, #e74c3c, #c0392b); /* Red gradient */
+  background: linear-gradient(to bottom, #d32f2f, #691818);
   color: white;
   margin-left: 20px;
 }
 
 .deactivate-button:hover {
-  background: linear-gradient(135deg, #c0392b, #a83224);
+  background: linear-gradient(to bottom, #d32f2f, #691818);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+  opacity: 0.5;
+  color: black;
 }
 
 .deactivate-button:focus {
@@ -192,14 +236,16 @@ button {
 
 /* Activate Button */
 .activate-button {
-  background: linear-gradient(135deg, #27ae60, #2ecc71); /* Bright green gradient */
+  background: linear-gradient(to bottom, #2fd350, #26821e);
   color: white;
 }
 
 .activate-button:hover {
-  background: linear-gradient(135deg, #229e55, #27ae60);
+  background: linear-gradient(to bottom, #2fd350, #26821e);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+  opacity: 0.5;
+  color: black;
 }
 
 .activate-button:focus {
@@ -914,4 +960,80 @@ button {
   to {
       opacity: 0;
   }
+}
+
+table button{
+  width: 150px;
+}
+
+/* Custom CSS for React Toastify */
+.Toastify__toast {
+  margin-top: 20px;
+  background-color: #333 !important; /* Toast background color */
+  color: #fff !important; /* Text color */
+  font-family: 'Arial', sans-serif; /* Custom font */
+  border-radius: 8px !important; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important; /* Shadow effect */
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(to bottom, #2fd350, #26821e) !important;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(to bottom, #d32f2f, #691818) !important;
+}
+
+.Toastify__progress-bar {
+  background: #ff9800 !important; /* Custom progress bar color */
+}
+
+.Toastify__close-button {
+  z-index: 10000 !important; /* Ensure it is above other elements */
+  pointer-events: auto; /* Ensure clicks are allowed */
+}
+/* SubscriptionManagement.css */
+
+.summary-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+.summary-item {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 150px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 20px;
+}
+
+.summary-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.summary-item h3 {
+  font-size: 1.2rem;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.summary-item p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007BFF; /* Blue color for numbers */
+}
+
+.summary-item p:after {
+  content: '';
+  display: block;
+  margin: 8px auto;
+  width: 50px;
+  height: 2px;
+  background: #007BFF; /* Matches the number color */
 }

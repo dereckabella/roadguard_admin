@@ -163,6 +163,21 @@
   align-items: center;
 }
 
+.modal-container-edit {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 10001; /* Ensure it's above the overlay */
+  width: 100%;
+  max-width: 500px;
+  animation: modalFadeIn 0.3s ease forwards;
+  display: flex; /* Ensure content aligns properly */
+  flex-direction: column; /* Allow vertical stacking inside modal */
+  justify-content: center;
+  align-items: center;
+}
+
 /* Modal Overlay with Blur Effect */
 .modal-overlay {
   position: fixed;
@@ -170,11 +185,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Dark semi-transparent background */
-  backdrop-filter: blur(8px); /* Blur effect */
-  z-index: 10000; /* Place below the modal container */
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
   animation: overlayFadeIn 0.3s ease forwards;
 }
+
 
 /* Fade In Animation for Modal */
 @keyframes modalFadeIn {
@@ -596,31 +612,51 @@ body.modal-open {
 }
 
 .export-container button {
-  position: inherit;
-  display: inline;
-  top: 0;
-  margin-left: 20px;
-  gap: 5px;
-  background-color: white;
-  color: black;
+  padding: 10px 20px;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce); /* Gradient background */
+  color: white; /* White text */
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px; /* Rounded corners */
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+  margin-left: 20px; /* Space between buttons */
 }
 
-.export-container button:hover{
-  background-color: #bebebe;
+.export-container button:hover {
+  background: linear-gradient(to bottom, #3182ce, #6b46c1); /* Reverse gradient on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
+}
+
+.export-container button:active {
+  transform: translateY(1px); /* Press effect */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Reduced shadow on press */
+}
+
+.posts button {
+  padding: 10px 20px;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce); /* Gradient background */
   color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.posts button{
-  background: linear-gradient(to bottom, #1293cb, #4f2ec7);
-  margin-bottom: 0;
+.posts button:hover {
+  background: linear-gradient(to bottom, #3182ce, #6b46c1); /* Reverse gradient */
+  opacity: 0.8; /* Slightly dimmed hover */
+  color: white; /* Keep the text white */
 }
 
-.posts button:hover{
-  background: linear-gradient(to bottom, #1293cb, #4f2ec7); 
-  color: black;
-}
-
-.posts .dropdown-menu{
+.posts .dropdown-menu {
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -628,11 +664,121 @@ body.modal-open {
   margin-bottom: 0;
 }
 
-.posts .dropdown-menu button{
+.posts .dropdown-menu button {
+  padding: 8px 16px;
   margin: 5px;
   width: 50%;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
 }
 
-.posts .dropdown-menu button:hover{
-  color: black;
+.posts .dropdown-menu button:hover {
+  background: linear-gradient(to bottom, #3182ce, #6b46c1); /* Reverse gradient */
+  color: white; /* Ensure text remains white */
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 10001;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Remove redundant styles */
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #ff4c4c;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.modal-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .modal-container {
+    width: 95%;
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+.preview-modal{
+  position: absolute;
+  display: block;
+  top: 10%;
+  left: 30%;
+  margin-bottom: 25px;
+
+}
+
+.preview-modal .modal-close{
+  padding: 1px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(254, 128, 128);
+}
+
+.preview-modal .modal-close:hover{
+  padding: 1px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(254, 128, 128);
+  opacity: 0.5;
+  color: white;
 }

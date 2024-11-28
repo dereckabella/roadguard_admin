@@ -63,10 +63,15 @@ thead {
 
 th, td {
     padding: 20px;
-    text-align: left;
     border-bottom: 1px solid #ddd;
+    vertical-align: middle; /* Center content vertically */
+    text-align: center; /* Center content horizontally */
 }
-
+.actions-container {
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Add space between buttons */
+}
 th {
     font-weight: bold;
 }
@@ -105,28 +110,42 @@ button:focus {
 
 /* Edit Button */
 .edit-btn {
-    background-color: #007bff; /* Blue */
+    background: linear-gradient(to bottom, #6b46c1, #3182ce);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease;
 }
 
 .edit-btn:hover {
-    background-color: #0056b3; /* Darker Blue */
+    background: linear-gradient(to bottom, #6b46c1, #3182ce);
+    opacity: 0.5;
+    color: black;
 }
 
 /* Disable Button */
 .disable-btn.disable {
-    background-color: #f44336; /* Red for "Disable" */
+    background: linear-gradient(to bottom, #d32f2f, #691818);
 }
 
 .disable-btn.disable:hover {
-    background-color: #d32f2f; /* Darker Red */
+    background: linear-gradient(to bottom, #d32f2f, #d83232);
+    opacity: 0.5;
+    color: black;
 }
 
 .disable-btn.enable {
-    background-color: #4CAF50; /* Green for "Enable" */
+    background: linear-gradient(to bottom, #2fd350, #26821e);
 }
 
 .disable-btn.enable:hover {
-    background-color: #45a049; /* Darker Green */
+    background: linear-gradient(to bottom, #2fd350, #26821e);
+    opacity: 0.5;
+    color: black;
 }
 
 /* Toast Notifications */
@@ -198,4 +217,8 @@ button:focus {
     100% {
         opacity: 1;
     }
+}
+
+table button{
+    width: 100px;
 }

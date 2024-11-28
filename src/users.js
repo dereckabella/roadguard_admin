@@ -86,40 +86,22 @@ const Users = () => {
     const editUser = async (userId) => {
         toast.dismiss(); // Dismiss any existing toasts
         const user = users.find(user => user.id === userId);
-
-        const newDocumentId = prompt('Enter new Document ID (email):', userId);
+    
         const newDisplayName = prompt('Enter new Display Name:', user.displayName);
-
+        // Document ID (email) should not be editable
+        // const newDocumentId = prompt('Enter new Document ID (email):', userId); 
+    
         // Validation checks
-        if (!newDocumentId || !newDisplayName || newDocumentId.trim() === '' || newDisplayName.trim() === '') {
-            toast.error('Document ID and Display Name cannot be empty!', { autoClose: 500 });
+        if (!newDisplayName || newDisplayName.trim() === '') {
+            toast.error('Display Name cannot be empty!', { autoClose: 500 });
             return;
         }
-
+    
         try {
-            if (newDocumentId !== userId) {
-                const oldUserDoc = doc(firestore, 'users', userId);
-                const newUserDoc = doc(firestore, 'users', newDocumentId);
-
-                await setDoc(newUserDoc, {
-                    ...user,
-                    id: newDocumentId,
-                    displayName: newDisplayName,
-                    email: newDocumentId,
-                });
-
-                await deleteDoc(oldUserDoc);
-
-                setUsers(users.map(user =>
-                    user.id === userId
-                        ? { ...user, id: newDocumentId, displayName: newDisplayName, email: newDocumentId }
-                        : user
-                ));
-                toast.success('Document ID and Display Name updated successfully!', { autoClose: 500 });
-            } else {
+            if (newDisplayName !== user.displayName) {
                 const userDoc = doc(firestore, 'users', userId);
                 await updateDoc(userDoc, { displayName: newDisplayName });
-
+    
                 setUsers(users.map(user =>
                     user.id === userId
                         ? { ...user, displayName: newDisplayName }
@@ -132,7 +114,7 @@ const Users = () => {
             toast.error('Failed to update user!', { autoClose: 500 });
         }
     };
-
+    
     const disableUser = async (userId, currentDisabledStatus) => {
         toast.dismiss(); // Dismiss any existing toasts
         const userDoc = doc(firestore, 'users', userId);

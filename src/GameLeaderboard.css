@@ -192,7 +192,7 @@
 }
 
 .bg-blue-500 {
-  background-color: #2a74a6;
+  background: linear-gradient(to bottom, #3182ce, #6b46c1);
 }
 
 .bg-blue-500:hover {
@@ -279,12 +279,26 @@
 
 .modal .delete-button{
   width: 50%;
-  background-color: #ff4d4f;
+  background: linear-gradient(to bottom, #d32f2f, #691818);
 }
 
 .modal .delete-button:hover{
   width: 50%;
-  background-color: #b33a3c;
+  opacity: 0.5;
+  color: black;
+  background: linear-gradient(to bottom, #d32f2f, #691818);
+}
+
+.modal .edit-button{
+  width: 50%;
+  background: linear-gradient(to bottom, #3182ce, #6b46c1);
+}
+
+.modal .edit-button:hover{
+  width: 50%;
+  opacity: 0.5;
+  color: black;
+  background: linear-gradient(to bottom, #3182ce, #6b46c1);
 }
 
 .reward-list-container {
@@ -436,6 +450,7 @@
 
 /* Buttons */
 .modal button {
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -444,25 +459,32 @@
 }
 
 .modal button:hover {
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
+  opacity: 0.5;
+  color: black;
   transform: scale(1.05);
 }
 
 .modal .view-details-btn {
-  background-color: #1d72f3;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
   color: white;
 }
 
 .modal .view-details-btn:hover {
-  background-color: #155bb5;
+  background: linear-gradient(to bottom, #6b46c1, #3182ce);
+  opacity: 0.5;
+  color: black;
 }
 
 .modal .verify-btn {
-  background-color: #28a745;
+  background: linear-gradient(to bottom, #2fd350, #26821e);
   color: white;
 }
 
 .modal .verify-btn:hover {
-  background-color: #218838;
+  background: linear-gradient(to bottom, #2fd350, #26821e);
+  opacity: 0.5;
+  color: black;
 }
 .Toastify__toast-container {
   text-align: center;
@@ -470,7 +492,7 @@
 
 /* Success Toast Styling */
 .Toastify__toast--success {
-  background-color: #28a745; /* Green background */
+  background: linear-gradient(to bottom, #2fd350, #26821e);
   color: white; /* White text */
   font-weight: bold;
   text-align: center;
@@ -481,7 +503,7 @@
 
 /* Error Toast Styling */
 .Toastify__toast--error {
-  background-color: #dc3545; /* Red background for errors */
+  background: linear-gradient(to bottom, #d32f2f, #691818);
   color: white; /* White text */
   font-weight: bold;
   text-align: center;
@@ -509,4 +531,21 @@
   to {
       opacity: 0;
   }
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(to bottom, #2fd350, #26821e) !important;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(to bottom, #d32f2f, #691818) !important;
+}
+
+.Toastify__progress-bar {
+  background: #ff9800 !important; /* Custom progress bar color */
+}
+
+.Toastify__close-button {
+  z-index: 10000 !important; /* Ensure it is above other elements */
+  pointer-events: auto; /* Ensure clicks are allowed */
 }
