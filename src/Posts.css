@@ -443,23 +443,23 @@ body.modal-open {
 }
 
 /* Cancel Button */
-.modal-button.cancel {
+.modal-button-cancel.cancel {
   background: #edf2f7;
   color: #2d3748;
 }
 
-.modal-button.cancel:hover {
+.modal-button-cancel.cancel:hover {
   background: #e2e8f0;
 }
 
 /* Confirm Button */
-.modal-button.confirm {
+.modal-button-confirm.confirm {
   background: #3182ce;
   color: #ffffff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.modal-button.confirm:hover {
+.modal-button-confirm.confirm:hover {
   background: #2b6cb0;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
@@ -781,4 +781,116 @@ p {
   background-color: rgb(254, 128, 128);
   opacity: 0.5;
   color: white;
+}
+
+/* Modal container */
+/* Modal container specific to delete action */
+.modal-container-delete {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-container-delete.closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal header */
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333; /* Make header text darker */
+}
+
+/* Confirmation text */
+.confirmation-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Modal actions */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Buttons */
+.modal-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 48%;
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cancel button */
+.modal-button.cancel {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.modal-button.cancel:hover {
+  background-color: #e0e0e0;
+}
+
+.modal-button.cancel:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Delete button */
+.modal-button.confirm {
+  background-color: #e74c3c;
+  border: none;
+  color: #fff;
+}
+
+.modal-button.confirm:hover {
+  background-color: #c0392b;
+}
+
+.modal-button.confirm:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+/* Error message */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+/* Success message */
+.success-message {
+  color: #27ae60;
+  font-size: 0.9rem;
+  margin-top: 10px;
 }

@@ -464,23 +464,35 @@ const Posts = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-      <div className={`modal-container ${isClosing ? 'closing' : ''}`}>
-        <div className="modal-content">
-          <h3>Are you sure you want to delete this post?</h3>
-          <p className="confirmation-text">This action cannot be undone.</p>
-          <div className="modal-actions">
-            <button onClick={handleCloseDeleteModal} disabled={deleting} className="cancel-button">
-              Cancel
-            </button>
-            <button onClick={handleDeleteConfirm} disabled={deleting} className="delete-button">
-              {deleting ? 'Deleting...' : 'Delete'}
-            </button>
-          </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
-          {successMessage && <p className="success-message">{successMessage}</p>}
-        </div>
+  <div className={`modal-container-delete ${isClosing ? 'closing' : ''}`}>
+    <div className="modal-content">
+      <div className="modal-header">
+        <h3>Are you sure you want to delete this post?</h3>
       </div>
-    )}
+      <div className="modal-body">
+        <p className="confirmation-text">This action cannot be undone.</p>
+        <div className="modal-actions">
+          <button 
+            onClick={handleCloseDeleteModal} 
+            disabled={deleting} 
+            className="modal-button cancel">
+            Cancel
+          </button>
+          <button 
+            onClick={handleDeleteConfirm} 
+            disabled={deleting} 
+            className="modal-button confirm">
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
+      </div>
+    </div>
+  </div>
+)}
+
+
 
 {/* Preview Modal */}
 {showPreviewModal && selectedPostForPreview && (
@@ -520,13 +532,13 @@ const Posts = () => {
           />
           <div className="modal-actions">
             <button
-              className="modal-button cancel"
+              className="modal-button-cancel cancel"
               onClick={() => setShowEditModal(false)}
             >
               Cancel
             </button>
             <button
-              className="modal-button confirm"
+              className="modal-button-confirm confirm"
               onClick={handleEditSubmit}
             >
               Save

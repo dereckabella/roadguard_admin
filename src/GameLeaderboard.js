@@ -11,6 +11,7 @@ import loadingAnimation from './lottie/loading.json';
 import { ToastContainer, toast } from 'react-toastify';  // Import toast
 import 'react-toastify/dist/ReactToastify.css';
 import {  Slide } from 'react-toastify';
+import { X } from 'lucide-react'; // Using Lucide for a cleaner close icon
 
 const GameLeaderboard = () => {
 const [leaderboardData, setLeaderboardData] = useState([]);
@@ -44,6 +45,7 @@ useEffect(() => {
       }
     } catch (error) {
       console.error('Error fetching claims:', error);
+      toast.error('Failed to fetch claims.', { autoClose: 500 });
     } finally {
       setLoading(false);
     }
@@ -52,7 +54,20 @@ useEffect(() => {
   fetchClaimRewards();
 }, []);
 
-// Fetch leaderboard data
+const toastConfig = {
+  position: "top-center",
+  autoClose: 3000, // 3 seconds, can be closed manually
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "light",
+  transition: Slide
+};
+
+
+
 useEffect(() => {
   const fetchLeaderboardData = async () => {
     try {
@@ -98,13 +113,13 @@ useEffect(() => {
       }, 2000);
     } catch (error) {
       console.error('Error fetching leaderboard data:', error);
+      toast.error('Failed to fetch leaderboard data.', { autoClose: 500 });
     }
   };
 
   fetchLeaderboardData();
 }, []);
 
-// Fetch rewards from Firebase Realtime Database
 useEffect(() => {
   const fetchRewards = async () => {
     try {
@@ -124,6 +139,7 @@ useEffect(() => {
       }
     } catch (error) {
       console.error('Error fetching rewards:', error);
+      toast.error('Failed to fetch rewards.', { autoClose: 500 });
     }
   };
 
@@ -131,7 +147,7 @@ useEffect(() => {
   if (showViewRewardsModal) {
     fetchRewards();
   }
-}, [showViewRewardsModal]);  // Trigger fetch when modal opens
+}, [showViewRewardsModal]);
 
 const handleRewardImageChange = (event) => {
   setRewardImage(event.target.files[0]);
@@ -148,24 +164,16 @@ const handleVerifyClaim = async (claimId) => {
       )
     );
     
-    toast.success('Claim verified successfully!', {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.success('Claim verified successfully!', { autoClose: 500 });
   } catch (error) {
-    toast.error('Failed to verify claim. Please try again.', {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.error('Failed to verify claim. Please try again.', { autoClose: 500 });
   }
 };
 
-// Open Claim Modal
 const openClaimModal = () => {
   setShowClaimModal(true);
 };
 
-// Close Claim Modal
 const closeClaimModal = () => {
   setSelectedClaim(null);
   setShowClaimModal(false);
@@ -173,10 +181,7 @@ const closeClaimModal = () => {
 
 const handleRewardSubmit = async () => {
   if (!rewardName || (!rewardImage && !editingReward) || !pointsRequired) {
-    toast.error("Please fill out all fields.", {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.error("Please fill out all fields.", { autoClose: 500 });
     return;
   }
 
@@ -198,43 +203,29 @@ const handleRewardSubmit = async () => {
     if (editingReward) {
       const rewardRef = dbRef(database, `rewards/${editingReward.id}`);
       await set(rewardRef, updatedReward);
-      toast.success("Reward updated successfully!", {
-        transition: Slide,
-        position: "top-center"
-      });
+      toast.success("Reward updated successfully!", { autoClose: 500 });
     } else {
       const rewardsRef = dbRef(database, "rewards");
       await push(rewardsRef, updatedReward);
-      toast.success("Reward added successfully!", {
-        transition: Slide,
-        position: "top-center"
-      });
+      toast.success("Reward added successfully!", { autoClose: 500 });
     }
 
-
-    // Step 3: Clear form fields and close the modal
     setRewardName("");
     setRewardImage(null);
     setPointsRequired("");
     setEditingReward(null);
     setShowAddRewardModal(false);
 
-    // Refresh the rewards list
     setRewards((prevRewards) => {
       if (editingReward) {
-        // Update the existing reward in the list
         return prevRewards.map((reward) =>
           reward.id === editingReward.id ? { id: reward.id, ...updatedReward } : reward
         );
       }
-      // Add the new reward to the list
       return [...prevRewards, { id: new Date().getTime().toString(), ...updatedReward }];
     });
   } catch (error) {
-    toast.error("An error occurred while saving the reward.", {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.error("An error occurred while saving the reward.", { autoClose: 500 });
   }
 };
 
@@ -245,41 +236,32 @@ const handleDeleteReward = async (rewardId) => {
 
     setRewards(rewards.filter((reward) => reward.id !== rewardId));
 
-    toast.success("Reward successfully deleted!", {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.success("Reward successfully deleted!", { autoClose: 500 });
   } catch (error) {
-    toast.error("An error occurred while deleting the reward.", {
-      transition: Slide,
-      position: "top-center"
-    });
+    toast.error("An error occurred while deleting the reward.", { autoClose: 500 });
   }
 };
 
 const handleEditReward = (reward) => {
-  setEditingReward(reward); // Store the reward being edited
-  setRewardName(reward.rewardName); // Prefill the reward name
-  setRewardImage(null); // Reset the reward image input (image uploading is optional during edits)
-  setPointsRequired(reward.pointsRequired.toString()); // Prefill points required
-  setShowAddRewardModal(true); // Open the modal
+  setEditingReward(reward);
+  setRewardName(reward.rewardName);
+  setRewardImage(null);
+  setPointsRequired(reward.pointsRequired.toString());
+  setShowAddRewardModal(true);
 };
 
 const maxScore = leaderboardData.length > 0 ? Math.max(...leaderboardData.map(user => user.score)) : 1;
 
 // Separate top 5 and other users
-const top5Data = leaderboardData.slice(0, 5);
-const otherUsers = leaderboardData.slice(5);
+const top5Data = leaderboardData.slice(0, 3);
+const otherUsers = leaderboardData.slice(3);
 
 const handleCompleteClaim = async (claimId) => {
   try {
-    const claimRef = dbRef(database, `claim_reward/${claimId}`);  // Corrected 'dbref' to 'dbRef'
-    await update(claimRef, {
-      status: 'completed',
-    });
-    toast.success("Claim marked as completed!"); // Success toast
+    const claimRef = dbRef(database, `claim_reward/${claimId}`);
+    await update(claimRef, { status: 'completed' });
+    toast.success("Claim marked as completed!", { autoClose: 500 });
 
-    // Update the claims state after completion
     setClaims((prevClaims) =>
       prevClaims.map((claim) =>
         claim.id === claimId ? { ...claim, status: 'completed' } : claim
@@ -287,25 +269,18 @@ const handleCompleteClaim = async (claimId) => {
     );
   } catch (error) {
     console.error('Error completing claim:', error);
-    toast.error("Failed to mark the claim as completed. Please try again."); // Error toast
+    toast.error("Failed to mark the claim as completed. Please try again.", { autoClose: 500 });
   }
 };
 
 
 return (
   <div className="container mx-auto p-4">
-           <ToastContainer
-      position="top-center"
-      autoClose={3000}
-      hideProgressBar
-      closeOnClick
-      transition={Slide}
-      closeButton={true}
-    />
+    <ToastContainer {...toastConfig} />
 
 
     <h1 className="leaderboard-title">Claim Rewards</h1>
-
+   
     {/* Claim Reward Button */}
     <div className="text-center mb-6 space-x-4">
       <button
@@ -537,59 +512,69 @@ return (
 </div>
 )}
     {/* Toast Notifications */}
-    <ToastContainer position="top-center" autoClose={3000} hideProgressBar closeOnClick pauseOnHover draggable />
+
 
     {/* View Rewards Modal */}
     {showViewRewardsModal && (
-      <div className="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full h-[80%] overflow-y-auto p-6 relative">
-          <button
-            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            onClick={() => setShowViewRewardsModal(false)}
-          >
-            &times;
-          </button>
-          <h2 className="reward-list-title text-center">Rewards</h2>
-          <div className="reward-list-container">
-            {rewards.length > 0 ? (
-              <ul>
-                {rewards.map((reward) => (
-                  <li key={reward.id} className="reward-item">
-                    <img
-                      src={reward.imageUrl}
-                      alt={reward.rewardName}
-                      className="object-cover"
-                    />
-                    <div className="reward-details">
-                      <p>{reward.rewardName}</p>
-                      <p className="points-required">Points Required: {reward.pointsRequired}</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        if (window.confirm("Are you sure you want to delete this reward?")) {
-                          handleDeleteReward(reward.id);
-                        }
-                      }}
-                      className="delete-button"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handleEditReward(reward)}
-                      className="edit-button"
-                    >
-                      Edit
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No rewards available yet.</p>
-            )}
+  <div className="custom-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="custom-modal-content bg-gradient-to-tl from-[#001F3F] via-[#003C61] to-[#0066A1] rounded-3xl shadow-2xl max-w-5xl w-full h-[80%] overflow-y-auto p-10 relative transition-transform transform-gpu">
+      <button
+        className="custom-close-btn absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-4xl font-bold"
+        onClick={() => setShowViewRewardsModal(false)}
+      >
+        &times;
+      </button>
+      <h2 className="custom-reward-list-title text-4xl font-semibold text-center text-white mb-8 drop-shadow-lg">Available Rewards</h2>
+
+      {/* Reward List Container */}
+      <div className="custom-reward-list-container">
+        {rewards.length > 0 ? (
+          <div className="custom-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {rewards.map((reward) => (
+              <div key={reward.id} className="custom-reward-item bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all hover:scale-105 transform">
+                <img
+                  src={reward.imageUrl}
+                  alt={reward.rewardName}
+                  className="custom-reward-image object-cover w-full h-40 transition-transform transform hover:scale-105"
+                />
+                <div className="custom-reward-details p-6">
+                  <p className="custom-reward-name text-xl font-semibold text-gray-800">{reward.rewardName}</p>
+                  <p className="custom-points-required text-sm text-gray-500 mt-2">Points Required: {reward.pointsRequired}</p>
+                </div>
+                <div className="custom-button-group flex justify-between p-4">
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => handleEditReward(reward)}
+                    className="custom-edit-button bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full py-2 px-6 text-sm font-semibold shadow-md hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200 transform hover:scale-105"
+                  >
+                    Edit
+                  </button>
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this reward?")) {
+                        handleDeleteReward(reward.id);
+                      }
+                    }}
+                    className="custom-delete-button bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full py-2 px-6 text-sm font-semibold shadow-md hover:from-red-600 hover:to-red-700 transition-all ease-in-out duration-200 transform hover:scale-105"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        ) : (
+          <p className="text-center text-gray-500 text-lg">No rewards available yet.</p>
+        )}
       </div>
-    )}
+    </div>
+  </div>
+)}
+
+
+
+
     {isLoading ? (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Player
