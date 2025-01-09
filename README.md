@@ -18,10 +18,10 @@ RoadGuard enhances road safety by providing real-time traffic alerts and updates
 * Community Reporting: Allows users to report road incidents, hazards, or traffic conditions, contributing to a shared, real-time information network that enhances safety and awareness for all RoadGuard users.
 
 # The Team
-**Abella, Dereck** - Project Manager
-**Sagnoy, Melvin** - Programmer
-**Solon, Diovic** - Database Designer
-**Caballes, Sean** - UI/UX Designer
-**Tulod, Charina Mie** - QA Analyst
+**Abella, Dereck** - Project Manager<br>
+**Sagnoy, Melvin** - Programmer<br>
+**Solon, Diovic** - Database Designer<br>
+**Caballes, Sean** - UI/UX Designer<br>
+**Tulod, Charina Mie** - QA Analyst<br>
 
 #
