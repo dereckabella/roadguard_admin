@@ -1,6 +1,6 @@
 **ROADGUARD: A REAL-TIME ROAD SAFETY ALERT MOBILE APP IN CEBU CITY**
 
-**RoadGuard** is a road safety mobile application designed to assist commuters and drivers by providing real-time alerts and personalized recommendations. Focused on enhancing road safety, the app connects users with critical traffic updates, potential hazards, and accident-prone areas. By utilizing data-driven insights, RoadGuard aims to promote safer driving practices, offering peace of mind and security for all road users.
+**RoadGuard** is a road safety mobile application designed to assist commuters and drivers by providing real-time alerts and personalized recommendations. Focused on enhancing road safety, the app connects users with critical traffic updates, potential hazards, and accident-prone areas. By utilizing data-driven insights, RoadGuard aims to promote safer driving practices, offering peace of mind and security for all road users.\
 
 **PROBLEMS:**
 High Rate of Road Accidents: Many road accidents are caused by a lack of timely information about hazards and unsafe driving practices. RoadGuard addresses this by providing real-time alerts to help drivers avoid potential dangers.
