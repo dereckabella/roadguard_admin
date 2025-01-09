@@ -1,70 +1,20 @@
-# Getting Started with Create React App
+**ROADGUARD: A REAL-TIME ROAD SAFETY ALERT MOBILE APP IN CEBU CITY**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**RoadGuard** is a road safety mobile application designed to assist commuters and drivers by providing real-time alerts and personalized recommendations. Focused on enhancing road safety, the app connects users with critical traffic updates, potential hazards, and accident-prone areas. By utilizing data-driven insights, RoadGuard aims to promote safer driving practices, offering peace of mind and security for all road users.
 
-## Available Scripts
+**PROBLEMS:**
+High Rate of Road Accidents: Many road accidents are caused by a lack of timely information about hazards and unsafe driving practices. RoadGuard addresses this by providing real-time alerts to help drivers avoid potential dangers.
 
-In the project directory, you can run:
+Limited Access to Real-Time Traffic Information: Drivers often struggle with inadequate information on current traffic conditions, leading to congestion and delays. RoadGuard offers up-to-date traffic updates to help users make informed decisions and navigate more safely.
 
-### `npm start`
+Insufficient Awareness of Accident-Prone Areas: Many drivers are unaware of high-risk zones, increasing their vulnerability to accidents. RoadGuard identifies and alerts users about these areas, promoting safer driving routes and reducing the likelihood of incidents.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**Solution:** 
+RoadGuard enhances road safety by providing real-time traffic alerts and updates on accident-prone areas. By leveraging community reporting and data-driven insights, the app empowers users with timely information to avoid hazards and make safer driving decisions. This proactive approach helps reduce accidents and improves the overall commuting experience.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Key Features:**
+Real-Time Alerts: Delivers instant notifications about traffic conditions, road hazards, and accidents, helping users navigate safely and avoid potential dangers.
 
-### `npm test`
+Accident-Prone Area Notifications: Identifies high-risk zones and alerts users to take precautionary measures, promoting safer route choices and reducing the risk of accidents.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Community Reporting: Allows users to report road incidents, hazards, or traffic conditions, contributing to a shared, real-time information network that enhances safety and awareness for all RoadGuard users.
