@@ -16,3 +16,12 @@ RoadGuard enhances road safety by providing real-time traffic alerts and updates
 * Real-Time Alerts: Delivers instant notifications about traffic conditions, road hazards, and accidents, helping users navigate safely and avoid potential dangers.
 * Accident-Prone Area Notifications: Identifies high-risk zones and alerts users to take precautionary measures, promoting safer route choices and reducing the risk of accidents.
 * Community Reporting: Allows users to report road incidents, hazards, or traffic conditions, contributing to a shared, real-time information network that enhances safety and awareness for all RoadGuard users.
+
+# The Team
+**Abella, Dereck** - Project Manager
+**Sagnoy, Melvin** - Programmer
+**Solon, Diovic** - Database Designer
+**Caballes, Sean** - UI/UX Designer
+**Tulod, Charina Mie** - QA Analyst
+
+#
